@@ -1,0 +1,46 @@
+﻿@page "/admin"
+
+<h3>Admin</h3>
+
+@if (ShowAddNewPlayerialog)
+{
+    <AddNewPlayer></AddNewPlayer>
+}
+
+@if (ShowAddNewTeamDialog)
+{
+    <AddNewTeam _visible="@ShowAddNewTeamDialog"></AddNewTeam>
+}
+
+@if (ShowAddNewMatchDialog)
+{
+    <AddNewMatch></AddNewMatch>
+}
+
+<Button OnClick="OpenDialog">Add new player</Button>
+
+<Button OnClick="OpenTeamDialog">Add new team</Button>
+
+<Button OnClick="OpenMatchDialog">Add new match</Button>
+
+
+@code {
+    public bool ShowAddNewPlayerialog = false;
+    public bool ShowAddNewTeamDialog = false;
+    public bool ShowAddNewMatchDialog = false;
+
+    protected void OpenDialog()
+    {
+        ShowAddNewPlayerialog = true;
+    }
+
+    protected void OpenTeamDialog()
+    {
+        ShowAddNewTeamDialog = true;
+    }
+
+    protected void OpenMatchDialog()
+    {
+        ShowAddNewMatchDialog = true;
+    }
+}

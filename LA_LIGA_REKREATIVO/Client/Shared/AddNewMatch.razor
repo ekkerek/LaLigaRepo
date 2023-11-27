@@ -1,0 +1,175 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Shared.Models;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server;
+
+<h3>AddNewMatch</h3>
+
+@if (showAddNewSummaryModal)
+{
+    <AddNewSummary OnChange="HandleAddNewSummary" CloseCallback="CloseSummaryModal" Players="@matchPlaters"></AddNewSummary>
+}
+
+
+
+
+<Modal Title="Add new match"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="Match"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@_form">
+        <FormItem WrapperColOffset="8" WrapperColSpan="16" Label="Team">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange">
+                <SelectOptions>
+                    @foreach (var team in teams)
+                    {
+                        <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
+                    }
+
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
+        <FormItem WrapperColOffset="8" WrapperColSpan="16" Label="Team">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange23">
+                <SelectOptions>
+                    @foreach (var team in teams)
+                    {
+                        <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
+                    }
+
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
+
+        <FormItem Label="Game Time">
+            <DatePicker @bind-Value="context.GameTime" TValue="DateTime" ShowTime="@true" Format="yyyy-MM-ddTHH:mm" Mask="yyyy-MM-ddTHH:mm" Placeholder="@("yyyy-MM-ddTHH:mm")" />
+        </FormItem>
+        <FormItem Label="Game Round">
+            <Input @bind-Value="context.GameRound" />
+        </FormItem>
+        <FormItem Label="Game Place">
+            <Input @bind-Value="context.GamePlace" />
+        </FormItem>
+        <FormItem>
+            <Button OnClick="OpenAddNewSummaryModal">Add new summary</Button>
+        </FormItem>
+
+       @*  <FormItem WrapperColOffset="8" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Submit
+            </Button>
+        </FormItem> *@
+    </Form>
+</Modal>
+
+
+
+
+@code {
+
+    bool _submitting = false;
+    private Form<MatchDto> _form;
+
+    public MatchDto Match = new MatchDto()
+        {
+            HomeTeam = new TeamDto(),
+            AwayTeam = new TeamDto(),
+            Players = new List<PlayerDto>(),
+            //HomeTeamPlayers = new List<Player>(),
+            Summaries = new List<SummaryDto>()
+        };
+    public PlayerDto player = new PlayerDto();
+    public List<TeamDto> teams = new();
+    public List<PlayerDto> matchPlaters = new();
+    public int selectedTeamId = 0;
+    public bool showAddNewSummaryModal;
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        var teamss = await Server.Teams.Get();
+        teams = teamss.ToList();
+        var kk = await Server.Players.Get();
+        matchPlaters = kk.ToList();
+        //player = players.FirstOrDefault();
+        //matchPlaters = players.Where(x => x.TeamId == Match.HomeTeam.Id || x.TeamId == Match.AwayTeam.Id).ToList();
+
+        base.OnInitialized();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+
+        var aa = await Server.Matches.Add(Match);
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+
+    public void handleChange(string value)
+    {
+        var homeSelectedTeamId = Int32.Parse(value);
+        Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
+        Match.Players.AddRange(matchPlaters.Where(x => x.TeamId == Match.HomeTeam.Id).ToList());
+        //Match.Players.AddRange(matchPlaters.Where(x => x.Team == Match.HomeTeam).ToList());
+
+        // Console.WriteLine(value);
+    }
+
+    public void handleChange23(string value)
+    {
+        var awaySelectedTeamId = Int32.Parse(value);
+        Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
+        Match.Players.AddRange(matchPlaters.Where(x => x.TeamId == Match.AwayTeam.Id).ToList());
+        //Match.Players.AddRange(matchPlaters.Where(x => x.Team == Match.AwayTeam).ToList());
+        Console.WriteLine(value);
+    }
+
+    void handleItemsChange(IEnumerable<string> value)
+    {
+        Console.WriteLine(value);
+    }
+
+    public void AddSummary()
+    {
+        var aa = new SummaryDto();
+        Match.Summaries.Add(new SummaryDto() { Time = 23, Type = SummaryType.Goal, Player = matchPlaters.FirstOrDefault() });
+        //Match.Players.Add(player);
+        StateHasChanged();
+    }
+
+    public void HandleAddNewSummary(SummaryDto summary)
+    {
+        Match.Summaries.Add(summary);
+        StateHasChanged();
+    }
+
+    public void OpenAddNewSummaryModal()
+    {
+        showAddNewSummaryModal = true;
+    }
+
+    private void CloseSummaryModal()
+    {
+        showAddNewSummaryModal = false;
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        _submitting = true;
+        await Task.Delay(1000);
+        _form.Submit();
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+    }

@@ -1,0 +1,57 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Shared.Models;
+@using Newtonsoft.Json;
+@using System.Net.Http.Headers;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+
+
+<Modal Title="Create new team"
+@bind-Visible="@_visible">
+    <Form Model="team"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16">
+        <FormItem Label="Name">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="Logo">
+            <Input @bind-Value="context.LogoSrc" />
+        </FormItem>
+
+        <FormItem WrapperColOffset="8" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Submit
+            </Button>
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    public TeamDto team = new();
+    public int selectedTeamId;
+    [Parameter]
+    public bool _visible { get; set; }
+    private async Task OnFinish(EditContext editContext)
+    {
+        var aa = await Server.Teams.Add(team);
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+
+    void handleChange(string value)
+    {
+        selectedTeamId = Int32.Parse(value);
+        //player.Team =
+        Console.WriteLine(value);
+    }
+
+    void handleItemsChange(IEnumerable<string> value)
+    {
+        Console.WriteLine(value);
+    }
+}
