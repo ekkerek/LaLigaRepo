@@ -23,7 +23,7 @@
           LabelColSpan="8"
           WrapperColSpan="16"
     @ref="@_form">
-        <FormItem WrapperColOffset="8" WrapperColSpan="16" Label="Team">
+        <FormItem Label="Team">
             <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange">
                 <SelectOptions>
                     @foreach (var team in teams)
@@ -34,7 +34,7 @@
                 </SelectOptions>
             </SimpleSelect>
         </FormItem>
-        <FormItem WrapperColOffset="8" WrapperColSpan="16" Label="Team">
+        <FormItem Label="Team">
             <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange23">
                 <SelectOptions>
                     @foreach (var team in teams)
@@ -44,6 +44,12 @@
 
                 </SelectOptions>
             </SimpleSelect>
+        </FormItem>
+        <FormItem Label="Home Team Goals">
+            <Input Type="number" @bind-Value="context.HomeTeamGoals" />
+        </FormItem>
+        <FormItem Label="Away Team Goals">
+            <Input Type="number" @bind-Value="context.AwayTeamGoals" />
         </FormItem>
 
         <FormItem Label="Game Time">
