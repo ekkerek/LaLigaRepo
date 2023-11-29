@@ -1,9 +1,6 @@
-﻿using LA_LIGA_REKREATIVO.Shared;
-using LA_LIGA_REKREATIVO.Shared.Dto;
-using LA_LIGA_REKREATIVO.Shared.Models;
+﻿using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using static System.Net.WebRequestMethods;
 
 namespace LA_LIGA_REKREATIVO.Client.Server
 {

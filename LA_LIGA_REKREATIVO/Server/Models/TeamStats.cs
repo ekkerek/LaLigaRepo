@@ -1,4 +1,4 @@
-﻿namespace LA_LIGA_REKREATIVO.Shared.Models
+﻿namespace LA_LIGA_REKREATIVO.Server.Models
 {
     public class TeamStats
     {
@@ -12,6 +12,5 @@
         public int GoalsConceded { get; set; }
         public int TotalPoints { get; set; }
         public Team Team { get; set; }
-        //public int Trophies { get; set; }
     }
 }

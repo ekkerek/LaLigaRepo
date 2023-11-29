@@ -1,5 +1,4 @@
 ﻿using LA_LIGA_REKREATIVO.Shared.Dto;
-using LA_LIGA_REKREATIVO.Shared.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 

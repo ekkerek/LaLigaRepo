@@ -1,4 +1,4 @@
-﻿using LA_LIGA_REKREATIVO.Shared.Models;
+﻿using LA_LIGA_REKREATIVO.Server.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 

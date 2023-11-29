@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
+using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
-using LA_LIGA_REKREATIVO.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

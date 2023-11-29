@@ -1,11 +1,4 @@
-﻿using LA_LIGA_REKREATIVO.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LA_LIGA_REKREATIVO.Shared.Dto
+﻿namespace LA_LIGA_REKREATIVO.Shared.Dto
 {
     public class PlayerStatsDto
     {

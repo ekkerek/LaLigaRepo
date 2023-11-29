@@ -1,5 +1,4 @@
 ﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
-@using LA_LIGA_REKREATIVO.Shared.Models;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server;
 
@@ -23,8 +22,8 @@
           LabelColSpan="8"
           WrapperColSpan="16"
     @ref="@_form">
-        <FormItem Label="Team">
-            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange">
+        <FormItem Label="Home Team">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
                 <SelectOptions>
                     @foreach (var team in teams)
                     {
@@ -34,8 +33,8 @@
                 </SelectOptions>
             </SimpleSelect>
         </FormItem>
-        <FormItem Label="Team">
-            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange23">
+        <FormItem Label="Away Team">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectAwayTeam">
                 <SelectOptions>
                     @foreach (var team in teams)
                     {
@@ -65,10 +64,12 @@
             <Button OnClick="OpenAddNewSummaryModal">Add new summary</Button>
         </FormItem>
 
-       @*  <FormItem WrapperColOffset="8" WrapperColSpan="16">
-            <Button Type="@ButtonType.Primary" HtmlType="submit">
-                Submit
-            </Button>
+        <Button OnClick="GetPlayerSummaries"></Button>
+
+        @*  <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+        Submit
+        </Button>
         </FormItem> *@
     </Form>
 </Modal>
@@ -119,17 +120,14 @@
         ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
     }
 
-    public void handleChange(string value)
+    public void SelectHomeTeam(string value)
     {
         var homeSelectedTeamId = Int32.Parse(value);
         Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
         Match.Players.AddRange(matchPlaters.Where(x => x.TeamId == Match.HomeTeam.Id).ToList());
-        //Match.Players.AddRange(matchPlaters.Where(x => x.Team == Match.HomeTeam).ToList());
-
-        // Console.WriteLine(value);
     }
 
-    public void handleChange23(string value)
+    public void SelectAwayTeam(string value)
     {
         var awaySelectedTeamId = Int32.Parse(value);
         Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
@@ -178,4 +176,10 @@
     {
         Console.WriteLine(e);
     }
+
+    protected void GetPlayerSummaries()
+    {
+
+        var _ = Server.Players.GetPlayerStats();
     }
+}

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
-using LA_LIGA_REKREATIVO.Shared.Models;
 
 namespace LA_LIGA_REKREATIVO.Server
 {

@@ -2,7 +2,7 @@
 using LA_LIGA_REKREATIVO.Client.Server;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Shared.Dto;
-using LA_LIGA_REKREATIVO.Shared.Models;
+using LA_LIGA_REKREATIVO.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,6 +65,33 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpGet("getplayerstats/{id}")]
+        public IEnumerable<PlayerDto> GetPlayerStats(int id)
+        {
+            var player = _context.Players.Include(x => x.Team).Include(x=> x.Matches).ThenInclude(x=> x.Summaries).FirstOrDefault(x=> x.Id == id);
+            var playerStats = player.Matches.Select(x => x.Summaries);
+            PlayerStatsDto returnPlayer = new PlayerStatsDto();
+            foreach (var stats in playerStats)
+            {
+                foreach (var stat in stats)
+                {
+                    var aa = stat.Type switch
+                    {
+                        SummaryType.Assist => returnPlayer.Assists += 1,
+                        SummaryType.Goal => returnPlayer.Goals += 1,
+                        SummaryType.GoalsFrom10meter => returnPlayer.GoalsFrom10meter += 1,
+                        SummaryType.GoalsFromPenalty => returnPlayer.GoalsFromPenalty += 1,
+                        SummaryType.OwnGoal => returnPlayer.OwnGoals += 1,
+                        SummaryType.RedCards => returnPlayer.RedCards += 1,
+                        SummaryType.YellowCards => returnPlayer.YellowCards += 1,
+                    };
+                }
+            }
+
+            var playersDto = _mapper.Map<List<PlayerDto>>(player);
+            return playersDto;
         }
     }
 }
