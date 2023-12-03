@@ -16,6 +16,8 @@ namespace LA_LIGA_REKREATIVO.Server
             CreateMap<SummaryDto, Summary>();
             CreateMap<Match, MatchDto>();
             CreateMap<MatchDto, Match>();
+            CreateMap<League, LeagueDto>();
+            CreateMap<LeagueDto, League>();
         }
     }
 }

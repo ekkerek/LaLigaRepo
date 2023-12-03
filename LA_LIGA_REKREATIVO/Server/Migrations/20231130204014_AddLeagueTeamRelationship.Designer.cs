@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LA_LIGA_REKREATIVO.Server.Migrations
 {
     [DbContext(typeof(LaLigaContext))]
-    [Migration("20231126114408_tt2")]
-    partial class tt2
+    [Migration("20231130204014_AddLeagueTeamRelationship")]
+    partial class AddLeagueTeamRelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,42 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Match", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.League", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Leagues", "rec");
+                });
+
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.LeagueTeam", b =>
+                {
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("LeagueId", "TeamId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("LeagueTeam", "rec");
+                });
+
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Match", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -56,12 +91,17 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.Property<int>("HomeTeamId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("LeagueId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LeagueId");
 
                     b.ToTable("Matches", "rec");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.MatchPlayer", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.MatchPlayer", b =>
                 {
                     b.Property<int>("MatchId")
                         .HasColumnType("integer");
@@ -76,7 +116,7 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.ToTable("MatchPlayer", "rec");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Player", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Player", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,55 +142,7 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.ToTable("Players", "rec");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.PlayerStats", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Assists")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Goals")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GoalsFrom10meter")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GoalsFromPenalty")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("GoalsPerMatch")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("OwnGoals")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RedCards")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Season")
-                        .HasColumnType("integer");
-
-                    b.Property<double>("WinPerMatch")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("YellowCards")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("PlayerStats", "rec");
-                });
-
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Summary", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Summary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +171,7 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.ToTable("Summaries", "rec");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Team", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Team", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -202,66 +194,50 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.ToTable("Teams", "rec");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.TeamStats", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.LeagueTeam", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.League", null)
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Draws")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GamePlayed")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Goals")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GoalsConceded")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Losts")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Season")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TeamId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TotalPoints")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Wins")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("TeamStats", "rec");
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Team", null)
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.MatchPlayer", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Match", b =>
                 {
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Match", null)
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.League", "League")
+                        .WithMany()
+                        .HasForeignKey("LeagueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("League");
+                });
+
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.MatchPlayer", b =>
+                {
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Match", null)
                         .WithMany()
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Player", null)
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Player", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Player", b =>
                 {
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Team", "Team")
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Team", "Team")
                         .WithMany("Players")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,26 +246,15 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.PlayerStats", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Summary", b =>
                 {
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-                });
-
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Summary", b =>
-                {
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Match", "Match")
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Match", "Match")
                         .WithMany("Summaries")
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Player", "Player")
+                    b.HasOne("LA_LIGA_REKREATIVO.Server.Models.Player", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -300,23 +265,12 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     b.Navigation("Player");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.TeamStats", b =>
-                {
-                    b.HasOne("LA_LIGA_REKREATIVO.Shared.Models.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Match", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Match", b =>
                 {
                     b.Navigation("Summaries");
                 });
 
-            modelBuilder.Entity("LA_LIGA_REKREATIVO.Shared.Models.Team", b =>
+            modelBuilder.Entity("LA_LIGA_REKREATIVO.Server.Models.Team", b =>
                 {
                     b.Navigation("Players");
                 });

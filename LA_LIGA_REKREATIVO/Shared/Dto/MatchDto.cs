@@ -2,6 +2,12 @@
 {
     public class MatchDto
     {
+        public MatchDto()
+        {
+            Summaries = new();
+            Players = new();
+        }
+
         public int Id { get; set; }
         public DateTime GameTime { get; set; }
         public int GameRound { get; set; }
@@ -12,5 +18,6 @@
         public TeamDto AwayTeam { get; set; }
         public List<SummaryDto> Summaries { get; set; }
         public List<PlayerDto> Players { get; set; }
+        public LeagueDto League { get; set; }
     }
 }

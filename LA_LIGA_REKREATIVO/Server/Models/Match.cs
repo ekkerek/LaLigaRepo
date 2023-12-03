@@ -19,5 +19,6 @@
         public int AwayTeamId { get; set; }
         public ICollection<Summary> Summaries { get; set; }
         public ICollection<Player> Players { get; set; }
+        public League League { get; set; }
     }
 }

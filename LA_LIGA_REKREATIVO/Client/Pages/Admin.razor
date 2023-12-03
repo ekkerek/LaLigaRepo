@@ -17,11 +17,25 @@
     <AddNewMatch></AddNewMatch>
 }
 
+@if (ShowAddNewLeagueDialog)
+{
+    <AddNewLeague CloseModal="HandleCloseModal"></AddNewLeague>
+}
+
+@if (ShowTeamsToLeagueDialog)
+{
+    <AddTeamToLeague></AddTeamToLeague>
+}
+
 <Button OnClick="OpenDialog">Add new player</Button>
 
 <Button OnClick="OpenTeamDialog">Add new team</Button>
 
 <Button OnClick="OpenMatchDialog">Add new match</Button>
+
+<Button OnClick="OpenLeagueDialog">Add new league</Button>
+
+<Button OnClick="OpenTeamstoLeagueDialog">Add teams to league</Button>
 
 
 
@@ -30,6 +44,9 @@
     public bool ShowAddNewPlayerialog = false;
     public bool ShowAddNewTeamDialog = false;
     public bool ShowAddNewMatchDialog = false;
+    public bool ShowAddNewLeagueDialog = false;
+    public bool ShowTeamsToLeagueDialog = false;
+
 
     protected void OpenDialog()
     {
@@ -45,4 +62,20 @@
     {
         ShowAddNewMatchDialog = true;
     }
+
+    protected void OpenLeagueDialog()
+    {
+        ShowAddNewLeagueDialog = true;
+    }
+
+    protected void OpenTeamstoLeagueDialog()
+    {
+        ShowTeamsToLeagueDialog = true;
+    }
+
+    public void HandleCloseModal()
+    {
+        ShowAddNewLeagueDialog = false;
+    }
+
 }

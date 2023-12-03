@@ -68,7 +68,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
         [HttpGet("getplayerstats/{id}")]
-        public IEnumerable<PlayerDto> GetPlayerStats(int id)
+        public PlayerStatsDto GetPlayerStats(int id)
         {
             var player = _context.Players.Include(x => x.Team).Include(x=> x.Matches).ThenInclude(x=> x.Summaries).FirstOrDefault(x=> x.Id == id);
             var playerStats = player.Matches.Select(x => x.Summaries);
@@ -90,8 +90,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
             }
 
-            var playersDto = _mapper.Map<List<PlayerDto>>(player);
-            return playersDto;
+            returnPlayer.Player = _mapper.Map<PlayerDto>(player);
+            return returnPlayer;
         }
     }
 }

@@ -10,10 +10,9 @@ namespace LA_LIGA_REKREATIVO.Server.Data
 
         public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<PlayerStats> PlayerStats { get; set; }
-        public DbSet<TeamStats> TeamStats { get; set; }
         public DbSet<Summary> Summaries { get; set; }
         public DbSet<Match> Matches { get; set; }
+        public DbSet<League> Leagues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,10 +22,8 @@ namespace LA_LIGA_REKREATIVO.Server.Data
 
             modelBuilder.Entity<Team>().HasKey(x => x.Id);
             modelBuilder.Entity<Team>().HasMany(x => x.Players)
-                                       .WithOne(x=> x.Team);
+                                       .WithOne(x => x.Team);
 
-            modelBuilder.Entity<PlayerStats>().HasKey(x => x.Id);
-            modelBuilder.Entity<TeamStats>().HasKey(x => x.Id);
             modelBuilder.Entity<Summary>().HasKey(x => x.Id);
             modelBuilder.Entity<Summary>().HasOne(x => x.Match)
                                           .WithMany(x => x.Summaries);
@@ -63,6 +60,24 @@ namespace LA_LIGA_REKREATIVO.Server.Data
                         .HasForeignKey(x => x.MatchId)
                         .OnDelete(DeleteBehavior.NoAction)
                 );
+
+            modelBuilder.Entity<League>().HasMany(x => x.Teams)
+                                       .WithMany(x => x.Leagues)
+                                       .UsingEntity<LeagueTeam>(
+                 x => x
+                       .HasOne<Team>()
+                       .WithMany()
+                       .HasForeignKey(x => x.TeamId)
+                       .OnDelete(DeleteBehavior.NoAction),
+                   x => x
+                       .HasOne<League>()
+                       .WithMany()
+                       .HasForeignKey(x => x.LeagueId)
+                       .OnDelete(DeleteBehavior.NoAction)
+               );
+
+
+
         }
     }
 }

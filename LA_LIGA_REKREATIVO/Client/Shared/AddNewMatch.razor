@@ -111,7 +111,8 @@
 
     private async Task OnFinish(EditContext editContext)
     {
-
+        LeagueDto l = new() { Id = 1, Name = "Hajdukova Liga 1", Year = 2023 };
+        Match.League = l;
         var aa = await Server.Matches.Add(Match);
     }
 
@@ -177,9 +178,10 @@
         Console.WriteLine(e);
     }
 
-    protected void GetPlayerSummaries()
+    protected async void GetPlayerSummaries()
     {
 
-        var _ = Server.Players.GetPlayerStats();
+        var playerStat = await Server.Players.GetPlayerStats();
+        var kk = playerStat;
     }
 }

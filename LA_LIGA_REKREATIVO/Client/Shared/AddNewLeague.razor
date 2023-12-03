@@ -1,0 +1,63 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server;
+@inject IMessageService _message
+
+<Modal Title="Add new league"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="League"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+    @ref="@_newLeagueForm">
+
+        <FormItem Label="Name">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="Year">
+            <Input @bind-Value="context.Year" />
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback CloseModal { get; set; }
+    LeagueDto League = new();
+    bool _submitting = false;
+    private Form<LeagueDto> _newLeagueForm;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        _submitting = true;
+        _newLeagueForm.Submit();
+
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+        await CloseModal.InvokeAsync();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+
+        var result = await Server.Leagues.Add(League);
+        if (result)
+        {
+            await _message.Success("New league is added.");
+        }
+        await CloseModal.InvokeAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+}

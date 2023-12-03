@@ -49,6 +49,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             foreach (var summary in mappedMatch.Summaries)
                 summary.Player = players.FirstOrDefault(x => x.Id == summary.Player.Id);
 
+            mappedMatch.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
+
             var entry = _context.Matches.Add(mappedMatch);
             if (entry != null)
             {

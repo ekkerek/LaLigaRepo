@@ -1,0 +1,105 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server;
+
+<h3>AddTeamToLeague</h3>
+
+<Modal Title="Add new match"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+
+    <Form Model="league"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@_formAddTeamToLeague">
+        <FormItem Label="Home Team">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
+                <SelectOptions>
+                    @foreach (var l in leagues)
+                    {
+                        <SimpleSelectOption Value="@l.Id.ToString()" Label="@l.Name"></SimpleSelectOption>
+                    }
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
+        <FormItem Label="Away Team">
+            <Select Mode="multiple"
+            @bind-Values="@_selectedValues1"
+                    Placeholder="Please select"
+                    TItemValue="string"
+                    TItem="string"
+                    Size="@_sizeValue"
+                    Style="width: 100%; margin-bottom: 8px;"
+                    OnSelectedItemsChanged="OnSelectedItemsChangedHandler">
+                <SelectOptions>
+                    @foreach (var item in teams)
+                    {
+                        <SelectOption TItemValue="string" TItem="string" Value=@item.Id.ToString() Label=@item.Name />
+                    }
+                </SelectOptions>
+            </Select>
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    private List<LeagueDto> leagues = new();
+    private List<TeamDto> teams = new();
+    public LeagueDto league = new();
+    public IEnumerable<string> _selectedValues1, _selectedValues2;
+
+    bool _submitting = false;
+    private Form<LeagueDto> _formAddTeamToLeague;
+    private string _sizeValue = AntSizeLDSType.Default;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var realguesResult = await Server.Leagues.Get();
+        leagues = realguesResult.ToList();
+        var teamsResult = await Server.Teams.Get();
+        teams = teamsResult.ToList();
+    }
+
+    public void SelectLeague(string value)
+    {
+        var leagueId = Int32.Parse(value);
+        league.Id = leagueId;
+        league.Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name;
+    }
+
+    private void OnSelectedItemsChangedHandler(IEnumerable<string> values)
+    {
+        if (values != null)
+        {
+            var selectedTeams = teams.Where(x => _selectedValues1.Contains(x.Id.ToString()));
+            league.Teams = selectedTeams.ToList();
+
+        }
+    }
+
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        _submitting = true;
+        await Task.Delay(1000);
+        _formAddTeamToLeague.Submit();
+    }
+
+    private void HandleCancel(MouseEventArgs e)
+    {
+        Console.WriteLine(e);
+    }
+
+    public async Task OnFinish(EditContext editContext)
+    {
+        var aa = await Server.Leagues.AddTeamsToLeague(league);
+    }
+
+    public void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+}

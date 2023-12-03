@@ -16,6 +16,21 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 name: "rec");
 
             migrationBuilder.CreateTable(
+                name: "Leagues",
+                schema: "rec",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<int>(type: "integer", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Leagues", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Teams",
                 schema: "rec",
                 columns: table => new
@@ -41,24 +56,20 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                     GameTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     GameRound = table.Column<int>(type: "integer", nullable: false),
                     GamePlace = table.Column<string>(type: "text", nullable: false),
+                    HomeTeamGoals = table.Column<int>(type: "integer", nullable: false),
+                    AwayTeamGoals = table.Column<int>(type: "integer", nullable: false),
                     HomeTeamId = table.Column<int>(type: "integer", nullable: false),
-                    AwayTeamId = table.Column<int>(type: "integer", nullable: false)
+                    AwayTeamId = table.Column<int>(type: "integer", nullable: false),
+                    LeagueId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Matches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Matches_Teams_AwayTeamId",
-                        column: x => x.AwayTeamId,
+                        name: "FK_Matches_Leagues_LeagueId",
+                        column: x => x.LeagueId,
                         principalSchema: "rec",
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Matches_Teams_HomeTeamId",
-                        column: x => x.HomeTeamId,
-                        principalSchema: "rec",
-                        principalTable: "Teams",
+                        principalTable: "Leagues",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -87,42 +98,12 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TeamStats",
-                schema: "rec",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Season = table.Column<int>(type: "integer", nullable: false),
-                    GamePlayed = table.Column<int>(type: "integer", nullable: false),
-                    Wins = table.Column<int>(type: "integer", nullable: false),
-                    Losts = table.Column<int>(type: "integer", nullable: false),
-                    Draws = table.Column<int>(type: "integer", nullable: false),
-                    Goals = table.Column<int>(type: "integer", nullable: false),
-                    GoalsConceded = table.Column<int>(type: "integer", nullable: false),
-                    TotalPoints = table.Column<int>(type: "integer", nullable: false),
-                    TeamId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TeamStats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TeamStats_Teams_TeamId",
-                        column: x => x.TeamId,
-                        principalSchema: "rec",
-                        principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MatchPlayer",
                 schema: "rec",
                 columns: table => new
                 {
                     MatchId = table.Column<int>(type: "integer", nullable: false),
-                    PlayerId = table.Column<int>(type: "integer", nullable: false),
-                    Action = table.Column<char>(type: "character(1)", nullable: false)
+                    PlayerId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -139,37 +120,6 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                         principalSchema: "rec",
                         principalTable: "Players",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlayerStats",
-                schema: "rec",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Season = table.Column<int>(type: "integer", nullable: false),
-                    Goals = table.Column<int>(type: "integer", nullable: false),
-                    Assists = table.Column<int>(type: "integer", nullable: false),
-                    OwnGoals = table.Column<int>(type: "integer", nullable: false),
-                    GoalsPerMatch = table.Column<double>(type: "double precision", nullable: false),
-                    WinPerMatch = table.Column<double>(type: "double precision", nullable: false),
-                    YellowCards = table.Column<int>(type: "integer", nullable: false),
-                    RedCards = table.Column<int>(type: "integer", nullable: false),
-                    GoalsFromPenalty = table.Column<int>(type: "integer", nullable: false),
-                    GoalsFrom10meter = table.Column<int>(type: "integer", nullable: false),
-                    PlayerId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlayerStats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PlayerStats_Players_PlayerId",
-                        column: x => x.PlayerId,
-                        principalSchema: "rec",
-                        principalTable: "Players",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,16 +153,10 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Matches_AwayTeamId",
+                name: "IX_Matches_LeagueId",
                 schema: "rec",
                 table: "Matches",
-                column: "AwayTeamId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Matches_HomeTeamId",
-                schema: "rec",
-                table: "Matches",
-                column: "HomeTeamId");
+                column: "LeagueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MatchPlayer_PlayerId",
@@ -227,12 +171,6 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 column: "TeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlayerStats_PlayerId",
-                schema: "rec",
-                table: "PlayerStats",
-                column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Summaries_MatchId",
                 schema: "rec",
                 table: "Summaries",
@@ -243,12 +181,6 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 schema: "rec",
                 table: "Summaries",
                 column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamStats_TeamId",
-                schema: "rec",
-                table: "TeamStats",
-                column: "TeamId");
         }
 
         /// <inheritdoc />
@@ -259,15 +191,7 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                 schema: "rec");
 
             migrationBuilder.DropTable(
-                name: "PlayerStats",
-                schema: "rec");
-
-            migrationBuilder.DropTable(
                 name: "Summaries",
-                schema: "rec");
-
-            migrationBuilder.DropTable(
-                name: "TeamStats",
                 schema: "rec");
 
             migrationBuilder.DropTable(
@@ -276,6 +200,10 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Players",
+                schema: "rec");
+
+            migrationBuilder.DropTable(
+                name: "Leagues",
                 schema: "rec");
 
             migrationBuilder.DropTable(

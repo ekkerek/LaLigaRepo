@@ -2,8 +2,8 @@
 {
     public class PlayerStatsDto
     {
-        public int Id { get; set; }
-        public int Season { get; set; }
+        //public int Id { get; set; }
+        //public int Season { get; set; }
         public int Goals { get; set; }
         public int Assists { get; set; }
         public int OwnGoals { get; set; }
