@@ -44,10 +44,9 @@
 @code {
     [Parameter] public List<PlayerDto> Players { get; set; }
     [Parameter] public EventCallback<SummaryDto> OnChange { get; set; }
-     [Parameter] public EventCallback CloseCallback { get; set; }
+    [Parameter] public EventCallback CloseCallback { get; set; }
     public SummaryDto summary = new();
     public int selectedPlayerId = 0;
-
 
     void setSummaryType(SummaryType summaryType)
     {
@@ -60,9 +59,11 @@
         summary.Player = Players.FirstOrDefault(x => x.Id == selectedPlayerId);
     }
 
-       public async Task CreateSummary()
+    public async Task CreateSummary()
     {
-         if (OnChange.HasDelegate)
+        // var sum = new SummaryDto();
+        // sum = summary;
+        if (OnChange.HasDelegate)
             await OnChange.InvokeAsync(summary);
         StateHasChanged();
     }

@@ -1,6 +1,7 @@
 ﻿using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 
 namespace LA_LIGA_REKREATIVO.Client.Server
 {
@@ -11,6 +12,32 @@ namespace LA_LIGA_REKREATIVO.Client.Server
         public Matches(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        public async Task<IEnumerable<MatchDto>> Get()
+        {
+            var result = await _httpClient.GetAsync("api/match");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchDto>>(json);
+            }
+            return Enumerable.Empty<MatchDto>();
+        }
+
+        public async Task<IEnumerable<MatchDto>> GetByDate(DateTime dateTime)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, "api/match/getByDate");
+            message.Content = new StringContent(JsonConvert.SerializeObject(dateTime));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchDto>>(json);
+            }
+            return Enumerable.Empty<MatchDto>();
         }
 
         public async Task<bool> Add(MatchDto match)

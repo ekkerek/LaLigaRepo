@@ -23,16 +23,48 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // GET: api/<MatchController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<MatchDto> Get()
         {
-            return new string[] { "value1", "value2" };
+            var matches = _context.Matches.ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(_context.Matches);
+            foreach (var match in matchesDto)
+            {
+                var homeTeamId = matches.FirstOrDefault(x => x.Id == match.Id).HomeTeamId;
+                var awayTeamId = matches.FirstOrDefault(x => x.Id == match.Id).AwayTeamId;
+                var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                match.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                match.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+            }
+            return matchesDto;
+        }
+
+
+        [HttpPost("getByDate")]
+        public IEnumerable<MatchDto> GetByDate([FromBody] DateTime date)
+        {
+            var aa = date.Date.ToUniversalTime();
+            //var bb = _context.Matches.Last();
+            //var cc = bb.GameTime.ToUniversalTime();
+            var matches = _context.Matches.Where(x => x.GameTime.ToUniversalTime().Date == date.ToUniversalTime().Date).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches);
+            foreach (var match in matchesDto)
+            {
+                var homeTeamId = matches.FirstOrDefault(x => x.Id == match.Id).HomeTeamId;
+                var awayTeamId = matches.FirstOrDefault(x => x.Id == match.Id).AwayTeamId;
+                var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                match.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                match.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+            }
+            return matchesDto;
         }
 
         // GET api/<MatchController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public MatchDto Get(int id)
         {
-            return "value";
+            return _mapper.Map<List<MatchDto>>(_context.Matches).FirstOrDefault();
         }
 
         // POST api/<MatchController>

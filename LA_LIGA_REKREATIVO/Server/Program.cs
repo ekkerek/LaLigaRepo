@@ -1,8 +1,5 @@
 using LA_LIGA_REKREATIVO.Server.Data;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 

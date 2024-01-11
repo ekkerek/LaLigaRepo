@@ -2,80 +2,96 @@
 
 <h3>Admin</h3>
 
-@if (ShowAddNewPlayerialog)
+@if (showAddPlayerModal)
 {
-    <AddNewPlayer></AddNewPlayer>
+    <AddNewPlayer CloseModal="CloseAddPlayerModal"></AddNewPlayer>
 }
 
-@if (ShowAddNewTeamDialog)
+@if (showAddTeamModal)
 {
-    <AddNewTeam _visible="@ShowAddNewTeamDialog"></AddNewTeam>
+    <AddNewTeam CloseModal="CloseAddTeamModal"></AddNewTeam>
 }
 
-@if (ShowAddNewMatchDialog)
+@if (showAddMatchModal)
 {
-    <AddNewMatch></AddNewMatch>
+    <AddNewMatch CloseModal="CloseAddMatchModal"></AddNewMatch>
 }
 
-@if (ShowAddNewLeagueDialog)
+@if (showAddLeagueModal)
 {
-    <AddNewLeague CloseModal="HandleCloseModal"></AddNewLeague>
+    <AddNewLeague CloseModal="CloseAddLeagueModal"></AddNewLeague>
 }
 
-@if (ShowTeamsToLeagueDialog)
+@if (showTeamsToLeagueModal)
 {
     <AddTeamToLeague></AddTeamToLeague>
 }
 
-<Button OnClick="OpenDialog">Add new player</Button>
-
-<Button OnClick="OpenTeamDialog">Add new team</Button>
-
-<Button OnClick="OpenMatchDialog">Add new match</Button>
-
-<Button OnClick="OpenLeagueDialog">Add new league</Button>
-
-<Button OnClick="OpenTeamstoLeagueDialog">Add teams to league</Button>
-
-
-
+<Button OnClick="OpenAddPlayerModal">Add new player</Button>
+<Button OnClick="OpenAddTeamModal">Add new team</Button>
+<Button OnClick="OpenAddMatchModal">Add new match</Button>
+<Button OnClick="OpenAddLeagueModal">Add new league</Button>
+<Button OnClick="OpenTeamsToLeagueModal">Add teams to league</Button>
 
 @code {
-    public bool ShowAddNewPlayerialog = false;
-    public bool ShowAddNewTeamDialog = false;
-    public bool ShowAddNewMatchDialog = false;
-    public bool ShowAddNewLeagueDialog = false;
-    public bool ShowTeamsToLeagueDialog = false;
+    private bool showAddPlayerModal;
+    private bool showAddTeamModal;
+    private bool showAddMatchModal;
+    private bool showAddLeagueModal;
+    private bool showTeamsToLeagueModal;
 
-
-    protected void OpenDialog()
+    #region AddLeague
+    private void OpenAddLeagueModal()
     {
-        ShowAddNewPlayerialog = true;
+        showAddLeagueModal = true;
     }
 
-    protected void OpenTeamDialog()
+    private void CloseAddLeagueModal()
     {
-        ShowAddNewTeamDialog = true;
+        showAddLeagueModal = false;
+    }
+    #endregion
+
+    #region AddTeam
+    private void OpenAddTeamModal()
+    {
+        showAddTeamModal = true;
     }
 
-    protected void OpenMatchDialog()
+    private void CloseAddTeamModal()
     {
-        ShowAddNewMatchDialog = true;
+        showAddTeamModal = false;
     }
 
-    protected void OpenLeagueDialog()
+    #endregion
+
+    #region AddPlayer
+    private void OpenAddPlayerModal()
     {
-        ShowAddNewLeagueDialog = true;
+        showAddPlayerModal = true;
     }
 
-    protected void OpenTeamstoLeagueDialog()
+    private void CloseAddPlayerModal()
     {
-        ShowTeamsToLeagueDialog = true;
+        showAddPlayerModal = false;
     }
 
-    public void HandleCloseModal()
+    #endregion
+
+    #region AddMatch
+    private void OpenAddMatchModal()
     {
-        ShowAddNewLeagueDialog = false;
+        showAddMatchModal = true;
     }
 
+    private void CloseAddMatchModal()
+    {
+        showAddMatchModal = false;
+    }
+    #endregion
+
+    protected void OpenTeamsToLeagueModal()
+    {
+        showTeamsToLeagueModal = true;
+    }
 }

@@ -1,16 +1,18 @@
 ﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server;
-@inject IMessageService _message
+@inject IMessageService MessageService
 
 <Modal Title="Add new league"
        Visible="true"
        OnOk="@HandleOk"
        OnCancel="@HandleCancel">
-    <Form Model="League"
+    <Form Model="league"
           OnFinish="OnFinish"
           OnFinishFailed="OnFinishFailed"
-    @ref="@_newLeagueForm">
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@addLeagueForm">
 
         <FormItem Label="Name">
             <Input @bind-Value="context.Name" />
@@ -23,36 +25,27 @@
 
 @code {
     [Parameter] public EventCallback CloseModal { get; set; }
-    LeagueDto League = new();
-    bool _submitting = false;
-    private Form<LeagueDto> _newLeagueForm;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
+    private Form<LeagueDto> addLeagueForm = null!;
+    private LeagueDto league = new();
+    private bool submitting { get; set; }
 
     public async Task HandleOk(MouseEventArgs e)
     {
-        _submitting = true;
-        _newLeagueForm.Submit();
-
+        submitting = true;
+        addLeagueForm.Submit();
     }
 
     private async Task HandleCancel(MouseEventArgs e)
     {
-        Console.WriteLine(e);
         await CloseModal.InvokeAsync();
     }
 
     private async Task OnFinish(EditContext editContext)
     {
-
-        var result = await Server.Leagues.Add(League);
+        var result = await Server.Leagues.Add(league);
         if (result)
-        {
-            await _message.Success("New league is added.");
-        }
+            _ = MessageService.Success("New league is added.");
+
         await CloseModal.InvokeAsync();
     }
 

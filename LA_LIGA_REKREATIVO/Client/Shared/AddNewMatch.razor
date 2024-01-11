@@ -1,27 +1,35 @@
 ﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
-@inject Server Server;
+@inject Server Server
+@inject IMessageService MessageService
 
 <h3>AddNewMatch</h3>
 
-@if (showAddNewSummaryModal)
+@if (showAddSummaryModal)
 {
-    <AddNewSummary OnChange="HandleAddNewSummary" CloseCallback="CloseSummaryModal" Players="@matchPlaters"></AddNewSummary>
+    <AddNewSummary OnChange="AddNewSummary" CloseCallback="CloseSummaryModal" Players="@matchPlayers"></AddNewSummary>
 }
-
-
-
 
 <Modal Title="Add new match"
        Visible="true"
        OnOk="@HandleOk"
        OnCancel="@HandleCancel">
-    <Form Model="Match"
+    <Form Model="match"
           OnFinish="OnFinish"
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="@_form">
+    @ref="@addMatchForm">
+        <FormItem Label="Select League">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
+                <SelectOptions>
+                    @foreach (var league in leagues)
+                    {
+                        <SimpleSelectOption Value="@league.Id.ToString()" Label="@league.Name"></SimpleSelectOption>
+                    }
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
         <FormItem Label="Home Team">
             <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
                 <SelectOptions>
@@ -61,59 +69,55 @@
             <Input @bind-Value="context.GamePlace" />
         </FormItem>
         <FormItem>
-            <Button OnClick="OpenAddNewSummaryModal">Add new summary</Button>
+            <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
         </FormItem>
-
         <Button OnClick="GetPlayerSummaries"></Button>
-
-        @*  <FormItem WrapperColOffset="8" WrapperColSpan="16">
-        <Button Type="@ButtonType.Primary" HtmlType="submit">
-        Submit
-        </Button>
-        </FormItem> *@
     </Form>
 </Modal>
 
-
-
-
 @code {
 
-    bool _submitting = false;
-    private Form<MatchDto> _form;
-
-    public MatchDto Match = new MatchDto()
-        {
-            HomeTeam = new TeamDto(),
-            AwayTeam = new TeamDto(),
-            Players = new List<PlayerDto>(),
-            //HomeTeamPlayers = new List<Player>(),
-            Summaries = new List<SummaryDto>()
-        };
-    public PlayerDto player = new PlayerDto();
-    public List<TeamDto> teams = new();
-    public List<PlayerDto> matchPlaters = new();
-    public int selectedTeamId = 0;
-    public bool showAddNewSummaryModal;
+    [Parameter] public EventCallback CloseModal { get; set; }
+    private Form<MatchDto> addMatchForm = null!;
+    private MatchDto match = new MatchDto();
+    private PlayerDto player = new PlayerDto();
+    private List<TeamDto> teams = new();
+    private List<PlayerDto> matchPlayers = new();
+    private List<LeagueDto> leagues = new();
+    private int selectedTeamId = 0;
+    private bool showAddSummaryModal;
+    private bool submitting;
 
     protected async override Task OnInitializedAsync()
     {
-
-        var teamss = await Server.Teams.Get();
-        teams = teamss.ToList();
-        var kk = await Server.Players.Get();
-        matchPlaters = kk.ToList();
-        //player = players.FirstOrDefault();
-        //matchPlaters = players.Where(x => x.TeamId == Match.HomeTeam.Id || x.TeamId == Match.AwayTeam.Id).ToList();
+        var resultTeams = await Server.Teams.Get();
+        teams = resultTeams.ToList();
+        var resultPlayers = await Server.Players.Get();
+        matchPlayers = resultPlayers.ToList();
+        var resultLeague = await Server.Leagues.Get();
+        leagues = resultLeague.ToList();
 
         base.OnInitialized();
     }
 
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        addMatchForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
+    }
+
     private async Task OnFinish(EditContext editContext)
     {
-        LeagueDto l = new() { Id = 1, Name = "Hajdukova Liga 1", Year = 2023 };
-        Match.League = l;
-        var aa = await Server.Matches.Add(Match);
+        var result = await Server.Matches.Add(match);
+        if (result)
+            _ = MessageService.Success("New match is added.");
+
+        await CloseModal.InvokeAsync();
     }
 
     private void OnFinishFailed(EditContext editContext)
@@ -124,64 +128,49 @@
     public void SelectHomeTeam(string value)
     {
         var homeSelectedTeamId = Int32.Parse(value);
-        Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
-        Match.Players.AddRange(matchPlaters.Where(x => x.TeamId == Match.HomeTeam.Id).ToList());
+        match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
+        match.Players.AddRange(matchPlayers.Where(x => x.TeamId == match.HomeTeam.Id).ToList());
     }
 
     public void SelectAwayTeam(string value)
     {
         var awaySelectedTeamId = Int32.Parse(value);
-        Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
-        Match.Players.AddRange(matchPlaters.Where(x => x.TeamId == Match.AwayTeam.Id).ToList());
-        //Match.Players.AddRange(matchPlaters.Where(x => x.Team == Match.AwayTeam).ToList());
-        Console.WriteLine(value);
+        match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
+        match.Players.AddRange(matchPlayers.Where(x => x.TeamId == match.AwayTeam.Id).ToList());
     }
 
-    void handleItemsChange(IEnumerable<string> value)
+    public void AddNewSummary(SummaryDto summary)
     {
-        Console.WriteLine(value);
+        match.Summaries.Add(summary);
+        showAddSummaryModal = false;
     }
 
-    public void AddSummary()
+    public void OpenAddSummaryModal()
     {
-        var aa = new SummaryDto();
-        Match.Summaries.Add(new SummaryDto() { Time = 23, Type = SummaryType.Goal, Player = matchPlaters.FirstOrDefault() });
-        //Match.Players.Add(player);
-        StateHasChanged();
-    }
-
-    public void HandleAddNewSummary(SummaryDto summary)
-    {
-        Match.Summaries.Add(summary);
-        StateHasChanged();
-    }
-
-    public void OpenAddNewSummaryModal()
-    {
-        showAddNewSummaryModal = true;
+        showAddSummaryModal = true;
     }
 
     private void CloseSummaryModal()
     {
-        showAddNewSummaryModal = false;
+        showAddSummaryModal = false;
     }
 
-    public async Task HandleOk(MouseEventArgs e)
-    {
-        _submitting = true;
-        await Task.Delay(1000);
-        _form.Submit();
-    }
-
-    private void HandleCancel(MouseEventArgs e)
-    {
-        Console.WriteLine(e);
-    }
-
+    //TODO: It will be deleted
     protected async void GetPlayerSummaries()
     {
-
         var playerStat = await Server.Players.GetPlayerStats();
         var kk = playerStat;
+    }
+
+    public void SelectLeague(string value)
+    {
+        var leagueId = Int32.Parse(value);
+        LeagueDto tempLeague = new()
+            {
+                Id = leagueId,
+                Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name,
+                Year = leagues.FirstOrDefault(x => x.Id == leagueId).Year
+            };
+        match.League = tempLeague;
     }
 }

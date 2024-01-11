@@ -1,52 +1,71 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Server;
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @inject Server Server;
+@inject IMessageService MessageService
 
-<Form Model="player"
-      OnFinish="OnFinish"
-      OnFinishFailed="OnFinishFailed"
-      LabelColSpan="8"
-      WrapperColSpan="16">
-    <FormItem Label="First Name">
-        <Input @bind-Value="context.FirstName" />
-    </FormItem>
-    <FormItem Label="Last Name">
-        <Input @bind-Value="@context.LastName" />
-    </FormItem>
-    <FormItem WrapperColOffset="8" WrapperColSpan="16" Label="Team">
-        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="handleChange">
-            <SelectOptions>
-                @foreach (var team in teams)
-                {
-                    <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
-                }
+<Modal Title="Add new player"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="player"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="addPlayerForm">
 
-            </SelectOptions>
-        </SimpleSelect>
-    </FormItem>
-    <FormItem WrapperColOffset="8" WrapperColSpan="16">
-        <Button Type="@ButtonType.Primary" HtmlType="submit">
-            Submit
-        </Button>
-    </FormItem>
-</Form>
+        <FormItem Label="First Name">
+            <Input @bind-Value="context.FirstName" />
+        </FormItem>
+        <FormItem Label="Last Name">
+            <Input @bind-Value="@context.LastName" />
+        </FormItem>
+        <FormItem Label="Team">
+            <SimpleSelect DefaultValue="lucy" OnSelectedItemChanged="SelectTeam">
+                <SelectOptions>
+                    @foreach (var team in teams)
+                    {
+                        <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
+                    }
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
+    </Form>
+</Modal>
 
 @code {
-    public PlayerDto player = new PlayerDto();
-    public List<TeamDto> teams = new List<TeamDto>();
-    public int selectedTeamId = 0;
+    [Parameter] public EventCallback CloseModal { get; set; }
+    private Form<PlayerDto> addPlayerForm = null!;
+    private PlayerDto player = new();
+    private List<TeamDto> teams = new();
+    private int selectedTeamId = 0;
+    private bool submitting;
 
     protected async override Task OnInitializedAsync()
     {
-        var aa = await Server.Teams.Get();
-        teams = aa.ToList();
+        var result = await Server.Teams.Get();
+        teams = result.ToList();
         base.OnInitialized();
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        addPlayerForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
     }
 
     private async Task OnFinish(EditContext editContext)
     {
+        var result = await Server.Players.Add(player);
+        if (result)
+            _ = MessageService.Success("New player is added.");
 
-        var aa = await Server.Players.Add(player);
+        await CloseModal.InvokeAsync();
     }
 
     private void OnFinishFailed(EditContext editContext)
@@ -54,16 +73,9 @@
         ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
     }
 
-    void handleChange(string value)
+    private void SelectTeam(string value)
     {
         selectedTeamId = Int32.Parse(value);
         player.TeamId = teams.FirstOrDefault(x => x.Id == selectedTeamId).Id;
-        //player.Team = teams.FirstOrDefault(x => x.Id == selectedTeamId);
-        Console.WriteLine(value);
-    }
-
-    void handleItemsChange(IEnumerable<string> value)
-    {
-        Console.WriteLine(value);
     }
 }
