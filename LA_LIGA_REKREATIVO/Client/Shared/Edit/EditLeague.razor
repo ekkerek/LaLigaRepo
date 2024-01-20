@@ -1,0 +1,62 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server;
+@inject IMessageService MessageService
+
+<Modal Title="Edit league"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="league"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@editLeagueForm">
+
+        <FormItem Label="Name">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="Year">
+            <Input @bind-Value="context.Year" />
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback CloseModal { get; set; }
+    [Parameter] public int Id { get; set; }
+    private Form<LeagueDto> editLeagueForm = null!;
+    private LeagueDto league = new();
+    private bool submitting { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        league = await Server.Leagues.Get(Id);
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        editLeagueForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        var result = await Server.Leagues.Update(league);
+        if (result)
+            _ = MessageService.Success("League is edited.");
+
+        await CloseModal.InvokeAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+}

@@ -1,0 +1,83 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using Newtonsoft.Json;
+@using System.Net.Http.Headers;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+@inject IMessageService MessageService
+
+
+<Modal Title="Create new team"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="team"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@addTeamForm">
+        <FormItem Label="Select League">
+            <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
+                <SelectOptions>
+                    @foreach (var league in leagues)
+                    {
+                        <SimpleSelectOption Value="@league.Id.ToString()" Label="@league.Name"></SimpleSelectOption>
+                    }
+                </SelectOptions>
+            </SimpleSelect>
+        </FormItem>
+        <FormItem Label="Name">
+            <Input @bind-Value="context.Name" />
+        </FormItem>
+        <FormItem Label="Logo">
+            <Input @bind-Value="context.LogoSrc" />
+        </FormItem>
+    </Form>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback CloseModal { get; set; }
+    private Form<TeamDto> addTeamForm = null!;
+    private TeamDto team = new();
+    private List<LeagueDto> leagues = new();
+    private LeagueDto league = new();
+    private bool submitting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        addTeamForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        var result = await Server.Teams.Add(team);
+        if (result)
+            _ = MessageService.Success("New team is added.");
+
+        await CloseModal.InvokeAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+
+    public void SelectLeague(string value)
+    {
+        var leagueId = Int32.Parse(value);
+        league.Id = leagueId;
+        league.Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name;
+    }
+}

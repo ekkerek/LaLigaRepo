@@ -1,0 +1,300 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+@inject IMessageService MessageService
+
+@if (showAddSummaryModal)
+{
+    <AddSummary OnChange="AddNewSummary" CloseModal="CloseAddSummaryModal" Players="@matchPlayers"></AddSummary>
+}
+
+@if (showEditSummaryModal)
+{
+    <EditSummary Summary="@summary" OnChange="EditExistingSummary" CloseModal="CloseEditSummaryModal" Players="@matchPlayers"></EditSummary>
+}
+
+<Modal Title="Add new match"
+       Visible="true"
+       OnOk="@HandleOk"
+       OnCancel="@HandleCancel"
+       Style="width: 80%">
+
+    <div>
+        <GridRow>
+            <GridCol Span="12">
+                <Form Model="Match"
+                      OnFinish="OnFinish"
+                      OnFinishFailed="OnFinishFailed"
+                      LabelColSpan="8"
+                      WrapperColSpan="16"
+                      @ref="@editMatchForm">
+                    <FormItem Label="Select League">
+                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
+                            <SelectOptions>
+                                @foreach (var league in leagues)
+                                {
+                                    <SimpleSelectOption Value="@league.Id.ToString()" Label="@league.Name"></SimpleSelectOption>
+                                }
+                            </SelectOptions>
+                        </SimpleSelect>
+                    </FormItem>
+                    <FormItem Label="Home Team">
+                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
+                            <SelectOptions>
+                                @foreach (var team in teams)
+                                {
+                                    <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
+                                }
+
+                            </SelectOptions>
+                        </SimpleSelect>
+                    </FormItem>
+                    <FormItem Label="Home team players">
+                        <Select Mode="multiple"
+                                @bind-Values="@_selectedValues1"
+                                Placeholder="Please select"
+                                TItemValue="string"
+                                TItem="string"
+                                Style="width: 100%; margin-bottom: 8px;">
+                            <SelectOptions>
+                                @foreach (var player in homeTeamPlayers)
+                                {
+                                    <SelectOption TItemValue="string" TItem="string" Value=@player.Id.ToString() Label=@player.FirstName />
+                                }
+                            </SelectOptions>
+                        </Select>
+                    </FormItem>
+                    <FormItem Label="Away Team">
+                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectAwayTeam">
+                            <SelectOptions>
+                                @foreach (var team in teams)
+                                {
+                                    <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
+                                }
+
+                            </SelectOptions>
+                        </SimpleSelect>
+                    </FormItem>
+                    <FormItem Label="Away team players">
+                        <Select Mode="multiple"
+                                @bind-Values="@_selectedValues2"
+                                Placeholder="Please select"
+                                TItemValue="string"
+                                TItem="string"
+                                Style="width: 100%; margin-bottom: 8px;">
+                            <SelectOptions>
+                                @foreach (var player in awayTeamPlayers)
+                                {
+                                    <SelectOption TItemValue="string" TItem="string" Value=@player.Id.ToString() Label=@player.FirstName />
+                                }
+                            </SelectOptions>
+                        </Select>
+                    </FormItem>
+                    <FormItem Label="Home Team Goals">
+                        <Input Type="number" @bind-Value="context.HomeTeamGoals" />
+                    </FormItem>
+                    <FormItem Label="Away Team Goals">
+                        <Input Type="number" @bind-Value="context.AwayTeamGoals" />
+                    </FormItem>
+
+                    <FormItem Label="Game Time">
+                        <DatePicker @bind-Value="context.GameTime" TValue="DateTime" ShowTime="@true" Format="yyyy-MM-ddTHH:mm" Mask="yyyy-MM-ddTHH:mm" Placeholder="@("yyyy-MM-ddTHH:mm")" />
+                    </FormItem>
+                    <FormItem Label="Game Round">
+                        <Input @bind-Value="context.GameRound" />
+                    </FormItem>
+                    <FormItem Label="Game Place">
+                        <Input @bind-Value="context.GamePlace" />
+                    </FormItem>
+                    <FormItem>
+                        <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
+                    </FormItem>
+                    <Button OnClick="GetPlayerSummaries"></Button>
+                </Form>
+            </GridCol>
+            <GridCol Span="11" Offset="1">
+                <Table TItem="SummaryDto" DataSource="@Match.Summaries" @ref="summaryTable">
+                    <PropertyColumn Property="c=>c.Player.FirstName">
+                        @*                         <a>@context.Player.FirstName</a> *@
+                    </PropertyColumn>
+                    <PropertyColumn Property="c=>c.Player.LastName"></PropertyColumn>
+                    <PropertyColumn Property="c=>c.Time"></PropertyColumn>
+                    <PropertyColumn Property="c=>c.Type">
+                        <a>@context.Type</a>
+                    </PropertyColumn>
+                    <ActionColumn Title="Edit">
+                        <Space>
+                            <SpaceItem><Button Danger OnClick="()=>OpenEditSummaryModal(context)">Edit</Button></SpaceItem>
+                         </Space>
+                     </ActionColumn>
+                     <ActionColumn Title="Delete">
+                         <Space>
+                             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+                         </Space>
+                     </ActionColumn>
+                 </Table>
+             </GridCol>
+         </GridRow>
+     </div>
+
+
+ </Modal>
+
+ @code {
+    [Parameter] public EventCallback CloseModal { get; set; }
+    [Parameter] public int MatchId { get; set; }
+    private Form<MatchDto> editMatchForm = null!;
+    private Table<SummaryDto> summaryTable = null!;
+    // private MatchDto match = new MatchDto();
+    // private PlayerDto player = new PlayerDto();
+    private List<TeamDto> teams = new();
+    private List<PlayerDto> matchPlayers = new();
+    private List<PlayerDto> homeTeamPlayers = new();
+    private List<PlayerDto> awayTeamPlayers = new();
+    private List<LeagueDto> leagues = new();
+    // private List<SummaryDto> summaries = new();
+    // private int selectedTeamId = 0;
+    private bool showAddSummaryModal;
+    private bool showEditSummaryModal;
+    private bool submitting;
+    public IEnumerable<string> _selectedValues1, _selectedValues2;
+    private SummaryDto summary;
+    private MatchDto Match = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var resultTeams = await Server.Teams.Get();
+        teams = resultTeams.ToList();
+        var resultPlayers = await Server.Players.Get();
+        matchPlayers = resultPlayers.ToList();
+        var resultLeague = await Server.Leagues.Get();
+        leagues = resultLeague.ToList();
+        Match = await Server.Matches.Get(MatchId);
+        //Match = matchReslt
+
+        base.OnInitialized();
+    }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        editMatchForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        SetPlayersToMatch();
+        var result = await Server.Matches.Update(Match);
+        if (result)
+            _ = MessageService.Success("New match is added.");
+
+        await CloseModal.InvokeAsync();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+
+    public async Task SelectHomeTeam(string value)
+    {
+        var homeSelectedTeamId = Int32.Parse(value);
+        Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
+        await Task.Delay(10); // state has changed not worked withoud this delay.
+        homeTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToList();
+        StateHasChanged();
+
+    }
+
+    public async Task SelectAwayTeam(string value)
+    {
+        var awaySelectedTeamId = Int32.Parse(value);
+        Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
+        await Task.Delay(10); // state has changed not worked withoud this delay.
+        awayTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToList();
+        StateHasChanged();
+    }
+
+    public async Task AddNewSummary(SummaryDto summary)
+    {
+        Match.Summaries.Add(summary);
+        showAddSummaryModal = false;
+        summaryTable.ReloadData();
+    }
+
+    public void OpenAddSummaryModal()
+    {
+        showAddSummaryModal = true;
+    }
+
+    private void CloseAddSummaryModal()
+    {
+        showAddSummaryModal = false;
+    }
+
+    public void OpenEditSummaryModal(SummaryDto value)
+    {
+        summary = value;
+        showEditSummaryModal = true;
+    }
+
+    public async Task EditExistingSummary(SummaryDto summary)
+    {
+        //match.Summaries.Add(summary);
+        showEditSummaryModal = false;
+        summaryTable.ReloadData();
+    }
+
+
+
+    private void CloseEditSummaryModal()
+    {
+        showEditSummaryModal = false;
+    }
+
+    //TODO: It will be deleted
+    protected async void GetPlayerSummaries()
+    {
+        var playerStat = await Server.Players.GetPlayerStats();
+        var kk = playerStat;
+    }
+
+    public void SelectLeague(string value)
+    {
+        var leagueId = Int32.Parse(value);
+        LeagueDto tempLeague = new()
+            {
+                Id = leagueId,
+                Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name,
+                Year = leagues.FirstOrDefault(x => x.Id == leagueId).Year
+            };
+        Match.League = tempLeague;
+    }
+
+    private void SetPlayersToMatch()
+    {
+        Match.Players.Clear();
+        HashSet<string> selectedHomePlayerIds = _selectedValues1 is null ? new HashSet<string>() : _selectedValues1.ToHashSet();
+        var selectedHomeTeamPlayer = matchPlayers.Where(x => selectedHomePlayerIds.Contains(x.Id.ToString()));
+        Match.Players.AddRange(selectedHomeTeamPlayer.ToList());
+
+        HashSet<string> selectedAwayPlayerIds = _selectedValues2 is null ? new HashSet<string>() : _selectedValues2.ToHashSet();
+        var selectedAwayTeamPlayer = matchPlayers.Where(x => selectedAwayPlayerIds.Contains(x.Id.ToString()));
+        Match.Players.AddRange(selectedAwayTeamPlayer.ToList());
+    }
+
+    private void Delete(int id)
+    {
+    }
+
+    private void Edit(int id)
+    {
+        // Id = id;
+        // showEditPlayerModal = true;
+    }
+}

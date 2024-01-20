@@ -1,0 +1,91 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@inject Server Server;
+@inject IMessageService MessageService
+
+<Modal Title="Edit summary"
+       Visible="true"
+       OnOk="HandleOk"
+       OnCancel="@HandleCancel">
+    <Form Model="summary"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16"
+    @ref="@editSummaryForm">
+        <GridRow>
+            <GridCol Span="12">Config name</GridCol>
+            <GridCol Span="12">
+                <SimpleSelect DefaultValue="@Summary.Player.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="setSummaryPlayer">
+                    <SelectOptions>
+                        @foreach (var player in Players)
+                        {
+                            <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.FirstName"></SimpleSelectOption>
+                        }
+                    </SelectOptions>
+                </SimpleSelect>
+            </GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12"><Input Type="number" @bind-Value="@summary.Time" /></GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12">
+                <EnumSelect TEnum="SummaryType" @bind-Value="@summary.Type" OnSelectedItemChanged="setSummaryType"></EnumSelect>
+            </GridCol>
+        </GridRow>
+    </Form>
+</Modal>
+
+@code {
+    [Parameter] public List<PlayerDto> Players { get; set; }
+    [Parameter] public EventCallback<SummaryDto> OnChange { get; set; }
+    [Parameter] public EventCallback CloseModal { get; set; }
+    [Parameter] public SummaryDto Summary { get; set; }
+    private Form<SummaryDto> editSummaryForm = null!;
+    private SummaryDto summary = new();
+    private int selectedPlayerId = 0;
+    private bool submitting;
+
+    protected override async void OnInitialized()
+    {
+        summary = Summary;
+        base.OnInitialized();
+     }
+
+    public async Task HandleOk(MouseEventArgs e)
+    {
+        submitting = true;
+        editSummaryForm.Submit();
+    }
+
+    private async Task HandleCancel(MouseEventArgs e)
+    {
+        await CloseModal.InvokeAsync();
+    }
+
+    private async Task OnFinish(EditContext editContext)
+    {
+        if (OnChange.HasDelegate)
+            await OnChange.InvokeAsync(summary);
+        StateHasChanged();
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
+    }
+
+    void setSummaryType(SummaryType summaryType)
+    {
+        summary.Type = summaryType;
+    }
+
+    void setSummaryPlayer(string value)
+    {
+        selectedPlayerId = Int32.Parse(value);
+        summary.Player = Players.FirstOrDefault(x => x.Id == selectedPlayerId);
+    }
+}

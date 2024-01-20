@@ -1,0 +1,82 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared.Edit
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@inject Server Server;
+@inject IMessageService MessageService
+
+@if (showAddPlayerModal)
+{
+    <AddPlayer CloseModal="CloseAddPlayerModal"></AddPlayer>
+}
+
+@if (showEditPlayerModal)
+{
+    <EditPlayer Id=@Id CloseModal="CloseEditPlayerModal"></EditPlayer>
+}
+
+<Table TItem="PlayerDto" DataSource="@players">
+    <PropertyColumn Property="c=>c.Id">
+        <a>@context.Id</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.FirstName">
+        <a>@context.FirstName</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.LastName"></PropertyColumn>
+    <PropertyColumn Property="c=>c.TeamId"></PropertyColumn>
+    <ColumnDefinition>
+    </ColumnDefinition>
+    <ActionColumn Title="Edit">
+        <Space>
+            <SpaceItem><Button Danger OnClick="()=>Edit(context.Id)">Edit</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+     <ActionColumn Title="Delete">
+         <Space>
+             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+ </Table>
+ <Button OnClick="OpenAddPlayerModal">Add new player</Button>
+
+@code {
+
+    private List<PlayerDto> players = new();
+    private int Id { get; set; }
+    private bool showAddPlayerModal;
+    private bool showEditPlayerModal;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await Server.Players.Get();
+        players = result.ToList();
+        base.OnInitialized();
+    }
+
+    #region AddPlayer
+    private void OpenAddPlayerModal()
+    {
+        showAddPlayerModal = true;
+    }
+
+    private void CloseAddPlayerModal()
+    {
+        showAddPlayerModal = false;
+    }
+
+    #endregion
+
+    private void Delete(int id)
+    {
+    }
+
+    private void Edit(int id)
+    {
+        Id = id;
+        showEditPlayerModal = true;
+    }
+
+    private void CloseEditPlayerModal()
+    {
+        showEditPlayerModal = false;
+    }
+}

@@ -1,0 +1,78 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared.Edit
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@inject Server Server;
+@inject IMessageService MessageService
+
+@if (showAddLeagueModal)
+{
+    <AddLeague CloseModal="CloseAddLeagueModal"></AddLeague>
+}
+
+@if (showEditLeagueModal)
+{
+    <EditLeague Id=@Id CloseModal="CloseEditLeagueModal"></EditLeague>
+}
+
+<Table TItem="LeagueDto" DataSource="@leagues">
+    <PropertyColumn Property="c=>c.Id">
+        <a>@context.Id</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Name">
+        <a>@context.Name</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Year"></PropertyColumn>
+    <ActionColumn Title="Edit">
+        <Space>
+            <SpaceItem><Button Danger OnClick="()=>Edit(context.Id)">Edit</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+     <ActionColumn Title="Delete">
+         <Space>
+             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+ </Table>
+ <Button OnClick="OpenAddLeagueModal">Add new league</Button>
+
+ @code {
+    private List<LeagueDto> leagues = new();
+    private int Id { get; set; }
+    private bool showEditLeagueModal;
+    private bool showAddLeagueModal;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+        base.OnInitialized();
+    }
+
+
+    #region AddLeague
+    private void OpenAddLeagueModal()
+    {
+        showAddLeagueModal = true;
+    }
+
+    private void CloseAddLeagueModal()
+    {
+        showAddLeagueModal = false;
+    }
+    #endregion
+
+    private void Delete(int id)
+    {
+    }
+
+    private void Edit(int id)
+    {
+        Id = id;
+        showEditLeagueModal = true;
+    }
+
+    private void CloseEditLeagueModal()
+    {
+        showEditLeagueModal = false;
+    }
+}

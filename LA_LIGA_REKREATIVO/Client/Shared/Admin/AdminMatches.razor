@@ -1,0 +1,80 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared.Edit
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@inject Server Server;
+@inject IMessageService MessageService
+
+@if (showAddMatchModal)
+{
+    <AddMatch CloseModal="CloseAddMatchModal"></AddMatch>
+}
+
+@if (showEditMatchModal)
+{
+    <EditMatch MatchId="@Match.Id" CloseModal="CloseAddMatchModal"></EditMatch>
+}
+
+<Table TItem="MatchDto" DataSource="@matches">
+    <PropertyColumn Property="c=>c.Id">
+        <a>@context.Id</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.GameTime"></PropertyColumn>
+    <PropertyColumn Property="c=>c.GameRound"></PropertyColumn>
+    <PropertyColumn Title="Home team name" Property="c=>c.HomeTeam.Name">
+        <a>@context.HomeTeam.Name</a>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.HomeTeamGoals"></PropertyColumn>
+    <PropertyColumn Property="c=>c.AwayTeamGoals"></PropertyColumn>
+    <PropertyColumn Title="Away team name" Property="c=>c.AwayTeam.Name"></PropertyColumn>
+    <PropertyColumn Property="c=>c.GamePlace"></PropertyColumn>
+    <PropertyColumn Title="League" Property="c=>c.League.Name"></PropertyColumn>
+    <ActionColumn Title="Edit">
+        <Space>
+            <SpaceItem><Button Danger OnClick="()=>Edit(context)">Edit</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+     <ActionColumn Title="Delete">
+         <Space>
+             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+         </Space>
+     </ActionColumn>
+ </Table>
+ <Button OnClick="OpenAddMatchModal">Add new match</Button>
+
+ @code {
+    List<MatchDto> matches = new();
+    private bool showAddMatchModal;
+    private bool showEditMatchModal;
+    private MatchDto Match = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await Server.Matches.Get();
+        matches = result.ToList();
+        base.OnInitialized();
+    }
+
+    #region AddMatch
+    private void OpenAddMatchModal()
+    {
+        showAddMatchModal = true;
+    }
+
+    private void CloseAddMatchModal()
+    {
+        showAddMatchModal = false;
+    }
+    #endregion
+
+    private void Delete(int id)
+    {
+    }
+
+    private void Edit(MatchDto match)
+    {
+        Match = match;
+        showEditMatchModal = true;
+        //Id = id;
+    }
+ }
