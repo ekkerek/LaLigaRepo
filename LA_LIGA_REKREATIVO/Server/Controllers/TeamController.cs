@@ -31,9 +31,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // GET api/<TeamController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public TeamDto Get(int id)
         {
-            return "value";
+            Team? team = _context.Teams.FirstOrDefault(x => x.Id == id);
+            return _mapper.Map<TeamDto>(team);
         }
 
         [AllowAnonymous]

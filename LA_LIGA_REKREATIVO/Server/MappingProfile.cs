@@ -14,8 +14,12 @@ namespace LA_LIGA_REKREATIVO.Server
             CreateMap<PlayerDto, Player>();
             CreateMap<Summary, SummaryDto>();
             CreateMap<SummaryDto, Summary>();
-            CreateMap<Match, MatchDto>();
-            CreateMap<MatchDto, Match>();
+            CreateMap<Match, MatchDto>().ForMember(sum => sum.Summaries,
+                map => map.MapFrom(source =>
+                source.Summaries.ToList()));
+            CreateMap<MatchDto, Match>().ForMember(sum => sum.Summaries,
+                map => map.MapFrom(source =>
+                source.Summaries.ToList()));
             CreateMap<League, LeagueDto>();
             CreateMap<LeagueDto, League>();
         }

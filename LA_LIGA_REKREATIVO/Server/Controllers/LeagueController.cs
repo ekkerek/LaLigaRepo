@@ -30,9 +30,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // GET api/<LeagueController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public LeagueDto Get(int id)
         {
-            return "value";
+            var league = _context.Leagues.FirstOrDefault(x => x.Id == id);
+            return _mapper.Map<LeagueDto>(league);
         }
 
         // POST api/<LeagueController>
@@ -45,8 +46,13 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // PUT api/<LeagueController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] LeagueDto league)
         {
+            var updatedLeague = _context.Leagues.FirstOrDefault(x => x.Id == id);
+            updatedLeague.Name = league.Name;
+            updatedLeague.Year = league.Year;
+            _context.Leagues.Update(updatedLeague);
+            _context.SaveChanges();
         }
 
         // DELETE api/<LeagueController>/5

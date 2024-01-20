@@ -1,6 +1,5 @@
 ﻿using LA_LIGA_REKREATIVO.Server.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace LA_LIGA_REKREATIVO.Server.Data
 {

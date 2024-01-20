@@ -1,37 +1,34 @@
 ﻿@page "/admin"
 
-<h3>Admin</h3>
 
-@if (showAddPlayerModal)
+@* @if (showAddMatchModal)
 {
-    <AddNewPlayer CloseModal="CloseAddPlayerModal"></AddNewPlayer>
-}
+    <AddMatch CloseModal="CloseAddMatchModal"></AddMatch>
+} *@
 
-@if (showAddTeamModal)
-{
-    <AddNewTeam CloseModal="CloseAddTeamModal"></AddNewTeam>
-}
-
-@if (showAddMatchModal)
-{
-    <AddNewMatch CloseModal="CloseAddMatchModal"></AddNewMatch>
-}
-
-@if (showAddLeagueModal)
-{
-    <AddNewLeague CloseModal="CloseAddLeagueModal"></AddNewLeague>
-}
 
 @if (showTeamsToLeagueModal)
 {
     <AddTeamToLeague></AddTeamToLeague>
 }
 
-<Button OnClick="OpenAddPlayerModal">Add new player</Button>
-<Button OnClick="OpenAddTeamModal">Add new team</Button>
-<Button OnClick="OpenAddMatchModal">Add new match</Button>
-<Button OnClick="OpenAddLeagueModal">Add new league</Button>
-<Button OnClick="OpenTeamsToLeagueModal">Add teams to league</Button>
+<Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" OnChange="OnTabChange" Animated>
+    <TabPane Tab="Leagues" Key="1">
+        <AdminLeagues></AdminLeagues>
+    </TabPane>
+    <TabPane Tab="Teams" Key="2">
+        <AdminTeams></AdminTeams>
+    </TabPane>
+    <TabPane Tab="Players" Key="3">
+        <AdminPlayers></AdminPlayers>
+    </TabPane>
+    <TabPane Tab="Matches" Key="4">
+        <AdminMatches></AdminMatches>
+    </TabPane>
+</Tabs>
+
+@* <Button OnClick="OpenAddMatchModal">Add new match</Button>
+<Button OnClick="OpenTeamsToLeagueModal">Add teams to league</Button> *@
 
 @code {
     private bool showAddPlayerModal;
@@ -40,43 +37,12 @@
     private bool showAddLeagueModal;
     private bool showTeamsToLeagueModal;
 
-    #region AddLeague
-    private void OpenAddLeagueModal()
+    string activeKey { get; set; } = "1";
+
+    void OnTabChange(string key)
     {
-        showAddLeagueModal = true;
+        Console.WriteLine($"tab change:{key}");
     }
-
-    private void CloseAddLeagueModal()
-    {
-        showAddLeagueModal = false;
-    }
-    #endregion
-
-    #region AddTeam
-    private void OpenAddTeamModal()
-    {
-        showAddTeamModal = true;
-    }
-
-    private void CloseAddTeamModal()
-    {
-        showAddTeamModal = false;
-    }
-
-    #endregion
-
-    #region AddPlayer
-    private void OpenAddPlayerModal()
-    {
-        showAddPlayerModal = true;
-    }
-
-    private void CloseAddPlayerModal()
-    {
-        showAddPlayerModal = false;
-    }
-
-    #endregion
 
     #region AddMatch
     private void OpenAddMatchModal()

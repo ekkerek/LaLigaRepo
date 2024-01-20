@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace LA_LIGA_REKREATIVO.Shared.Dto
+﻿namespace LA_LIGA_REKREATIVO.Shared.Dto
 {
     public class PlayerDto
     {

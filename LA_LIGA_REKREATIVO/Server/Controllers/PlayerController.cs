@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using LA_LIGA_REKREATIVO.Client.Server;
 using LA_LIGA_REKREATIVO.Server.Data;
-using LA_LIGA_REKREATIVO.Shared.Dto;
 using LA_LIGA_REKREATIVO.Server.Models;
+using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,16 +25,18 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet]
         public IEnumerable<PlayerDto> Get()
         {
-            var players = _context.Players.Include(x=> x.Team).ToList();
+            var players = _context.Players.Include(x => x.Team).ToList();
             var playersDto = _mapper.Map<List<PlayerDto>>(players);
             return playersDto;
         }
 
         // GET api/<PlayerController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public PlayerDto Get(int id)
         {
-            return "value";
+            var player = _context.Players.Include(x => x.Team).FirstOrDefault(x => x.Id == id);
+            var playerDto = _mapper.Map<PlayerDto>(player);
+            return playerDto;
         }
 
         // POST api/<PlayerController>
@@ -57,8 +58,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // PUT api/<PlayerController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] PlayerDto value)
         {
+            var updatedPlayer = _context.Players.Include(x=> x.Team).FirstOrDefault(x => x.Id == id);
+            updatedPlayer.FirstName = value.FirstName;
+            updatedPlayer.LastName = value.LastName;
+            updatedPlayer.Team = _context.Teams.FirstOrDefault(x => x.Id == value.TeamId);
+            _context.Players.Update(updatedPlayer);
+            _context.SaveChanges();
         }
 
         // DELETE api/<PlayerController>/5
@@ -70,7 +77,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getplayerstats/{id}")]
         public PlayerStatsDto GetPlayerStats(int id)
         {
-            var player = _context.Players.Include(x => x.Team).Include(x=> x.Matches).ThenInclude(x=> x.Summaries).FirstOrDefault(x=> x.Id == id);
+            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).FirstOrDefault(x => x.Id == id);
             var playerStats = player.Matches.Select(x => x.Summaries);
             PlayerStatsDto returnPlayer = new PlayerStatsDto();
             foreach (var stats in playerStats)

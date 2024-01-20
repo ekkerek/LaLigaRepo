@@ -1,7 +1,6 @@
 ﻿using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using System.Text.RegularExpressions;
 
 namespace LA_LIGA_REKREATIVO.Client.Server
 {
@@ -23,6 +22,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
                 return JsonConvert.DeserializeObject<List<MatchDto>>(json);
             }
             return Enumerable.Empty<MatchDto>();
+        }
+
+        public async Task<MatchDto> Get(int id)
+        {
+            var result = await _httpClient.GetAsync($"api/match/{id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<MatchDto>(json);
+            }
+            return new MatchDto();
         }
 
         public async Task<IEnumerable<MatchDto>> GetByDate(DateTime dateTime)
@@ -56,6 +66,15 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             {
                 await Console.Out.WriteLineAsync("test failed");
             }
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> Update(MatchDto match)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Put, $"api/match/{match.Id}");
+            message.Content = new StringContent(JsonConvert.SerializeObject(match));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
             return result.IsSuccessStatusCode;
         }
     }
