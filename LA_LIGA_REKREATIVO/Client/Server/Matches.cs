@@ -34,6 +34,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return new MatchDto();
         }
+        public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
+        {
+            var result = await _httpClient.GetAsync($"api/match/getStandingsByLeague/{id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<TeamStatsDto>>(json);
+            }
+            return new List<TeamStatsDto>();
+        }
+        
 
         public async Task<IEnumerable<MatchDto>> GetByDate(DateTime dateTime)
         {
@@ -54,12 +65,6 @@ namespace LA_LIGA_REKREATIVO.Client.Server
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");
             message.Content = new StringContent(JsonConvert.SerializeObject(match));
-
-            var kk = JsonConvert.SerializeObject(match);
-            //message.Content = new StringContent(JsonConvert.SerializeObject(match, Formatting.Indented, new JsonSerializerSettings
-            //{
-            //    ReferenceLoopHandling = ReferenceLoopHandling.Serialize
-            //}));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
             if (result.IsSuccessStatusCode)

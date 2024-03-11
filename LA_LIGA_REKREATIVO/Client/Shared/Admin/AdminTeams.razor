@@ -36,15 +36,14 @@
  <Button OnClick="OpenAddTeamModal">Add new team</Button>
 
  @code {
-    private List<TeamDto> teams = new();
+    private IEnumerable<TeamDto> teams = Enumerable.Empty<TeamDto>();
     private int Id { get; set; }
     private bool showEditTeamModal;
     private bool showAddTeamModal;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await Server.Teams.Get();
-        teams = result.ToList();
+        teams = await Server.Teams.Get();
         base.OnInitialized();
     }
 
@@ -54,9 +53,11 @@
         showAddTeamModal = true;
     }
 
-    private void CloseAddTeamModal()
+    private async void CloseAddTeamModal()
     {
+        teams = await Server.Teams.Get();
         showAddTeamModal = false;
+        StateHasChanged();
     }
 
     #endregion
@@ -71,8 +72,10 @@
         showEditTeamModal = true;
     }
 
-    private void CloseEditTeamModal()
+    private async void CloseEditTeamModal()
     {
+        teams = await Server.Teams.Get();
         showEditTeamModal = false;
+        StateHasChanged();
     }
 }

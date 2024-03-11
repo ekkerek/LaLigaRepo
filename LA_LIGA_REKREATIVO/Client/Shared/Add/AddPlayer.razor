@@ -12,7 +12,7 @@
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="addPlayerForm">
+          @ref="addPlayerForm">
 
         <FormItem Label="First Name">
             <Input @bind-Value="context.FirstName" />
@@ -37,14 +37,13 @@
     [Parameter] public EventCallback CloseModal { get; set; }
     private Form<PlayerDto> addPlayerForm = null!;
     private PlayerDto player = new();
-    private List<TeamDto> teams = new();
+    private IEnumerable<TeamDto> teams = Enumerable.Empty<TeamDto>();
     private int selectedTeamId = 0;
     private bool submitting;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await Server.Teams.Get();
-        teams = result.ToList();
+        teams = await Server.Teams.Get();
         base.OnInitialized();
     }
 
@@ -75,6 +74,8 @@
 
     private void SelectTeam(string value)
     {
+        if (value is null) return;
+
         selectedTeamId = Int32.Parse(value);
         player.TeamId = teams.FirstOrDefault(x => x.Id == selectedTeamId).Id;
     }

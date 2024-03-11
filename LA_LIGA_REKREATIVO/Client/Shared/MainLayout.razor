@@ -1,5 +1,71 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
+<div class="page" style="height: 100vh">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <Layout>
+        <Content Style="overflow-y: auto;">
+            @*             <div class="top-row px-4">
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            </div> *@
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </Content>
+        <Footer Style="padding: 4px;display: flex; justify-content:space-evenly">
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; ">
+                <div style="display:flex; flex-direction: column;">
+                    <span>
+                        <img style="max-height: 24px;max-width: 24px" src="./home.png" />
+                    </span>
+
+                    <span>Home</span>
+                </div>
+            </Button>
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToMatches">
+                <div style="display:flex; flex-direction: column;">
+                    <span style="display:flex; justify-content: center">
+                        <img style="max-height: 24px;max-width: 24px" src="./football-field.png" />
+                    </span>
+                    <span>Matches</span>
+                </div>
+            </Button>
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToStandings">
+                <div style="display:flex; flex-direction: column;">
+                    <span style="display:flex; justify-content: center">
+                        <img style="max-height: 24px; max-width: 24px" src="./trophy.png" />
+                    </span>
+                    <span>Standings</span>
+                </div>
+            </Button>
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateTodreamTeam">
+                <div style="display:flex; flex-direction: column;">
+                    <span style="display:flex; justify-content: center">
+                        <img style="max-height: 24px;max-width: 24px" src="./people.png" />
+                    </span>
+
+                    <span>Dream team</span>
+                </div>
+            </Button>
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; ">
+                <div style="display:flex; flex-direction: column;">
+                    <span style="display:flex; justify-content: center">
+                        <img style="max-height: 24px;max-width: 24px" src="./stats.png" />
+                    </span>
+                    <span>Stats</span>
+                </div>
+            </Button>
+        </Footer>
+
+    </Layout>
+
+</div>
+
+@*
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -14,5 +80,25 @@
             @Body
         </article>
     </main>
-</div>
+
+</div> *@
 <RadzenComponents />
+
+@code {
+    private void NavigateTodreamTeam()
+    {
+        Navigation.NavigateTo($"/matchDetails/{40}");
+    }
+
+    private void NavigateToMatches()
+    {
+        Navigation.NavigateTo($"/matches");
+
+    }
+
+    private void NavigateToStandings()
+    {
+        Navigation.NavigateTo($"/standings");
+
+    }
+}

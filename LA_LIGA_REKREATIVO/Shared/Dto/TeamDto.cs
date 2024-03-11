@@ -4,12 +4,14 @@
     {
         public TeamDto()
         {
-            Players = new List<PlayerDto>();
+            Players = new();
+            Leagues = new();
         }
         public int Id { get; set; }
         public string Name { get; set; }
         public string? ParticipantOf { get; set; }
         public string? LogoSrc { get; set; }
+        public List<LeagueDto> Leagues { get; set; }
 
         public List<PlayerDto> Players { get; set; }
     }

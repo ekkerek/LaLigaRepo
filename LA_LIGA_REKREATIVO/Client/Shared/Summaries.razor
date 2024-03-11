@@ -1,0 +1,69 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto
+<GridRow>
+    <GridCol Span="24">
+        <ChildContent>
+            @foreach (var item in Match.Summaries.OrderBy(x => x.Time))
+            {
+                if (item.Player.TeamId == Match.HomeTeam.Id)
+                {
+                    <GridRow Style="display:flex; justify-content: left">
+                        <span style="font-weight:500; padding-right: 0.5rem;">@item.Time.ToString()'</span>
+                        @*  <span>&nbsp @item.Type.ToString() &nbsp</span> *@
+                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                        <span style="font-weight:500;padding-left: 0.5rem;">@item.Player.FirstName</span>
+                    </GridRow>
+                }
+                else
+                {
+                    <GridRow Style="display:flex; justify-content: right">
+                        <span style="font-weight:500;padding-right: 0.5rem;">@item.Player.FirstName</span>
+                        @*  <span>&nbsp @item.Type.ToString() &nbsp</span> *@
+                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                        <span style="font-weight:500; padding-left: 0.5rem">@item.Time.ToString()'</span>
+                    </GridRow>
+                }
+
+            }
+        </ChildContent>
+
+    </GridCol>
+</GridRow>
+@code {
+    [Parameter] public MatchDto Match { get; set; }
+
+    private string GetImgSrc(SummaryType type)
+    {
+        if (type == SummaryType.Goal)
+        {
+            return "./goal.png";
+        }
+        if (type == SummaryType.OwnGoal)
+        {
+            return "./own_goal.png";
+        }
+        else if (type == SummaryType.Assist)
+        {
+            return "./assist.png";
+        }
+        else if (type == SummaryType.GoalsFrom10meter)
+        {
+            return "./10_m.png";
+        }
+        else if (type == SummaryType.GoalsFromPenalty)
+        {
+            return "./penalty.png";
+        }
+        else if (type == SummaryType.RedCards)
+        {
+            return "./red_card.png";
+        }
+        else if (type == SummaryType.YellowCards)
+        {
+            return "./yellow_card.png";
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+}

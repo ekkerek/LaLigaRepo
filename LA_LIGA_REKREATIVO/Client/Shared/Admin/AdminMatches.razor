@@ -11,7 +11,7 @@
 
 @if (showEditMatchModal)
 {
-    <EditMatch MatchId="@Match.Id" CloseModal="CloseAddMatchModal"></EditMatch>
+    <EditMatch MatchId="@Match.Id" CloseModal="CloseEditMatchModal"></EditMatch>
 }
 
 <Table TItem="MatchDto" DataSource="@matches">
@@ -42,7 +42,8 @@
  <Button OnClick="OpenAddMatchModal">Add new match</Button>
 
  @code {
-    List<MatchDto> matches = new();
+    private IEnumerable<MatchDto> matches = Enumerable.Empty<MatchDto>();
+    //List<MatchDto> matches = new();
     private bool showAddMatchModal;
     private bool showEditMatchModal;
     private MatchDto Match = new();
@@ -50,8 +51,9 @@
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await Server.Matches.Get();
-        matches = result.ToList();
+        matches = await Server.Matches.Get();
+
+        var standings = await Server.Matches.GetStandingsByLeague(5);
         base.OnInitialized();
     }
 
@@ -75,6 +77,10 @@
     {
         Match = match;
         showEditMatchModal = true;
-        //Id = id;
+    }
+
+    private void CloseEditMatchModal()
+    {
+        showEditMatchModal = false;
     }
  }

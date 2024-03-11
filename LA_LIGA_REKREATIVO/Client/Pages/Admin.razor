@@ -1,18 +1,6 @@
 ﻿@page "/admin"
 
-
-@* @if (showAddMatchModal)
-{
-    <AddMatch CloseModal="CloseAddMatchModal"></AddMatch>
-} *@
-
-
-@if (showTeamsToLeagueModal)
-{
-    <AddTeamToLeague></AddTeamToLeague>
-}
-
-<Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" OnChange="OnTabChange" Animated>
+<Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated>
     <TabPane Tab="Leagues" Key="1">
         <AdminLeagues></AdminLeagues>
     </TabPane>
@@ -27,37 +15,6 @@
     </TabPane>
 </Tabs>
 
-@* <Button OnClick="OpenAddMatchModal">Add new match</Button>
-<Button OnClick="OpenTeamsToLeagueModal">Add teams to league</Button> *@
-
 @code {
-    private bool showAddPlayerModal;
-    private bool showAddTeamModal;
-    private bool showAddMatchModal;
-    private bool showAddLeagueModal;
-    private bool showTeamsToLeagueModal;
-
     string activeKey { get; set; } = "1";
-
-    void OnTabChange(string key)
-    {
-        Console.WriteLine($"tab change:{key}");
-    }
-
-    #region AddMatch
-    private void OpenAddMatchModal()
-    {
-        showAddMatchModal = true;
-    }
-
-    private void CloseAddMatchModal()
-    {
-        showAddMatchModal = false;
-    }
-    #endregion
-
-    protected void OpenTeamsToLeagueModal()
-    {
-        showTeamsToLeagueModal = true;
-    }
 }

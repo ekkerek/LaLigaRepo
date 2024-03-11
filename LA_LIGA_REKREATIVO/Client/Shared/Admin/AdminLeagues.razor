@@ -36,18 +36,16 @@
  <Button OnClick="OpenAddLeagueModal">Add new league</Button>
 
  @code {
-    private List<LeagueDto> leagues = new();
+    private IEnumerable<LeagueDto> leagues = Enumerable.Empty<LeagueDto>();
     private int Id { get; set; }
     private bool showEditLeagueModal;
     private bool showAddLeagueModal;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await Server.Leagues.Get();
-        leagues = result.ToList();
+        leagues = await Server.Leagues.Get();
         base.OnInitialized();
     }
-
 
     #region AddLeague
     private void OpenAddLeagueModal()
@@ -55,9 +53,11 @@
         showAddLeagueModal = true;
     }
 
-    private void CloseAddLeagueModal()
+    private async void CloseAddLeagueModal()
     {
+        leagues = await Server.Leagues.Get();
         showAddLeagueModal = false;
+        StateHasChanged();
     }
     #endregion
 
@@ -65,14 +65,18 @@
     {
     }
 
+    #region EditLeague
     private void Edit(int id)
     {
         Id = id;
         showEditLeagueModal = true;
     }
 
-    private void CloseEditLeagueModal()
+    private async void CloseEditLeagueModal()
     {
+        leagues = await Server.Leagues.Get();
         showEditLeagueModal = false;
+        StateHasChanged();
     }
+    #endregion
 }

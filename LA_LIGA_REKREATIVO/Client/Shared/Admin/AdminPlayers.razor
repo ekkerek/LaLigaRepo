@@ -38,17 +38,15 @@
  </Table>
  <Button OnClick="OpenAddPlayerModal">Add new player</Button>
 
-@code {
-
-    private List<PlayerDto> players = new();
+ @code {
+    private IEnumerable<PlayerDto> players = Enumerable.Empty<PlayerDto>();
     private int Id { get; set; }
     private bool showAddPlayerModal;
     private bool showEditPlayerModal;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await Server.Players.Get();
-        players = result.ToList();
+        players = await Server.Players.Get();
         base.OnInitialized();
     }
 
@@ -58,9 +56,11 @@
         showAddPlayerModal = true;
     }
 
-    private void CloseAddPlayerModal()
+    private async void CloseAddPlayerModal()
     {
+        players = await Server.Players.Get();
         showAddPlayerModal = false;
+        StateHasChanged();
     }
 
     #endregion
@@ -75,8 +75,10 @@
         showEditPlayerModal = true;
     }
 
-    private void CloseEditPlayerModal()
+    private async void CloseEditPlayerModal()
     {
+        players = await Server.Players.Get();
         showEditPlayerModal = false;
+        StateHasChanged();
     }
 }

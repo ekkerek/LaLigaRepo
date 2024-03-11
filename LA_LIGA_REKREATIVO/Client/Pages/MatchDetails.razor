@@ -1,0 +1,110 @@
+﻿@page "/matchDetails/{Id:int}"
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared;
+@inject Server Server;
+@inject NavigationManager Navigation
+<div>
+    <GridRow>
+        <Divider>@title</Divider>
+            <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
+                <div>
+                    <div> <img style="height:48px;" src="./rcqgqmku.p0v.png" /> </div>
+                    <div>@Match.HomeTeam.Name</div>
+            </div>
+        </GridCol>
+        <GridCol Style="font-weight:500; display: grid; justify-content: center" Span="8">
+            <div style="display:flex; justify-content: center;font-size: 12px;">
+                @Match.GameTime.ToShortDateString()
+            </div>
+            <div style="display:flex; justify-content: center;font-size: 12px;">
+                @Match.GameTime.ToShortTimeString()
+            </div>
+            <div style="display:flex; justify-content: center;">
+                @Match.HomeTeamGoals - @Match.AwayTeamGoals
+            </div>
+        </GridCol>
+        <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
+            <div>
+                <div> <img style="height:48px;" src="./rcqgqmku.p0v.png" /> </div>
+                <div>            @Match.AwayTeam.Name</div>
+            </div>
+        </GridCol>
+    </GridRow>
+    <Divider></Divider>
+    <GridRow>
+        <Tabs Style="width: 100%" DefaultActiveKey="1">
+            <TabPane Key="1">
+                <TabTemplate>Summary</TabTemplate>
+                <ChildContent>
+                    <Summaries Match="@Match"></Summaries>
+                </ChildContent>
+            </TabPane>
+            <TabPane Key="2">
+                <TabTemplate>Players</TabTemplate>
+                <ChildContent>
+                    <Lineups Match="@Match"></Lineups>
+                </ChildContent>
+            </TabPane>
+            <TabPane Key="3">
+                <TabTemplate>Standings</TabTemplate>
+                <ChildContent>
+                    <Standings LeagueId="@Match.League.Id"></Standings>
+                </ChildContent>
+            </TabPane>
+        </Tabs>
+    </GridRow>
+</div>
+
+
+@code {
+    [Parameter] public EventCallback CloseModal { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    public MatchDto Match = new();
+    private string title;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        Match = await Server.Matches.Get(Id);
+        title = Match.League.Name.ToString() + " - " + Match.GameRound.ToString();
+    }
+
+    private string GetImgSrc(SummaryType type)
+    {
+        if (type == SummaryType.Goal)
+        {
+            return "./goal.png";
+        }
+        if (type == SummaryType.OwnGoal)
+        {
+            return "./own_goal.png";
+        }
+        else if (type == SummaryType.Assist)
+        {
+            return "./assist.png";
+        }
+        else if (type == SummaryType.GoalsFrom10meter)
+        {
+            return "./10_m.png";
+        }
+        else if (type == SummaryType.GoalsFromPenalty)
+        {
+            return "./penalty.png";
+        }
+        else if (type == SummaryType.RedCards)
+        {
+            return "./red_card.png";
+        }
+        else if (type == SummaryType.YellowCards)
+        {
+            return "./yellow_card.png";
+        }
+        else
+        {
+            return string.Empty;
+        }
+
+    }
+
+}

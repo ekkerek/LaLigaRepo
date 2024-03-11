@@ -3,17 +3,17 @@
 @inject Server Server
 @inject IMessageService MessageService
 
-@if (showAddSummaryModal)
+@* @if (showAddSummaryModal)
 {
     <AddSummary OnChange="AddNewSummary" CloseModal="CloseAddSummaryModal" Players="@matchPlayers"></AddSummary>
-}
+} *@
 
 @if (showEditSummaryModal)
 {
     <EditSummary Summary="@summary" OnChange="EditExistingSummary" CloseModal="CloseEditSummaryModal" Players="@matchPlayers"></EditSummary>
 }
 
-<Modal Title="Add new match"
+<Modal Title="Edit match"
        Visible="true"
        OnOk="@HandleOk"
        OnCancel="@HandleCancel"
@@ -29,7 +29,7 @@
                       WrapperColSpan="16"
                       @ref="@editMatchForm">
                     <FormItem Label="Select League">
-                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
+                        <SimpleSelect DefaultValue="@Match.League.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
                             <SelectOptions>
                                 @foreach (var league in leagues)
                                 {
@@ -39,7 +39,7 @@
                         </SimpleSelect>
                     </FormItem>
                     <FormItem Label="Home Team">
-                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
+                        <SimpleSelect DefaultValue="@Match.HomeTeam.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
                             <SelectOptions>
                                 @foreach (var team in teams)
                                 {
@@ -65,7 +65,7 @@
                         </Select>
                     </FormItem>
                     <FormItem Label="Away Team">
-                        <SimpleSelect DefaultValue="lucy" Style="width:120px;" OnSelectedItemChanged="SelectAwayTeam">
+                        <SimpleSelect DefaultValue="@Match.AwayTeam.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectAwayTeam">
                             <SelectOptions>
                                 @foreach (var team in teams)
                                 {
@@ -145,15 +145,11 @@
     [Parameter] public int MatchId { get; set; }
     private Form<MatchDto> editMatchForm = null!;
     private Table<SummaryDto> summaryTable = null!;
-    // private MatchDto match = new MatchDto();
-    // private PlayerDto player = new PlayerDto();
     private List<TeamDto> teams = new();
     private List<PlayerDto> matchPlayers = new();
     private List<PlayerDto> homeTeamPlayers = new();
     private List<PlayerDto> awayTeamPlayers = new();
     private List<LeagueDto> leagues = new();
-    // private List<SummaryDto> summaries = new();
-    // private int selectedTeamId = 0;
     private bool showAddSummaryModal;
     private bool showEditSummaryModal;
     private bool submitting;
@@ -161,7 +157,7 @@
     private SummaryDto summary;
     private MatchDto Match = new();
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
         var resultTeams = await Server.Teams.Get();
         teams = resultTeams.ToList();
@@ -170,10 +166,28 @@
         var resultLeague = await Server.Leagues.Get();
         leagues = resultLeague.ToList();
         Match = await Server.Matches.Get(MatchId);
-        //Match = matchReslt
-
-        base.OnInitialized();
+        _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
+        _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
+        homeTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToList();
+        awayTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToList();
     }
+
+    // protected async override Task OnInitializedAsync()
+    // {
+    //     // var resultTeams = await Server.Teams.Get();
+    //     // teams = resultTeams.ToList();
+    //     // var resultPlayers = await Server.Players.Get();
+    //     // matchPlayers = resultPlayers.ToList();
+    //     // var resultLeague = await Server.Leagues.Get();
+    //     // leagues = resultLeague.ToList();
+    //     // Match = await Server.Matches.Get(MatchId);
+    //     // homeTeam = Match.HomeTeam;
+    //     // awayTeam = Match.AwayTeam;
+    //     // _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
+    //     // _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
+    //     base.OnInitialized();
+    // }
+
 
     public async Task HandleOk(MouseEventArgs e)
     {
@@ -191,7 +205,7 @@
         SetPlayersToMatch();
         var result = await Server.Matches.Update(Match);
         if (result)
-            _ = MessageService.Success("New match is added.");
+            _ = MessageService.Success("Match is edited.");
 
         await CloseModal.InvokeAsync();
     }
@@ -203,6 +217,10 @@
 
     public async Task SelectHomeTeam(string value)
     {
+        if (value is null)
+        {
+            return;
+        }
         var homeSelectedTeamId = Int32.Parse(value);
         Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
         await Task.Delay(10); // state has changed not worked withoud this delay.
@@ -213,6 +231,10 @@
 
     public async Task SelectAwayTeam(string value)
     {
+        if (value is null)
+        {
+            return;
+        }
         var awaySelectedTeamId = Int32.Parse(value);
         Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
         await Task.Delay(10); // state has changed not worked withoud this delay.
@@ -250,8 +272,6 @@
         summaryTable.ReloadData();
     }
 
-
-
     private void CloseEditSummaryModal()
     {
         showEditSummaryModal = false;
@@ -266,6 +286,10 @@
 
     public void SelectLeague(string value)
     {
+        if (value is null)
+        {
+            return;
+        }
         var leagueId = Int32.Parse(value);
         LeagueDto tempLeague = new()
             {

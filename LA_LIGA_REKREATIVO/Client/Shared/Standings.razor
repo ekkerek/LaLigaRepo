@@ -1,0 +1,29 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@inject Server Server;
+
+<Table TItem="TeamStatsDto"
+       DataSource="@stats"
+       Size="TableSize.Small"
+       HidePagination>
+    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
+    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
+    <PropertyColumn Title="G" Property="c=>c.Goals">
+        @context.Goals: @context.GoalsConceded
+    </PropertyColumn>
+    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+</Table>
+
+
+@code {
+    [Parameter] public int LeagueId { get; set; }
+    TeamStatsDto teamStats = new();
+    List<TeamStatsDto> stats = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        stats = await Server.Matches.GetStandingsByLeague(LeagueId);
+        base.OnInitialized();
+    }
+}

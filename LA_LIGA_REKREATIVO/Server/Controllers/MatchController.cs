@@ -4,7 +4,6 @@ using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -62,7 +61,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("{id}")]
         public MatchDto Get(int id)
         {
-            var match = _context.Matches.Include(x => x.League).Include(x => x.Players).Include(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
+            var match = _context.Matches.Include(x => x.League).Include(x => x.Players).ThenInclude(x => x.Team).Include(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
             var matchDto = _mapper.Map<MatchDto>(match);
 
             var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == match.HomeTeamId);
@@ -101,13 +100,29 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             //var mappedMatch = _mapper.Map<Match>(match);
             var players = _context.Players.Include(x => x.Team).Where(x => match.Players.Select(x => x.Id).Contains(x.Id)).ToList();
+            var allPlayers = _context.Players.Include(x => x.Team).ToList();
 
             var matchToBeUpdate = _context.Matches.Include(x => x.Players)
                                                    .Include(x => x.Summaries)
                                                    .ThenInclude(x => x.Player)
                                                    .FirstOrDefault(x => x.Id == match.Id);
-            matchToBeUpdate.Players.Clear();
+            //matchToBeUpdate.Players.Clear();
 
+            matchToBeUpdate.HomeTeamGoals = match.HomeTeamGoals;
+            matchToBeUpdate.AwayTeamGoals = match.AwayTeamGoals;
+            matchToBeUpdate.GamePlace = match.GamePlace;
+            matchToBeUpdate.GameRound = match.GameRound;
+            matchToBeUpdate.GameTime = match.GameTime;
+
+            //league
+            matchToBeUpdate.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
+
+            //teams
+            matchToBeUpdate.HomeTeamId = match.HomeTeam.Id;
+            matchToBeUpdate.AwayTeamId = match.AwayTeam.Id;
+
+
+            //players on match
             _context.Matches.Include(x => x.Players)
                             .FirstOrDefault(x => x.Id == match.Id)
                             .Players.Clear();
@@ -120,11 +135,22 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
             }
 
+
+
+
+
             //foreach (var summary in mappedMatch.Summaries)
             //    summary.Player = players.FirstOrDefault(x => x.Id == summary.Player.Id);
-            var allPlayers = _context.Players.Include(x => x.Team).ToList();
-            matchToBeUpdate.Summaries.Clear();
-            _context.Matches.Include(x => x.Players).Include(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == match.Id).Summaries.Clear();
+
+            //matchToBeUpdate.Summaries.Clear();
+
+
+            //summary
+            _context.Matches.Include(x => x.Players)
+                            .Include(x => x.Summaries)
+                            .ThenInclude(x => x.Player)
+                            .FirstOrDefault(x => x.Id == match.Id)
+                            .Summaries.Clear();
 
             var summaries = _context.Summaries.Where(x => x.Match.Id == match.Id);
             foreach (var item in summaries)
@@ -140,13 +166,38 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
             }
 
-            matchToBeUpdate.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
-
             var entry = _context.Matches.Update(matchToBeUpdate);
             if (entry != null)
             {
                 _context.SaveChanges();
             }
+        }
+        [HttpGet("getStandingsByLeague/{id}")]
+        public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
+        {
+            var matches = _context.Matches.Where(x => x.League.Id == id);
+            var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id).Teams;
+            var teamStatsList = new List<TeamStatsDto>();
+            foreach (var team in teams)
+            {
+                var teamStatsDto = new TeamStatsDto();
+                teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+                teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id);
+                teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum() +
+                                     matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum();
+                teamStatsDto.GoalsConceded = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum() +
+                                     matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum();
+                teamStatsDto.Wins = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals);
+                teamStatsDto.Losts = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals);
+                teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals);
+                teamStatsDto.TotalPoints = teamStatsDto.Wins * 3 + teamStatsDto.Draws;
+
+                teamStatsList.Add(teamStatsDto);
+            }
+            return teamStatsList;
         }
 
         // DELETE api/<MatchController>/5

@@ -75,7 +75,7 @@
         if (values != null)
         {
             var selectedTeams = teams.Where(x => _selectedValues1.Contains(x.Id.ToString()));
-            league.Teams = selectedTeams.ToList();
+            //league.Teams = selectedTeams.ToList();
 
         }
     }
@@ -95,7 +95,7 @@
 
     public async Task OnFinish(EditContext editContext)
     {
-        var aa = await Server.Leagues.AddTeamsToLeague(league);
+        //var aa = await Server.Leagues.AddTeamsToLeague(league);
     }
 
     public void OnFinishFailed(EditContext editContext)

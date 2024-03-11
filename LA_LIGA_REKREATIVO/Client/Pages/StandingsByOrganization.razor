@@ -1,0 +1,23 @@
+﻿@page "/standings"
+@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@inject Server Server;
+
+<Collapse DefaultActiveKey="@(new[]{"5"})" Animation>
+    @foreach (var league in leagues)
+    {
+        <Panel Header="@league.Name" Key="@league.Id.ToString()">
+            <Standings LeagueId="league.Id"></Standings>
+        </Panel>
+    }
+</Collapse>
+
+@code {
+    private List<LeagueDto> leagues = new();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+    }
+}

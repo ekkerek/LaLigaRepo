@@ -1,0 +1,152 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto
+<GridRow>
+    <GridCol Span="12" Style="padding:4px;">
+        <Collapse DefaultActiveKey="@(new[]{"1"})" Animation>
+            @foreach (var player in Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id))
+            {
+                <Panel Key="@player.Id.ToString()">
+                    <HeaderTemplate>
+                        <div>
+                            @player.FirstName
+                        </div>
+                        <div>
+                            <span>@player.LastName</span>
+                            <span style="float: right"> @GetTotalPoint(player)</span>
+
+                        </div>
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <Tooltip Title="match attended" Style="padding-right: 10%">
+                            <img height="24px;" src="./football-jersey.png" />
+                        </Tooltip>
+                        @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
+                        {
+                            <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
+                                <img height="24px;" src="@GetImgSrc(item.Type)" />
+                            </Tooltip>
+                        }
+                    </ChildContent>
+                </Panel>
+            }
+        </Collapse>
+    </GridCol>
+    <GridCol Span="12" Style="padding:4px;">
+        <Collapse DefaultActiveKey="@(new[]{"1"})" Animation>
+            @foreach (var player in Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id))
+            {
+                <Panel Key="@player.Id.ToString()">
+                    <HeaderTemplate>
+                        <div>
+                            @player.FirstName
+                        </div>
+                        <div>
+                            <span>@player.LastName</span>
+                            <span style="float: right"> @GetTotalPoint(player)</span>
+                        </div>
+
+                    </HeaderTemplate>
+                    <ChildContent>
+                        <Tooltip Title="match attended" Style="padding-right: 10%">
+                            <img height="24px;" src="./football-jersey.png" />
+                        </Tooltip>
+                        @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
+                        {
+                            <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
+                                <img height="24px;" src="@GetImgSrc(item.Type)" />
+                            </Tooltip>
+                        }
+                    </ChildContent>
+                </Panel>
+            }
+        </Collapse>
+    </GridCol>
+</GridRow>
+
+@code {
+    [Parameter] public MatchDto Match { get; set; }
+
+    private string GetImgSrc(SummaryType type)
+    {
+        var result = type switch
+        {
+            SummaryType.Goal => "./goal.png",
+            SummaryType.OwnGoal => "./own_goal.png",
+            SummaryType.Assist => "./assist.png",
+            SummaryType.GoalsFrom10meter => "./10_m.png",
+            SummaryType.GoalsFromPenalty => "./penalty.png",
+            SummaryType.RedCards => "./red_card.png",
+            SummaryType.YellowCards => "./yellow_card.png",
+            _ => string.Empty
+        };
+
+        return result;
+
+        // if (type == SummaryType.Goal)
+        // {
+        //     return "./goal.png";
+        // }
+        // if (type == SummaryType.OwnGoal)
+        // {
+        //     return "./own_goal.png";
+        // }
+        // else if (type == SummaryType.Assist)
+        // {
+        //     return "./assist.png";
+        // }
+        // else if (type == SummaryType.GoalsFrom10meter)
+        // {
+        //     return "./10_m.png";
+        // }
+        // else if (type == SummaryType.GoalsFromPenalty)
+        // {
+        //     return "./penalty.png";
+        // }
+        // else if (type == SummaryType.RedCards)
+        // {
+        //     return "./red_card.png";
+        // }
+        // else if (type == SummaryType.YellowCards)
+        // {
+        //     return "./yellow_card.png";
+        // }
+        // else
+        // {
+        //     return string.Empty;
+        // }
+    }
+
+    private double GetTotalPoint(PlayerDto playerDto)
+    {
+        var summaries = Match.Summaries.Where(x => x.Player.Id == playerDto.Id);
+        double summ = 0;
+        foreach (var sum in summaries)
+        {
+            if (sum.Type == SummaryType.Goal)
+            {
+                summ += 5;
+            }
+            else if (sum.Type == SummaryType.Assist)
+            {
+                summ += 3;
+            }
+            else if (sum.Type == SummaryType.GoalsFrom10meter)
+            {
+                summ += 3;
+            }
+            else if (sum.Type == SummaryType.GoalsFromPenalty)
+            {
+                summ += 2;
+            }
+            else if (sum.Type == SummaryType.YellowCards)
+            {
+                summ -= 2;
+            }
+            else if (sum.Type == SummaryType.RedCards)
+            {
+                summ -= 5;
+            }
+        }
+        return summ;
+
+    }
+}

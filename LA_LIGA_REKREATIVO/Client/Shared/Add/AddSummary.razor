@@ -39,7 +39,7 @@
 
 
 @code {
-    [Parameter] public List<PlayerDto> Players { get; set; }
+    [Parameter] public HashSet<PlayerDto> Players { get; set; }
     [Parameter] public EventCallback<SummaryDto> OnChange { get; set; }
     [Parameter] public EventCallback CloseModal { get; set; }
     private Form<SummaryDto> addSummaryForm = null!;

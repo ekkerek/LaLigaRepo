@@ -1,106 +1,66 @@
 ﻿@page "/matches"
+@using LA_LIGA_REKREATIVO.Shared
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using System.Net.Http.Headers
 @inject Server Server;
-
-<h3>Matches</h3>
-
-<RadzenButton class="bi bi-arrow-right" ButtonStyle="ButtonStyle.Secondary" Size="Radzen.ButtonSize.Large"></RadzenButton>
-
-<RadzenDataList AllowVirtualization=@allowVirtualization Style="@(allowVirtualization ? "height:400px;overflow:auto;" : "")"
-                WrapItems="@(!allowVirtualization)" AllowPaging="@(!allowVirtualization)"
-                Data="@matches" TItem="MatchDto" PageSize="2" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true">
-    <Template Context="match">
-        <RadzenCard Style="width: 100%; padding: 0;">
-            <RadzenRow @onclick="@(() => OnTest(match))" Gap="0">
-                @*   <RadzenColumn Size="12" SizeLG="4" SizeXS="4" Class="rz-p-4 product-title">
-                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@match.HomeTeam.Name</RadzenText>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeLG="4" SizeXS="4" Class="rz-p-4">
-                <RadzenRow Gap="0">
-                <RadzenColumn Size="12" SizeMD="6" SizeLG="2">
-                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">@match.HomeTeamGoals:@match.AwayTeamGoals</RadzenText>
-                <RadzenText TextStyle="TextStyle.Body2">12:45</RadzenText>
-                </RadzenColumn>
-                </RadzenRow>
-                </RadzenColumn>
-                <RadzenColumn Size="12" SizeLG="4" SizeXS="4" Class="rz-p-4">
-                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" class="rz-color-secondary">@match.AwayTeam.Name</RadzenText>
-                </RadzenColumn> *@
-                <RadzenColumn Size="8" SizeLG="4" Class="rz-p-4">
-                    <RadzenRow Gap="0">
-                        <RadzenColumn>
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" Class="rz-mb-0">@match.HomeTeam.Name</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" Class="rz-mb-0">@match.AwayTeam.Name</RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenColumn>
-                <RadzenColumn Size="2" SizeLG="2" Class="rz-p-4">
-                    <RadzenRow Gap="0">
-                        <RadzenColumn>
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0 ">@match.HomeTeamGoals</RadzenText>
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H5" Class="rz-mb-0">@match.AwayTeamGoals</RadzenText>
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenColumn>
-            </RadzenRow>
-        </RadzenCard>
-    </Template>
-</RadzenDataList>
+@inject NavigationManager Navigation
+@inject HttpClient Http
 
 <div class="rz-p-12 rz-text-align-center">
-    <RadzenLabel Text="Select Date" Component="RadzenDatePickerBindValue" Style="margin-right: 8px; vertical-align: middle;" />
-    <RadzenDatePicker Change="OnChangeDate" @bind-Value=@currentDate Name="RadzenDatePickerBindValue" />
+    <Button OnClick="@OnPrev" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Left" />
+    <RadzenDatePicker Style="width: 150px;" ShowTime=false DateFormat="dd-MM-yyyy" Change="OnChangeDate" @bind-Value=@currentDate Name="RadzenDatePickerBindValue" />
+    <Button OnClick="@OnNext" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Right" />
 </div>
-<RadzenButton Click="@OnPrev" Text="Primary" ButtonStyle="ButtonStyle.Primary">Left</RadzenButton>
-<RadzenButton Click="OnNext" Text="Primary" ButtonStyle="ButtonStyle.Primary">Right</RadzenButton>
 
-@code {
+<AntList DataSource="@matches" TItem="MatchDto">
+    <ListItem OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItemMeta>
+            <TitleTemplate>
+                <GridRow>
+                    <GridCol Style="font-weight:500" Span="20">@context.HomeTeam.Name</GridCol>
+                        <GridCol Style="font-weight:500" Span="4">@context.HomeTeamGoals</GridCol>
+                        <GridCol Style="font-weight:500" Span="20">@context.AwayTeam.Name</GridCol>
+                        <GridCol Style="font-weight:500" Span="4">@context.AwayTeamGoals</GridCol>
+                    </GridRow>
+                </TitleTemplate>
+            </ListItemMeta>
+        </ListItem>
+    </AntList>
+
+    @code {
     List<MatchDto> matches = new List<MatchDto>();
     bool allowVirtualization = true;
     DateTime currentDate = DateTime.Now;
-    DateTime tomorrow;
-    DateTime yesterday;
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
 
     protected override async Task OnInitializedAsync()
     {
-
-        var tt = await Server.Matches.GetByDate(DateTime.Now);
-        matches = tt.ToList();
-
-        // tomorrow = currentDate.AddDays(1);
-        // yesterday = currentDate.AddDays(-1);
+        var result = await Server.Matches.GetByDate(DateTime.Now);
+        matches = result.ToList();
     }
 
     async Task OnNext()
     {
         currentDate = currentDate.AddDays(1);
-        // tomorrow = currentDate.AddDays(1);
-        // yesterday = currentDate.AddDays(-1);
-        var tt = await Server.Matches.GetByDate(currentDate);
-        matches = tt.ToList();
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
     }
 
     async Task OnPrev()
     {
         currentDate = currentDate.AddDays(-1);
-        // tomorrow = currentDate.AddDays(1);
-        // yesterday = currentDate.AddDays(-1);
-        var tt = await Server.Matches.GetByDate(currentDate);
-        matches = tt.ToList();
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
     }
 
     async Task OnChangeDate()
     {
-        //currentDate = currentDate.AddDays(-1);
-        // tomorrow = currentDate.AddDays(1);
-        // yesterday = currentDate.AddDays(-1);
-        var tt = await Server.Matches.GetByDate(currentDate);
-        matches = tt.ToList();
-    }
-
-    async Task OnTest(MatchDto match)
-    {
-        Console.WriteLine(match.HomeTeam.Name);
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
     }
 }

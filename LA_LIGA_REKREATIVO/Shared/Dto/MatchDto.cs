@@ -1,4 +1,6 @@
-﻿namespace LA_LIGA_REKREATIVO.Shared.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LA_LIGA_REKREATIVO.Shared.Dto
 {
     public class MatchDto
     {
@@ -6,10 +8,14 @@
         {
             Summaries = new();
             Players = new();
+            HomeTeam = new();
+            AwayTeam = new();
+            League = new();
         }
 
         public int Id { get; set; }
         public DateTime GameTime { get; set; }
+        [Required]
         public int GameRound { get; set; }
         public string GamePlace { get; set; }
         public int HomeTeamGoals { get; set; }

@@ -14,9 +14,6 @@ namespace LA_LIGA_REKREATIVO.Client.Server
         }
         public async Task<bool> Add(TeamDto team)
         {
-            //team.ParticipantOf = "2016";
-            //team.Players = new List<Player>();
-
             var message = new HttpRequestMessage(HttpMethod.Post, "api/team/addNew");
             message.Content = new StringContent(JsonConvert.SerializeObject(team));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -25,6 +22,15 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             {
                 await Console.Out.WriteLineAsync("test failed");
             }
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> Update(TeamDto team)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Put, $"api/team/{team.Id}");
+            message.Content = new StringContent(JsonConvert.SerializeObject(team));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
             return result.IsSuccessStatusCode;
         }
 
@@ -48,6 +54,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
                 return JsonConvert.DeserializeObject<TeamDto>(json);
             }
             return new TeamDto();
+        }
+
+        public async Task<List<TeamDto>> GetTeamsByLeague(int leagueId)
+        {
+            var result = await _httpClient.GetAsync($"api/team/getTeamsByLeague/{leagueId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<TeamDto>>(json);
+            }
+            return new List<TeamDto>();
         }
     }
 }
