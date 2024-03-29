@@ -7,10 +7,10 @@
 @inject NavigationManager Navigation
 @inject HttpClient Http
 
-<div class="rz-p-12 rz-text-align-center">
-    <Button OnClick="@OnPrev" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Left" />
-    <RadzenDatePicker Style="width: 150px;" ShowTime=false DateFormat="dd-MM-yyyy" Change="OnChangeDate" @bind-Value=@currentDate Name="RadzenDatePickerBindValue" />
-    <Button OnClick="@OnNext" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Right" />
+<div style="padding: 1rem!important; display: flex; justify-content: space-between; align-items:center;" class="rz-p-12 rz-text-align-center">
+    <Button Style="background-color:transparent;" OnClick="@OnPrev" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Left" />
+    <RadzenDatePicker Style="width: 200px; background-color:transparent;" ShowTime=false DateFormat="dd-MM-yyyy" Change="OnChangeDate" @bind-Value=@currentDate Name="RadzenDatePickerBindValue" />
+    <Button Style="background-color:transparent;" OnClick="@OnNext" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Right" />
 </div>
 
 <AntList DataSource="@matches" TItem="MatchDto">
@@ -18,17 +18,27 @@
         <ListItemMeta>
             <TitleTemplate>
                 <GridRow>
-                    <GridCol Style="font-weight:500" Span="20">@context.HomeTeam.Name</GridCol>
-                        <GridCol Style="font-weight:500" Span="4">@context.HomeTeamGoals</GridCol>
-                        <GridCol Style="font-weight:500" Span="20">@context.AwayTeam.Name</GridCol>
-                        <GridCol Style="font-weight:500" Span="4">@context.AwayTeamGoals</GridCol>
-                    </GridRow>
-                </TitleTemplate>
-            </ListItemMeta>
-        </ListItem>
-    </AntList>
+                    <GridCol Style="font-weight:500" Span="20">
+                        <img style="height:22px;" src="./@context.HomeTeam.LogoSrc" />
+                        <span style="padding-left:5px;">
+                            @context.HomeTeam.Name
+                        </span>
+                    </GridCol>
+                    <GridCol Style="font-weight:500" Span="4">@context.HomeTeamGoals</GridCol>
+                    <GridCol Style="font-weight:500" Span="20">
+                        <img style="height:22px;" src="./@context.AwayTeam.LogoSrc" />
+                        <span style="padding-left:5px;">
+                            @context.AwayTeam.Name
+                        </span>
+                    </GridCol>
+                    <GridCol Style="font-weight:500" Span="4">@context.AwayTeamGoals</GridCol>
+                </GridRow>
+            </TitleTemplate>
+        </ListItemMeta>
+    </ListItem>
+</AntList>
 
-    @code {
+@code {
     List<MatchDto> matches = new List<MatchDto>();
     bool allowVirtualization = true;
     DateTime currentDate = DateTime.Now;

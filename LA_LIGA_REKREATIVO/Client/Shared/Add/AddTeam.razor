@@ -1,9 +1,12 @@
-﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Shared;
 @using Newtonsoft.Json;
 @using System.Net.Http.Headers;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server
 @inject IMessageService MessageService
+@inject UploadService _uploadService
 
 
 <Modal Title="Create new team"
@@ -33,8 +36,8 @@
         <FormItem Label="Name">
             <Input @bind-Value="context.Name" />
         </FormItem>
-        <FormItem Label="Logo">
-            <Input @bind-Value="context.LogoSrc" />
+        <FormItem>
+            <InputFile OnChange="OnInputFileChange" />
         </FormItem>
     </Form>
 </Modal>
@@ -47,6 +50,7 @@
     private HashSet<LeagueDto> selectedLeagues = new();
     private LeagueDto league = new();
     private bool submitting;
+    private List<UploadResult> uploadResults = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,6 +70,10 @@
 
     private async Task OnFinish(EditContext editContext)
     {
+        if (uploadResults.FirstOrDefault() is not null)
+        {
+            team.LogoSrc = uploadResults.FirstOrDefault()?.FileName;
+        }
         team.Leagues.AddRange(selectedLeagues);
         var result = await Server.Teams.Add(team);
         if (result)
@@ -82,5 +90,10 @@
     private void OnSelectedLeagues(IEnumerable<LeagueDto> leagues)
     {
         selectedLeagues = leagues.ToHashSet();
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        uploadResults = await _uploadService.UploadFile(e);
     }
 }

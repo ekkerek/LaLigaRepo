@@ -115,7 +115,7 @@
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
                     </FormItem>
-                    <Button OnClick="GetPlayerSummaries"></Button>
+                   @*  <Button OnClick="GetPlayerSummaries"></Button> *@
                 </Form>
             </GridCol>
             <GridCol Span="11" Offset="1">
@@ -237,19 +237,17 @@
         summaryTable.ReloadData();
     }
 
-
-
     private void CloseEditSummaryModal()
     {
         showEditSummaryModal = false;
     }
 
     //TODO: It will be deleted
-    protected async void GetPlayerSummaries()
-    {
-        var playerStat = await Server.Players.GetPlayerStats();
-        var kk = playerStat;
-    }
+    // protected async void GetPlayerSummaries()
+    // {
+    //     var playerStat = await Server.Players.GetPlayerStats();
+    //     var kk = playerStat;
+    // }
 
     private void SetPlayersToMatch()
     {
@@ -304,12 +302,12 @@
 
     private void OnSelectedHomePlayers(IEnumerable<PlayerDto> players)
     {
-        selectedHomeTeamPlayers = players.ToHashSet();
+        selectedHomeTeamPlayers = players?.ToHashSet();
     }
 
     private void OnSelectedAwayPlayers(IEnumerable<PlayerDto> players)
     {
-        selectedAwayTeamPlayers = players.ToHashSet();
+        selectedAwayTeamPlayers = players?.ToHashSet();
     }
 
     private void Delete(int id)

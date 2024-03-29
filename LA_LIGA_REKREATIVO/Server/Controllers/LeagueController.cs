@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
+using LA_LIGA_REKREATIVO.Server.Services;
 using LA_LIGA_REKREATIVO.Shared;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +19,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         private readonly LaLigaContext _context;
         private readonly IMapper _mapper;
         private readonly IHostEnvironment _env;
+        private readonly IUploadService _uploadService;
 
-        public LeagueController(LaLigaContext context, IMapper mapper, IHostEnvironment env)
+        public LeagueController(LaLigaContext context, IMapper mapper, IHostEnvironment env, IUploadService uploadService)
         {
             _context = context;
             _mapper = mapper;
             _env = env;
+            _uploadService = uploadService;
         }
 
         // GET: api/<LeagueController>
@@ -85,75 +88,81 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("postFile")]
         public async Task<ActionResult<IList<UploadResult>>> PostFile([FromForm] IEnumerable<IFormFile> files)
         {
-            var maxAllowedFiles = 3;
-            long maxFileSize = 1024 * 1024;
-            var filesProcessed = 0;
+            var tt = await _uploadService.PostFile(files);
+            //var maxAllowedFiles = 3;
+            //long maxFileSize = 1024 * 1024;
+            //var filesProcessed = 0;
             var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
-            List<UploadResult> uploadResults = new();
+            //List<UploadResult> uploadResults = new();
 
-            foreach (var file in files)
-            {
-                var uploadResult = new UploadResult();
-                string trustedFileNameForFileStorage;
-                var untrustedFileName = file.FileName;
-                uploadResult.FileName = untrustedFileName;
-                var trustedFileNameForDisplay =
-                    WebUtility.HtmlEncode(untrustedFileName);
+            //foreach (var file in files)
+            //{
+            //    var uploadResult = new UploadResult();
+            //    string trustedFileNameForFileStorage;
+            //    var untrustedFileName = file.FileName;
+            //    uploadResult.FileName = untrustedFileName;
+            //    var trustedFileNameForDisplay =
+            //        WebUtility.HtmlEncode(untrustedFileName);
 
-                if (filesProcessed < maxAllowedFiles)
-                {
-                    if (file.Length == 0)
-                    {
-                        //logger.LogInformation("{FileName} length is 0 (Err: 1)",
-                        //    trustedFileNameForDisplay);
-                        uploadResult.ErrorCode = 1;
-                    }
-                    else if (file.Length > maxFileSize)
-                    {
-                        //logger.LogInformation("{FileName} of {Length} bytes is " +
-                        //    "larger than the limit of {Limit} bytes (Err: 2)",
-                        //    trustedFileNameForDisplay, file.Length, maxFileSize);
-                        uploadResult.ErrorCode = 2;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            trustedFileNameForFileStorage = Path.GetRandomFileName();
-                            var path = Path.Combine("C:\\Users\\uic80946\\source\\repos\\LaLigaRepo\\LA_LIGA_REKREATIVO\\Client\\wwwroot",
-                          trustedFileNameForFileStorage);
-                            //var path = "C:\\Users\\uic80946\\source\\repos\\LaLigaRepo\\LA_LIGA_REKREATIVO\\Client\\wwwroot";
+            //    if (filesProcessed < maxAllowedFiles)
+            //    {
+            //        if (file.Length == 0)
+            //        {
+            //            //logger.LogInformation("{FileName} length is 0 (Err: 1)",
+            //            //    trustedFileNameForDisplay);
+            //            uploadResult.ErrorCode = 1;
+            //        }
+            //        else if (file.Length > maxFileSize)
+            //        {
+            //            //logger.LogInformation("{FileName} of {Length} bytes is " +
+            //            //    "larger than the limit of {Limit} bytes (Err: 2)",
+            //            //    trustedFileNameForDisplay, file.Length, maxFileSize);
+            //            uploadResult.ErrorCode = 2;
+            //        }
+            //        else
+            //        {
+            //            try
+            //            {
+            //                var fileNames = Directory.GetFiles("C:\\Users\\uic80946\\source\\repos\\LaLigaRepo\\LA_LIGA_REKREATIVO\\Client\\wwwroot");
+            //                var fnames = new List<string>();
+            //                foreach (string f in fileNames)
+            //                    fnames.Add(Path.GetFileName(f));
 
-                            await using FileStream fs = new(path, FileMode.Create);
-                            await file.CopyToAsync(fs);
+            //                trustedFileNameForFileStorage = Path.GetRandomFileName();
+            //                var path = Path.Combine("C:\\Users\\uic80946\\source\\repos\\LaLigaRepo\\LA_LIGA_REKREATIVO\\Client\\wwwroot",
+            //              file.FileName);
+            //                //var path = "C:\\Users\\uic80946\\source\\repos\\LaLigaRepo\\LA_LIGA_REKREATIVO\\Client\\wwwroot";
 
-                            //logger.LogInformation("{FileName} saved at {Path}",
-                            //    trustedFileNameForDisplay, path);
-                            uploadResult.Uploaded = true;
-                            uploadResult.StoredFileName = trustedFileNameForFileStorage;
-                        }
-                        catch (IOException ex)
-                        {
-                            //logger.LogError("{FileName} error on upload (Err: 3): {Message}",
-                            //    trustedFileNameForDisplay, ex.Message);
-                            uploadResult.ErrorCode = 3;
-                        }
-                    }
+            //                await using FileStream fs = new(path, FileMode.Create);
+            //                await file.CopyToAsync(fs);
 
-                    filesProcessed++;
-                }
-                else
-                {
-                    //logger.LogInformation("{FileName} not uploaded because the " +
-                    //    "request exceeded the allowed {Count} of files (Err: 4)",
-                    //    trustedFileNameForDisplay, maxAllowedFiles);
-                    uploadResult.ErrorCode = 4;
-                }
+            //                //logger.LogInformation("{FileName} saved at {Path}",
+            //                //    trustedFileNameForDisplay, path);
+            //                uploadResult.Uploaded = true;
+            //                uploadResult.StoredFileName = trustedFileNameForFileStorage;
+            //            }
+            //            catch (IOException ex)
+            //            {
+            //                //logger.LogError("{FileName} error on upload (Err: 3): {Message}",
+            //                //    trustedFileNameForDisplay, ex.Message);
+            //                uploadResult.ErrorCode = 3;
+            //            }
+            //        }
 
-                uploadResults.Add(uploadResult);
-            }
+            //        filesProcessed++;
+            //    }
+            //    else
+            //    {
+            //        //logger.LogInformation("{FileName} not uploaded because the " +
+            //        //    "request exceeded the allowed {Count} of files (Err: 4)",
+            //        //    trustedFileNameForDisplay, maxAllowedFiles);
+            //        uploadResult.ErrorCode = 4;
+            //    }
 
-            return new CreatedResult(resourcePath, uploadResults);
+            //    uploadResults.Add(uploadResult);
+            //}
+
+            return new CreatedResult(resourcePath, tt);
         }
     }
 }

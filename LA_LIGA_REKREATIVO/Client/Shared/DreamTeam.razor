@@ -1,0 +1,85 @@
+﻿@page "/dreamTeam"
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+@inject NavigationManager Navigation
+
+<style>
+
+    .demo-loadmore-list {
+        min-height: 350px;
+    }
+
+    .demo-loadmore-btn-content {
+        text-align: center;
+        margin-top: 12px;
+        height: 32px;
+        line-height: 32px;
+    }
+</style>
+
+<AntList Class="demo-loadmore-list" DataSource="@players" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
+    <ChildContent Context="item">
+        <ListItem>
+            <ListItemMeta>
+                <TitleTemplate>
+                    <span><img style="height:34px; width:34px; border-radius: 50%;" src="./@item.Picture" /></span>
+                    <span>                    <a @onclick="() => GoToProfilePage(item.Id)">@item.FirstName @item.LastName</a></span>
+                    <span>@teams.First(x => x.Id == item.TeamId).Name</span>
+                </TitleTemplate>
+            </ListItemMeta>
+            <div>@item.TeamId.ToString()</div>
+        </ListItem>
+    </ChildContent>
+    <LoadMore>
+        @if (!InitLoading && !Loading)
+        {
+            <div class="demo-loadmore-btn-content ">
+                <Button OnClick="OnLoadMore">loading more</Button>
+            </div>
+        }
+    </LoadMore>
+</AntList>
+
+@code {
+    private PlayerDto player = new();
+    private List<PlayerDto> players = new();
+    private List<TeamDto> teams = new();
+    public bool InitLoading { get; set; } = true;
+    public bool Loading { get; set; } = false;
+    public int count = 3;
+    public int multiple = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await Server.Players.Get();
+        players = res.Take(3).ToList();
+        var teamsRes = await Server.Teams.Get();
+        teams = teamsRes.ToList();
+        InitLoading = false;
+        await base.OnInitializedAsync();
+
+    }
+    // public override async Task SetParametersAsync(ParameterView parameters)
+    // {
+    //     var res = await Server.Players.Get();
+    //     players = res.ToList();
+    // }
+
+    public async Task OnLoadMore()
+    {
+        multiple++;
+        count = 3 * multiple;
+        var res = await Server.Players.Get();
+        players = res.Take(count).ToList();
+        Loading = true;
+        // var res = await GetData();
+        //players.AddRange(res);
+        Loading = false;
+    }
+
+    private void GoToProfilePage(int id)
+    {
+        Navigation.NavigateTo($"/playerProfile/{id}");
+    }
+}

@@ -1,4 +1,5 @@
 using LA_LIGA_REKREATIVO.Server.Data;
+using LA_LIGA_REKREATIVO.Server.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<LaLigaContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 

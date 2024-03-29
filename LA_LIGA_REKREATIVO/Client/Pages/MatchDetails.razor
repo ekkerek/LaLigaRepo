@@ -7,26 +7,26 @@
 <div>
     <GridRow>
         <Divider>@title</Divider>
-            <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
-                <div>
-                    <div> <img style="height:48px;" src="./rcqgqmku.p0v.png" /> </div>
-                    <div>@Match.HomeTeam.Name</div>
+        <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
+            <div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="./@Match.HomeTeam.LogoSrc" /> </div>
+                <div>@Match.HomeTeam.Name</div>
             </div>
         </GridCol>
         <GridCol Style="font-weight:500; display: grid; justify-content: center" Span="8">
-            <div style="display:flex; justify-content: center;font-size: 12px;">
-                @Match.GameTime.ToShortDateString()
+            <div style="display:flex; justify-content: center;align-items: flex-start; font-size: x-small;position: relative; bottom: 5px;">
+                @Match.GameTime.ToShortDateString() @Match.GameTime.ToShortTimeString()
             </div>
-            <div style="display:flex; justify-content: center;font-size: 12px;">
-                @Match.GameTime.ToShortTimeString()
-            </div>
-            <div style="display:flex; justify-content: center;">
+            @*             <div style="display:flex; justify-content: center;font-size: 12px;">
+
+            </div> *@
+            <div style="display:flex; justify-content: center; font-size:xx-large; position: relative; bottom: 10px;">
                 @Match.HomeTeamGoals - @Match.AwayTeamGoals
             </div>
         </GridCol>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div> <img style="height:48px;" src="./rcqgqmku.p0v.png" /> </div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="./@Match.AwayTeam.LogoSrc" /> </div>
                 <div>            @Match.AwayTeam.Name</div>
             </div>
         </GridCol>
@@ -67,7 +67,7 @@
     protected async override Task OnParametersSetAsync()
     {
         Match = await Server.Matches.Get(Id);
-        title = Match.League.Name.ToString() + " - " + Match.GameRound.ToString();
+        title = Match.League.Name.ToString() + " - " + " round " + Match.GameRound.ToString();
     }
 
     private string GetImgSrc(SummaryType type)

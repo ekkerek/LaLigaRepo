@@ -10,7 +10,9 @@
         public string Name { get; set; }
         public string? ParticipantOf { get; set; }
         public string? LogoSrc { get; set; }
-    
+        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
+
         public ICollection<Player> Players { get; set; }
         public ICollection<League> Leagues { get; set; }
     }

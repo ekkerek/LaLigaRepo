@@ -12,6 +12,9 @@ namespace LA_LIGA_REKREATIVO.Server.Models
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string? Picture { get; set; }
+        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
         public Team Team { get; set; }
         public ICollection<Match> Matches { get; set; }
     }

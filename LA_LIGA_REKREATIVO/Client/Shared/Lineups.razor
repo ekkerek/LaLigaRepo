@@ -1,4 +1,6 @@
 ﻿@using LA_LIGA_REKREATIVO.Shared.Dto
+@inject NavigationManager Navigation
+
 <GridRow>
     <GridCol Span="12" Style="padding:4px;">
         <Collapse DefaultActiveKey="@(new[]{"1"})" Animation>
@@ -6,25 +8,37 @@
             {
                 <Panel Key="@player.Id.ToString()">
                     <HeaderTemplate>
-                        <div>
-                            @player.FirstName
-                        </div>
-                        <div>
-                            <span>@player.LastName</span>
-                            <span style="float: right"> @GetTotalPoint(player)</span>
+                        @*        <div>
+                    @player.FirstName
+                    </div> *@
+                        <div style="word-break:break-word">
+                            <span style="font-size:small">    @player.FirstName</span>
+                            <span style="font-size: small; font-weight: 700;">@player.LastName</span>
+                            <span style="float: right; font-weight: 700;">
+                                @GetTotalPoint(player)
+                                <Icon  Type="star" Theme="outline" />
+                            </span>
+
 
                         </div>
                     </HeaderTemplate>
                     <ChildContent>
-                        <Tooltip Title="match attended" Style="padding-right: 10%">
-                            <img height="24px;" src="./football-jersey.png" />
-                        </Tooltip>
-                        @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
-                        {
-                            <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
-                                <img height="24px;" src="@GetImgSrc(item.Type)" />
-                            </Tooltip>
-                        }
+                        <div>
+                            <div>
+                                <Tooltip Title="match attended" Style="padding-right: 10%">
+                                    <img height="24px;" src="./football-jersey.png" />
+                                </Tooltip>
+                                @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
+                                {
+                                    <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
+                                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                                    </Tooltip>
+                                }
+                            </div>
+                            <div style="display: flex; justify-content: center;padding-top: 8px;">
+                                <Button Size="@AntDesign.ButtonSize.Small" Type="@AntDesign.ButtonType.Primary" OnClick="() => GoToPlayerProfile(player.Id)">Player profile</Button>
+                            </div>
+                        </div>
                     </ChildContent>
                 </Panel>
             }
@@ -36,25 +50,36 @@
             {
                 <Panel Key="@player.Id.ToString()">
                     <HeaderTemplate>
-                        <div>
-                            @player.FirstName
-                        </div>
-                        <div>
-                            <span>@player.LastName</span>
-                            <span style="float: right"> @GetTotalPoint(player)</span>
+                        @*   <div>
+                    @player.FirstName
+                    </div> *@
+                        <div style="word-break:break-word">
+                            <span style="font-size:small">    @player.FirstName</span>
+                            <span style="font-size: small; font-weight: 700;">@player.LastName</span>
+                            <span style="float: right; font-weight: 700;">
+                                @GetTotalPoint(player)
+                                <Icon Type="star" Theme="outline" />
+                            </span>
                         </div>
 
                     </HeaderTemplate>
                     <ChildContent>
-                        <Tooltip Title="match attended" Style="padding-right: 10%">
-                            <img height="24px;" src="./football-jersey.png" />
-                        </Tooltip>
-                        @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
-                        {
-                            <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
-                                <img height="24px;" src="@GetImgSrc(item.Type)" />
-                            </Tooltip>
-                        }
+                        <div>
+                            <div>
+                                <Tooltip Title="match attended" Style="padding-right: 10%">
+                                    <img height="24px;" src="./football-jersey.png" />
+                                </Tooltip>
+                                @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
+                                {
+                                    <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
+                                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                                    </Tooltip>
+                                }
+                            </div>
+                            <div style="display: flex; justify-content: center;padding-top: 8px;">
+                                <Button Size="@AntDesign.ButtonSize.Small" Type="@AntDesign.ButtonType.Primary" OnClick="() => GoToPlayerProfile(player.Id)">Player profile</Button>
+                            </div>
+                        </div>
                     </ChildContent>
                 </Panel>
             }
@@ -148,5 +173,11 @@
         }
         return summ;
 
+    }
+
+    private void GoToPlayerProfile(int playerId)
+    {
+
+        Navigation.NavigateTo($"/playerProfile/{playerId}");
     }
 }

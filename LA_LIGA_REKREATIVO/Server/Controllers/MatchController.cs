@@ -197,7 +197,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
                 teamStatsList.Add(teamStatsDto);
             }
-            return teamStatsList;
+            return teamStatsList.OrderByDescending(x => x.TotalPoints).ToList();
         }
 
         // DELETE api/<MatchController>/5

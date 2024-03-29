@@ -3,21 +3,68 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @inject Server Server;
 
-<Collapse DefaultActiveKey="@(new[]{"5"})" Animation>
+<Select TItem="LeagueDto"
+        TItemValue="int?"
+        DataSource="@leagues"
+        DefaultValue="1"
+        LabelName="@nameof(LeagueDto.Name)"
+        ValueName="@nameof(PlayerDto.Id)"
+        Style="width: 200px"
+        Placeholder="Select a league"
+        IgnoreItemChanges="false"
+        OnSelectedItemChanged="OnSelectedLeague"
+        AllowClear>
+</Select>
+
+<Table TItem="TeamStatsDto"
+       DataSource="@stats"
+       Size="TableSize.Small"
+       HidePagination>
+    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
+    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
+    <PropertyColumn Title="G" Property="c=>c.Goals">
+        @context.Goals: @context.GoalsConceded
+    </PropertyColumn>
+    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+</Table>
+
+@* <Collapse DefaultActiveKey="@(new[]{"5"})" Animation>
     @foreach (var league in leagues)
     {
         <Panel Header="@league.Name" Key="@league.Id.ToString()">
             <Standings LeagueId="league.Id"></Standings>
         </Panel>
     }
-</Collapse>
+</Collapse> *@
 
 @code {
     private List<LeagueDto> leagues = new();
+    List<TeamStatsDto> stats = new();
+    int defaultvalue = 1;
 
     protected async override Task OnParametersSetAsync()
     {
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
+
+        stats = await Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
+        StateHasChanged();
+    }
+
+    private async Task OnSelectedLeague(LeagueDto league)
+    {
+        if (league is null) return;
+
+        stats = await Server.Matches.GetStandingsByLeague(league.Id);
+        //var leagueId = Int32.Parse(league.Id);
+        // LeagueDto tempLeague = new()
+        //     {
+        //         Id = league.Id,
+        //         Name = leagues.FirstOrDefault(x => x.Id == league.Id).Name,
+        //         Year = leagues.FirstOrDefault(x => x.Id == league.Id).Year
+        //     };
+        // match.League = tempLeague;
+        // teams = await Server.Teams.GetTeamsByLeague(league.Id);
+        StateHasChanged();
     }
 }

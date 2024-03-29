@@ -107,4 +107,20 @@ a, .btn-link {
     width: calc(100vw - 250px);
     justify-content: flex-end;
 }
+
+.ant-list-split .ant-list-item {
+    border-bottom: 1px solid lightgray !important;
+}
+
+.rz-calendar .rz-inputtext {
+    background-color: transparent !important;
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 4px !important;
+}
+
+    .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+        margin-right: 4px !important
+    }
 /*Code I added - End*/

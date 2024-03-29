@@ -1,0 +1,13 @@
+﻿@page "/teamProfile/{Id:int}"
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+
+
+@code {
+
+    [Parameter] public int Id { get; set; }
+    private TeamDto team = new();
+    //private List<TeamDto> teams = new();
+    private TeamStatsDto teamStats = new();
+}

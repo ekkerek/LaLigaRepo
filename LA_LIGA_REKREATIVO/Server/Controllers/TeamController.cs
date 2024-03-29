@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using LA_LIGA_REKREATIVO.Client.Server;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Radzen.Blazor.Rendering;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

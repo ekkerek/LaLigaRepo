@@ -10,13 +10,13 @@
                         <span style="font-weight:500; padding-right: 0.5rem;">@item.Time.ToString()'</span>
                         @*  <span>&nbsp @item.Type.ToString() &nbsp</span> *@
                         <img height="24px;" src="@GetImgSrc(item.Type)" />
-                        <span style="font-weight:500;padding-left: 0.5rem;">@item.Player.FirstName</span>
+                        <span style="font-weight:500;padding-left: 0.5rem;">@item.Player.FirstName @item.Player.LastName</span>
                     </GridRow>
                 }
                 else
                 {
                     <GridRow Style="display:flex; justify-content: right">
-                        <span style="font-weight:500;padding-right: 0.5rem;">@item.Player.FirstName</span>
+                        <span style="font-weight:500;padding-right: 0.5rem;">@item.Player.FirstName @item.Player.LastName</span>
                         @*  <span>&nbsp @item.Type.ToString() &nbsp</span> *@
                         <img height="24px;" src="@GetImgSrc(item.Type)" />
                         <span style="font-weight:500; padding-left: 0.5rem">@item.Time.ToString()'</span>

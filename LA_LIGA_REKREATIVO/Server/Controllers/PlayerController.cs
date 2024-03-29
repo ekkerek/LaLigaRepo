@@ -60,7 +60,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] PlayerDto value)
         {
-            var updatedPlayer = _context.Players.Include(x=> x.Team).FirstOrDefault(x => x.Id == id);
+            var updatedPlayer = _context.Players.Include(x => x.Team).FirstOrDefault(x => x.Id == id);
             updatedPlayer.FirstName = value.FirstName;
             updatedPlayer.LastName = value.LastName;
             updatedPlayer.Team = _context.Teams.FirstOrDefault(x => x.Id == value.TeamId);
@@ -80,6 +80,16 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).FirstOrDefault(x => x.Id == id);
             var playerStats = player.Matches.Select(x => x.Summaries);
             PlayerStatsDto returnPlayer = new PlayerStatsDto();
+            returnPlayer.TotalMatches = player.Matches.Count();
+            returnPlayer.Wins = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
+
+            returnPlayer.Draws = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals == x.HomeTeamGoals);
+
+            returnPlayer.Losts = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals < x.HomeTeamGoals);
+
             foreach (var stats in playerStats)
             {
                 foreach (var stat in stats)
@@ -97,6 +107,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
             }
 
+            returnPlayer.Goals = returnPlayer.Goals + returnPlayer.GoalsFrom10meter + returnPlayer.GoalsFromPenalty;
+
+            returnPlayer.GoalsPerMatch = returnPlayer.Goals / returnPlayer.TotalMatches;
+            returnPlayer.WinPerMatch = (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
             returnPlayer.Player = _mapper.Map<PlayerDto>(player);
             return returnPlayer;
         }
