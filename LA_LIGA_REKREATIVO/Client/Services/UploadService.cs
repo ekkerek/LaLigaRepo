@@ -1,8 +1,6 @@
 ﻿using LA_LIGA_REKREATIVO.Shared;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net.Http.Headers;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
 namespace LA_LIGA_REKREATIVO.Client.Services

@@ -9,7 +9,7 @@
 
 <div style="padding: 1rem!important; display: flex; justify-content: space-between; align-items:center;" class="rz-p-12 rz-text-align-center">
     <Button Style="background-color:transparent;" OnClick="@OnPrev" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Left" />
-    <RadzenDatePicker Style="width: 200px; background-color:transparent;" ShowTime=false DateFormat="dd-MM-yyyy" Change="OnChangeDate" @bind-Value=@currentDate Name="RadzenDatePickerBindValue" />
+    <DatePicker TValue="DateTime" Picker="@DatePickerType.Date" Change="OnChangeDate" @bind-Value=@currentDate />
     <Button Style="background-color:transparent;" OnClick="@OnNext" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Right" />
 </div>
 

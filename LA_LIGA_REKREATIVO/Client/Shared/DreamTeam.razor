@@ -4,7 +4,8 @@
 @inject Server Server
 @inject NavigationManager Navigation
 
-<style>
+
+@* <style>
 
     .demo-loadmore-list {
         min-height: 350px;
@@ -16,48 +17,72 @@
         height: 32px;
         line-height: 32px;
     }
-</style>
+</style> *@
 
-<AntList Class="demo-loadmore-list" DataSource="@players" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
+<Select TItem="LeagueDto"
+        TItemValue="int?"
+        DataSource="@leagues"
+        DefaultValue="5"
+        LabelName="@nameof(LeagueDto.Name)"
+        ValueName="@nameof(PlayerDto.Id)"
+        Style="width: 200px"
+        Placeholder="Select a league"
+        IgnoreItemChanges="false"
+        OnSelectedItemChanged="OnSelectedLeague"
+        AllowClear>
+</Select>
+
+
+<AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
     <ChildContent Context="item">
         <ListItem>
             <ListItemMeta>
                 <TitleTemplate>
-                    <span><img style="height:34px; width:34px; border-radius: 50%;" src="./@item.Picture" /></span>
-                    <span>                    <a @onclick="() => GoToProfilePage(item.Id)">@item.FirstName @item.LastName</a></span>
-                    <span>@teams.First(x => x.Id == item.TeamId).Name</span>
+                    <span><img style="height:34px; width:34px; border-radius: 50%;" src="./@item.Player.Picture" /></span>
+                    <span>                    <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a></span>
+                  @*   <span>@item?.Team?.Name</span> *@
                 </TitleTemplate>
             </ListItemMeta>
-            <div>@item.TeamId.ToString()</div>
+            <div>@item?.TotalPoints</div>
         </ListItem>
     </ChildContent>
-    <LoadMore>
+@*     <LoadMore>
         @if (!InitLoading && !Loading)
         {
             <div class="demo-loadmore-btn-content ">
                 <Button OnClick="OnLoadMore">loading more</Button>
             </div>
         }
-    </LoadMore>
+    </LoadMore> *@
 </AntList>
 
 @code {
-    private PlayerDto player = new();
-    private List<PlayerDto> players = new();
-    private List<TeamDto> teams = new();
+    // private PlayerDto player = new();
+    // private List<PlayerDto> players = new();
+    //private List<TeamDto> teams = new();
+    private List<PlayerStatsDto> stats = new();
+    private List<LeagueDto> leagues = new();
     public bool InitLoading { get; set; } = true;
     public bool Loading { get; set; } = false;
-    public int count = 3;
+    public int count = 6;
     public int multiple = 1;
 
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+    }
     protected override async Task OnInitializedAsync()
     {
-        var res = await Server.Players.Get();
-        players = res.Take(3).ToList();
-        var teamsRes = await Server.Teams.Get();
-        teams = teamsRes.ToList();
+        // var res = await Server.Players.Get();
+        // players = res.Take(3).ToList();
+        var resStats = await Server.Players.GetDreamTeamByLeague(5);
+        stats = resStats.Take(6).ToList();
+        // var teamsRes = await Server.Teams.Get();
+        // teams = teamsRes.ToList();
         InitLoading = false;
-        await base.OnInitializedAsync();
+        //await base.OnInitializedAsync();
 
     }
     // public override async Task SetParametersAsync(ParameterView parameters)
@@ -66,20 +91,39 @@
     //     players = res.ToList();
     // }
 
-    public async Task OnLoadMore()
-    {
-        multiple++;
-        count = 3 * multiple;
-        var res = await Server.Players.Get();
-        players = res.Take(count).ToList();
-        Loading = true;
-        // var res = await GetData();
-        //players.AddRange(res);
-        Loading = false;
-    }
+    // public async Task OnLoadMore()
+    // {
+    //     multiple++;
+    //     count = 3 * multiple;
+    //     var res = await Server.Players.Get();
+    //     players = res.Take(count).ToList();
+    //     Loading = true;
+    //     // var res = await GetData();
+    //     //players.AddRange(res);
+    //     Loading = false;
+    // }
 
     private void GoToProfilePage(int id)
     {
         Navigation.NavigateTo($"/playerProfile/{id}");
+    }
+
+    private async Task OnSelectedLeague(LeagueDto league)
+    {
+        if (league is null) return;
+
+        var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
+        stats = resStats.ToList();
+        //stats = await Server.Matches.GetStandingsByLeague(league.Id);
+        //var leagueId = Int32.Parse(league.Id);
+        // LeagueDto tempLeague = new()
+        //     {
+        //         Id = league.Id,
+        //         Name = leagues.FirstOrDefault(x => x.Id == league.Id).Name,
+        //         Year = leagues.FirstOrDefault(x => x.Id == league.Id).Year
+        //     };
+        // match.League = tempLeague;
+        // teams = await Server.Teams.GetTeamsByLeague(league.Id);
+        StateHasChanged();
     }
 }

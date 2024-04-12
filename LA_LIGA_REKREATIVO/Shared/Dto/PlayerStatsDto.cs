@@ -6,6 +6,7 @@
         //public int Season { get; set; }
         //General
         public int TotalMatches { get; set; }
+        public int TotalPoints { get; set; }
         public int Wins { get; set; }
         public int Losts { get; set; }
         public int Draws { get; set; }
@@ -26,5 +27,6 @@
         public int GoalsFrom10meter { get; set; }
 
         public PlayerDto Player { get; set; }
+        public TeamDto Team { get; set; }
     }
 }

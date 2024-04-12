@@ -1,3 +1,4 @@
+using Amazon.S3;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Services;
 using Microsoft.EntityFrameworkCore;
@@ -5,16 +6,19 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var conn = builder.Configuration.GetConnectionString("DefaultConnection"); 
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<LaLigaContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseNpgsql(conn));
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+
 
 var app = builder.Build();
 
@@ -30,7 +34,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
@@ -48,7 +52,7 @@ app.UseEndpoints(endpoints =>
 });
 
 
-app.MapRazorPages();
+//app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 

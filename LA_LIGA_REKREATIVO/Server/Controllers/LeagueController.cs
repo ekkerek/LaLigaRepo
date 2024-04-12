@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.S3;
+using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Server.Services;
@@ -20,13 +21,15 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         private readonly IMapper _mapper;
         private readonly IHostEnvironment _env;
         private readonly IUploadService _uploadService;
+        private readonly IAmazonS3 _s3Client;
 
-        public LeagueController(LaLigaContext context, IMapper mapper, IHostEnvironment env, IUploadService uploadService)
+        public LeagueController(LaLigaContext context, IMapper mapper, IHostEnvironment env, IUploadService uploadService, IAmazonS3 s3Client)
         {
             _context = context;
             _mapper = mapper;
             _env = env;
             _uploadService = uploadService;
+            _s3Client = s3Client;
         }
 
         // GET: api/<LeagueController>
@@ -88,6 +91,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("postFile")]
         public async Task<ActionResult<IList<UploadResult>>> PostFile([FromForm] IEnumerable<IFormFile> files)
         {
+            var bucketExists = await _s3Client.DoesS3BucketExistAsync("la-liga-nikad-vidjeno-test");
+            //if (bucketExists) return BadRequest($"Bucket {bucketName} already exists.");
+            await _s3Client.PutBucketAsync("la-liga-nikad-vidjeno-test");
+
             var tt = await _uploadService.PostFile(files);
             //var maxAllowedFiles = 3;
             //long maxFileSize = 1024 * 1024;

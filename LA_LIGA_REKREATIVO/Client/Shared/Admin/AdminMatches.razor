@@ -43,7 +43,6 @@
 
  @code {
     private IEnumerable<MatchDto> matches = Enumerable.Empty<MatchDto>();
-    //List<MatchDto> matches = new();
     private bool showAddMatchModal;
     private bool showEditMatchModal;
     private MatchDto Match = new();
@@ -52,8 +51,6 @@
     protected async override Task OnInitializedAsync()
     {
         matches = await Server.Matches.Get();
-
-        var standings = await Server.Matches.GetStandingsByLeague(5);
         base.OnInitialized();
     }
 

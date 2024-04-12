@@ -46,6 +46,7 @@
     private IEnumerable<TeamDto> teams = Enumerable.Empty<TeamDto>();
     private int selectedTeamId = 0;
     private bool submitting;
+    private List<IBrowserFile> loadedFiles = new();
 
     protected async override Task OnInitializedAsync()
     {
@@ -92,6 +93,9 @@
 
     private List<File> files = new();
     private List<UploadResult> uploadResults = new();
+
+
+
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         uploadResults = await _uploadService.UploadFile(e);

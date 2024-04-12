@@ -4,125 +4,91 @@
 @inject Server Server
 
 <div>
-    <Card Title="Player profile">
-        @*         <Extra>
-        <a>More</a>
-        </Extra> *@
-        <Body>
-            <div style="display: flex; justify-content: center;">
-                <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="./@player.Picture" />
-            </div>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700; font-size: medium">First name:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@player.FirstName</GridCol>
-            </GridRow>
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Last name:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@player.LastName</GridCol>
-            </GridRow>
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Team:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@player.TeamId</GridCol>
-            </GridRow>
-
-            <Divider Style="margin: 12px;" />
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Total Matches:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.TotalMatches</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Wins:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.Wins</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Draws:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.Draws</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Losts:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.Losts</GridCol>
-            </GridRow>
-
-            <Divider Style="margin: 12px;" />
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.Goals</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Assists:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.Assists</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Own goals:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.OwnGoals</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals Per Match:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsPerMatch</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">WinPerMatch</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.WinPerMatch %</GridCol>
-            </GridRow>
-
-            <Divider Style="margin: 12px;" />
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Yellow Cards:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.YellowCards</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Red Cards:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.RedCards</GridCol>
-            </GridRow>
-
-            <Divider Style="margin: 12px;" />
-
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 7m:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFromPenalty</GridCol>
-            </GridRow>
-            <GridRow>
-                <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 10m:</GridCol>
-                <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFrom10meter</GridCol>
-            </GridRow>
-
-        </Body>
-    </Card>
-    @*      <GridRow>
-    <GridCol Span="12">First name:</GridCol>
-    <GridCol Span="12">@player.FirstName</GridCol>
+    <div style="display: flex; justify-content: center;">
+        <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="./@player.Picture" />
+    </div>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700; font-size: medium">First name:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@player.FirstName</GridCol>
     </GridRow>
 
     <GridRow>
-    <GridCol Span="12">Last name:</GridCol>
-    <GridCol Span="12">@player.LastName</GridCol>
-    </GridRow> *@
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Last name:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@player.LastName</GridCol>
+    </GridRow>
 
-    @*   <div style="display: flex; justify-content:space-evenly">
-    <span>First name: </span> <span>@player.FirstName</span>
-    </div>
-    <div style="display: flex; justify-content:space-evenly">
-    <span>Last name: </span><span>@player.LastName</span>
-    </div>
-    <div style="display: flex; justify-content:space-evenly">
-    <span>Team:</span>  <span>@player.TeamId</span>
-    </div> *@
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Team:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@player.TeamId</GridCol>
+    </GridRow>
+
+    <Divider Style="margin: 12px;" />
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Total Matches:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.TotalMatches</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Wins:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Wins</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Draws:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Draws</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Losts:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Losts</GridCol>
+    </GridRow>
+
+    <Divider Style="margin: 12px;" />
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Goals</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Assists:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Assists</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Own goals:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.OwnGoals</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals Per Match:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsPerMatch</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">WinPerMatch</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.WinPerMatch %</GridCol>
+    </GridRow>
+
+    <Divider Style="margin: 12px;" />
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Yellow Cards:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.YellowCards</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Red Cards:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.RedCards</GridCol>
+    </GridRow>
+
+    <Divider Style="margin: 12px;" />
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 7m:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFromPenalty</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 10m:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFrom10meter</GridCol>
+    </GridRow>
 </div>
-
-@* <div>
-    lista utakmica koje je odigrao,
-    podaci u jednom redu => domacin rezultat gost broj poena na tom mecu, ako se ekspanduje, otvori se igracev ucinak na tom mecu
-</div> *@
-
 
 
 @code {
-    //public PlayerDto Player { get; set; }
     [Parameter] public int Id { get; set; }
     private PlayerDto player = new();
     private List<TeamDto> teams = new();

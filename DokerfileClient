@@ -1,0 +1,22 @@
+﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY LA_LIGA_REKREATIVO/ .
+RUN dotnet restore "Client/LA_LIGA_REKREATIVO.Client.csproj" 
+COPY . .
+RUN dotnet build "Client/LA_LIGA_REKREATIVO.Client.csproj" -c Release  -o /app/build 
+ 
+FROM build AS publish
+RUN dotnet publish "Client/LA_LIGA_REKREATIVO.Client.csproj" -c Release -o /app/publish 
+ 
+EXPOSE 80
+EXPOSE 443
+
+FROM nginxinc/nginx-unprivileged:bookworm-perl AS final
+WORKDIR /usr/share/nginx/html
+COPY --from=publish /app/publish/wwwroot .
+COPY nginx.conf /etc/nginx/nginx.conf
+
+USER root
+
+COPY replace_url.sh .
+RUN chmod +x replace_url.sh

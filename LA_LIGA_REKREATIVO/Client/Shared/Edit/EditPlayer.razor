@@ -1,7 +1,10 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared
 @using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Services
 @inject Server Server;
 @inject IMessageService MessageService
+@inject UploadService _uploadService
 
 <Modal Title="Edit player"
        Visible="true"
@@ -28,6 +31,9 @@
                     }
                 </SelectOptions>
             </SimpleSelect>
+        </FormItem>
+        <FormItem>
+            <InputFile OnChange="OnInputFileChange" />
         </FormItem>
     </Form>
 </Modal>
@@ -78,5 +84,12 @@
     {
         selectedTeamId = Int32.Parse(value);
         player.TeamId = teams.FirstOrDefault(x => x.Id == selectedTeamId).Id;
+    }
+
+    private List<File> files = new();
+    private List<UploadResult> uploadResults = new();
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        uploadResults = await _uploadService.UploadFile(e);
     }
 }

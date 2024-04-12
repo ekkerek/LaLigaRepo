@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "5000:8080"
+      
+  client:
+    image: file-images
+    build:
+      context: .
+      dockerfile: DokerfileClient
+    container_name: client
+    tty: true
+    entrypoint: ["/bin/bash", "-c","./replace_url.sh"]
+    volumes:
+      - local_images:/var/lib/images
+
+    ports:
+      - "5001:8080"   
+      
+  db:
+    image: postgres
+    container_name: local_pgdb
+    restart: always
+    ports:
+      - "9000:5432"
+    environment:
+      POSTGRES_USER: user-name
+      POSTGRES_PASSWORD: strong-password
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+volumes:
+  local_pgdata:
+  pgadmin-data:
+  local_images:  

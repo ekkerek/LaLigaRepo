@@ -55,6 +55,28 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new PlayerStatsDto();
         }
 
+        public async Task<List<PlayerStatsDto>> GetPlayersStats(int leagueId, int count)
+        {
+            var result = await _httpClient.GetAsync($"api/player/getplayersstats/{leagueId}/{count}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<PlayerStatsDto>>(json);
+            }
+            return new List<PlayerStatsDto>();
+        }
+
+        public async Task<List<PlayerStatsDto>> GetDreamTeamByLeague(int leagueId)
+        {
+            var result = await _httpClient.GetAsync($"api/player/getDreamTeam/{leagueId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<PlayerStatsDto>>(json);
+            }
+            return new List<PlayerStatsDto>();
+        }
+
         public async Task<bool> Update(PlayerDto player)
         {
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/player/{player.Id}");

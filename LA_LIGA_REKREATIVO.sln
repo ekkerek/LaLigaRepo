@@ -9,6 +9,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LA_LIGA_REKREATIVO.Client",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LA_LIGA_REKREATIVO.Shared", "LA_LIGA_REKREATIVO\Shared\LA_LIGA_REKREATIVO.Shared.csproj", "{CE685FE3-C896-4359-9747-86CC56696ABC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DE5B675-C051-40A9-98D1-6D14896D38C6}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
+		Dockerfile = Dockerfile
+		DokerfileClient = DokerfileClient
+		nginx.conf = nginx.conf
+		..\..\..\Downloads\replace_url.sh = ..\..\..\Downloads\replace_url.sh
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +39,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0CC4E885-6C3D-47B3-BC30-3ECC628C7D26} = {0DE5B675-C051-40A9-98D1-6D14896D38C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8237785B-CF86-4047-9BFC-9850B3483A15}
