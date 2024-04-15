@@ -1,4 +1,5 @@
 ﻿using Amazon.S3;
+using Amazon.S3.Model;
 using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
@@ -91,11 +92,23 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("postFile")]
         public async Task<ActionResult<IList<UploadResult>>> PostFile([FromForm] IEnumerable<IFormFile> files)
         {
-            var bucketExists = await _s3Client.DoesS3BucketExistAsync("la-liga-nikad-vidjeno-test");
+            var bucketName = "test-la-liga-bucket";
+            var bucketExists = await _s3Client.DoesS3BucketExistAsync(bucketName);
+            //if (!bucketExists) return NotFound($"Bucket {bucketName} does not exist.");
+            var request = new PutObjectRequest()
+            {
+                BucketName = bucketName,
+                //Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
+                Key = files.FirstOrDefault().FileName,
+                InputStream = files.FirstOrDefault().OpenReadStream()
+            };
+            request.Metadata.Add("Content-Type", files.FirstOrDefault().ContentType);
+            await _s3Client.PutObjectAsync(request);
+            //return Ok($"File {prefix}/{file.FileName} uploaded to S3 successfully!");
             //if (bucketExists) return BadRequest($"Bucket {bucketName} already exists.");
             //await _s3Client.PutBucketAsync("la-liga-nikad-vidjeno-test");
 
-            var tt = await _uploadService.PostFile(files);
+            //var tt = await _uploadService.PostFile(files);
             //var maxAllowedFiles = 3;
             //long maxFileSize = 1024 * 1024;
             //var filesProcessed = 0;
@@ -169,7 +182,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //    uploadResults.Add(uploadResult);
             //}
 
-            return new CreatedResult(resourcePath, tt);
+            return new CreatedResult(resourcePath, new List<UploadResult>());
         }
     }
 }
