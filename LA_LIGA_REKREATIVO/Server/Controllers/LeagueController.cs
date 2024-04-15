@@ -93,7 +93,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             var bucketExists = await _s3Client.DoesS3BucketExistAsync("la-liga-nikad-vidjeno-test");
             //if (bucketExists) return BadRequest($"Bucket {bucketName} already exists.");
-            await _s3Client.PutBucketAsync("la-liga-nikad-vidjeno-test");
+            //await _s3Client.PutBucketAsync("la-liga-nikad-vidjeno-test");
 
             var tt = await _uploadService.PostFile(files);
             //var maxAllowedFiles = 3;
