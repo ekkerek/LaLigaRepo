@@ -18,5 +18,3 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 USER root
 
-COPY replace_url.sh .
-RUN chmod +x replace_url.sh

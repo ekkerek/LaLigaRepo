@@ -14,7 +14,6 @@ services:
       dockerfile: DokerfileClient
     container_name: client
     tty: true
-    entrypoint: ["/bin/bash", "-c","./replace_url.sh"]
     volumes:
       - local_images:/var/lib/images
 
