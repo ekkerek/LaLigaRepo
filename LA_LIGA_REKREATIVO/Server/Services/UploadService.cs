@@ -12,6 +12,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             long maxFileSize = 1024 * 1024;
             var filesProcessed = 0;
             //var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
+
             List<UploadResult> uploadResults = new();
 
             foreach (var file in files)
