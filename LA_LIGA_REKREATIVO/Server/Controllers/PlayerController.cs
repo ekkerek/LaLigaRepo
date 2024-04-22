@@ -44,7 +44,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public void Post([FromBody] PlayerDto playerDto)
         {
             var team = _context.Teams.FirstOrDefault(r => r.Id == playerDto.TeamId);
-            //playerDto.Team = _mapper.Map<TeamDto>(rl);
 
             var newPlayer = _mapper.Map<Player>(playerDto);
             newPlayer.Team = team;
@@ -63,6 +62,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var updatedPlayer = _context.Players.Include(x => x.Team).FirstOrDefault(x => x.Id == id);
             updatedPlayer.FirstName = value.FirstName;
             updatedPlayer.LastName = value.LastName;
+            updatedPlayer.Picture = value.Picture;
             updatedPlayer.Team = _context.Teams.FirstOrDefault(x => x.Id == value.TeamId);
             _context.Players.Update(updatedPlayer);
             _context.SaveChanges();
@@ -109,7 +109,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
             returnPlayer.Goals = returnPlayer.Goals + returnPlayer.GoalsFrom10meter + returnPlayer.GoalsFromPenalty;
 
-            returnPlayer.GoalsPerMatch = returnPlayer.Goals / returnPlayer.TotalMatches;
+            returnPlayer.GoalsPerMatch = (double)returnPlayer.Goals / (double)returnPlayer.TotalMatches;
             returnPlayer.WinPerMatch = (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
             returnPlayer.Player = _mapper.Map<PlayerDto>(player);
             return returnPlayer;

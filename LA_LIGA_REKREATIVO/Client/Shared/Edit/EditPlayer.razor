@@ -4,7 +4,7 @@
 @using LA_LIGA_REKREATIVO.Client.Services
 @inject Server Server;
 @inject IMessageService MessageService
-@inject UploadService _uploadService
+@inject FileService _fileService
 
 <Modal Title="Edit player"
        Visible="true"
@@ -15,7 +15,7 @@
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="editPlayerForm">
+          @ref="editPlayerForm">
         <FormItem Label="First Name">
             <Input @bind-Value="context.FirstName" />
         </FormItem>
@@ -68,6 +68,10 @@
 
     private async Task OnFinish(EditContext editContext)
     {
+        if (uploadResults.FirstOrDefault() is not null)
+        {
+            player.Picture = uploadResults.FirstOrDefault()?.StoredFileName;
+        }
         var result = await Server.Players.Update(player);
         if (result)
             _ = MessageService.Success("Player is edited.");
@@ -86,10 +90,10 @@
         player.TeamId = teams.FirstOrDefault(x => x.Id == selectedTeamId).Id;
     }
 
-    private List<File> files = new();
     private List<UploadResult> uploadResults = new();
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        uploadResults = await _uploadService.UploadFile(e);
+        uploadResults = new();
+        uploadResults = await _fileService.UploadFile(e);
     }
 }

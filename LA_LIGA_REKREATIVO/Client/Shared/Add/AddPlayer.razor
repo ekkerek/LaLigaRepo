@@ -4,7 +4,7 @@
 @using LA_LIGA_REKREATIVO.Client.Services
 @inject Server Server;
 @inject IMessageService MessageService
-@inject UploadService _uploadService;
+@inject FileService _fileService;
 
 <Modal Title="Add new player"
        Visible="true"
@@ -69,7 +69,7 @@
     {
         if (uploadResults.FirstOrDefault() is not null)
         {
-            player.Picture = uploadResults.FirstOrDefault().FileName;
+            player.Picture = uploadResults.FirstOrDefault().StoredFileName;
         }
         var result = await Server.Players.Add(player);
         if (result)
@@ -91,13 +91,13 @@
         player.TeamId = teams.FirstOrDefault(x => x.Id == selectedTeamId).Id;
     }
 
-    private List<File> files = new();
+    //private List<File> files = new();
     private List<UploadResult> uploadResults = new();
 
 
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        uploadResults = await _uploadService.UploadFile(e);
+        uploadResults = await _fileService.UploadFile(e);
     }
 }

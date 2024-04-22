@@ -1,11 +1,13 @@
 ﻿@page "/playerProfile/{Id:int}"
+@using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server
+@inject FileService _fileService;
 
 <div>
     <div style="display: flex; justify-content: center;">
-        <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="./@player.Picture" />
+        <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="@_fileService.GetImagePath(player.Picture)" />
     </div>
     <GridRow>
         <GridCol Span="12" Style="font-weight: 700; font-size: medium">First name:</GridCol>
@@ -57,11 +59,11 @@
     </GridRow>
     <GridRow>
         <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals Per Match:</GridCol>
-        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsPerMatch</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsPerMatch.ToString("F")</GridCol>
     </GridRow>
     <GridRow>
-        <GridCol Span="12" Style="font-weight: 700;font-size: medium">WinPerMatch</GridCol>
-        <GridCol Span="12" Style="font-size: medium">@playerStats.WinPerMatch %</GridCol>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">WinPerMatch:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.WinPerMatch.ToString("F") %</GridCol>
     </GridRow>
 
     <Divider Style="margin: 12px;" />

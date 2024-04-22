@@ -19,14 +19,14 @@
             <TitleTemplate>
                 <GridRow>
                     <GridCol Style="font-weight:500" Span="20">
-                        <img style="height:22px;" src="./@context.HomeTeam.LogoSrc" />
+                        <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
                         <span style="padding-left:5px;">
                             @context.HomeTeam.Name
                         </span>
                     </GridCol>
                     <GridCol Style="font-weight:500" Span="4">@context.HomeTeamGoals</GridCol>
                     <GridCol Style="font-weight:500" Span="20">
-                        <img style="height:22px;" src="./@context.AwayTeam.LogoSrc" />
+                        <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
                         <span style="padding-left:5px;">
                             @context.AwayTeam.Name
                         </span>
@@ -42,6 +42,7 @@
     List<MatchDto> matches = new List<MatchDto>();
     bool allowVirtualization = true;
     DateTime currentDate = DateTime.Now;
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
 
     public void SelectMatchDetails(int id)
     {
@@ -72,5 +73,10 @@
     {
         var result = await Server.Matches.GetByDate(currentDate);
         matches = result.ToList();
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
     }
 }

@@ -1,9 +1,12 @@
-﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Shared
+@using LA_LIGA_REKREATIVO.Shared.Dto;
 @using Newtonsoft.Json;
 @using System.Net.Http.Headers;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server
 @inject IMessageService MessageService
+@inject FileService _fileService
 
 
 <Modal Title="Edit team"
@@ -16,30 +19,7 @@
           LabelColSpan="8"
           WrapperColSpan="16"
           @ref="@addTeamForm">
-        @*         <FormItem Label="Select League">
-        <SimpleSelect DefaultValue="@defaultLeagueId" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
-        <SelectOptions>
-        @foreach (var league in leagues)
-        {
-        <SimpleSelectOption Value="@league.Id.ToString()" Label="@league.Name"></SimpleSelectOption>
-        }
-        </SelectOptions>
-        </SimpleSelect>
-        </FormItem> *@
         <FormItem Label="Select League">
-           @*  <Select Mode="multiple"
-                    @bind-Values="@_selectedValues2"
-                    Placeholder="Please select"
-                    TItemValue="string"
-                    TItem="string"
-                    Style="width: 100%; margin-bottom: 8px;">
-                <SelectOptions>
-                    @foreach (var league in leagues)
-                    {
-                        <SelectOption TItemValue="string" TItem="string" Value=@league.Id.ToString() Label=@league.Name />
-                    }
-                </SelectOptions>
-            </Select> *@
             <Select Mode="multiple"
                     TItem="LeagueDto"
                     TItemValue="int"
@@ -57,8 +37,8 @@
         <FormItem Label="Name">
             <Input @bind-Value="context.Name" />
         </FormItem>
-        <FormItem Label="Logo">
-            <Input @bind-Value="context.LogoSrc" />
+        <FormItem>
+            <InputFile OnChange="OnInputFileChange" />
         </FormItem>
     </Form>
 </Modal>
@@ -72,8 +52,7 @@
     private HashSet<LeagueDto> selectedLeagues = new();
     private LeagueDto league = new();
     private bool submitting;
-    // private string defaultLeagueId;
-    // public IEnumerable<string> _selectedValues1, _selectedValues2;
+    private List<UploadResult> uploadResults = new();
 
     protected async override Task OnParametersSetAsync()
     {
@@ -82,17 +61,6 @@
         leagues = result.ToList();
         selectedLeagues = team.Leagues.ToHashSet();
     }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     team = await Server.Teams.Get(Id);
-    //     var result = await Server.Leagues.Get();
-    //     leagues = result.ToList();
-    //     selectedLeagues = team.Leagues.ToHashSet();
-    //     //_selectedValues2 = leagues.Where(x => team.Leagues.Select(x=> x.Id).Contains(x.Id)).Select(x=> x.Id.ToString()).ToList();
-    //     // var pp = leagues.FirstOrDefault(x => x.Teams.Contains(team)).Id.ToString();
-    //     // defaultLeagueId = leagues.FirstOrDefault(x => x.Teams.Contains(team)).Id.ToString();
-    // }
 
     public async Task HandleOk(MouseEventArgs e)
     {
@@ -107,11 +75,15 @@
 
     private async Task OnFinish(EditContext editContext)
     {
-        team.Leagues.Clear();
-        team.Leagues.AddRange(selectedLeagues);
+        if (uploadResults.FirstOrDefault() is not null)
+        {
+            team.LogoSrc = uploadResults.FirstOrDefault()?.StoredFileName;
+        }
+        // team.Leagues.Clear();
+        // team.Leagues.AddRange(selectedLeagues);
         var result = await Server.Teams.Update(team);
         if (result)
-            _ = MessageService.Success("New team is added.");
+            _ = MessageService.Success($"{team} is edited.");
 
         await CloseModal.InvokeAsync();
     }
@@ -121,15 +93,14 @@
         ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
     }
 
-    // public void SelectLeague(string value)
-    // {
-    //     var leagueId = Int32.Parse(value);
-    //     league.Id = leagueId;
-    //     league.Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name;
-    // }
-
     private void OnSelectedLeagues(IEnumerable<LeagueDto> leagues)
     {
         selectedLeagues = leagues.ToHashSet();
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        uploadResults = new();
+        uploadResults = await _fileService.UploadFile(e);
     }
 }

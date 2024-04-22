@@ -66,6 +66,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var updatedTeam = _context.Teams.Include(x=> x.Leagues).FirstOrDefault(x => x.Id == id);
             updatedTeam.Name = teamDto.Name;
             updatedTeam.ParticipantOf = teamDto.ParticipantOf;
+            updatedTeam.LogoSrc = teamDto.LogoSrc;
             Team team = _mapper.Map<Team>(teamDto);
             updatedTeam.Leagues.Clear();
             var leagues = _context.Leagues.Where(x => teamDto.Leagues.Select(x => x.Id).Contains(x.Id));

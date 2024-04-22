@@ -7,8 +7,7 @@
 @inject Server Server;
 @inject IMessageService MessageService
 @inject HttpClient _httpClient;
-@inject UploadService _uploadService;
-
+@inject FileService _fileService;
 
 <Modal Title="Add new league"
        Visible="true"
@@ -39,90 +38,11 @@
     private Form<LeagueDto> addLeagueForm = null!;
     private LeagueDto league = new();
     private bool submitting { get; set; }
-
-    private List<File> files = new();
     private List<UploadResult> uploadResults = new();
-    private int maxAllowedFiles = 3;
-    private bool shouldRender;
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        uploadResults = await _uploadService.UploadFile(e);
-        // shouldRender = false;
-        // long maxFileSize = 1024 * 1024;
-        // var upload = false;
-
-        // using var content = new MultipartFormDataContent();
-
-        // foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
-        // {
-        //     if (uploadResults.SingleOrDefault(
-        //         f => f.FileName == file.Name) is null)
-        //     {
-        //         try
-        //         {
-        //             files.Add(new() { Name = file.Name });
-
-        //             var fileContent =
-        //                 new StreamContent(file.OpenReadStream(maxFileSize));
-
-        //             fileContent.Headers.ContentType =
-        //                 new MediaTypeHeaderValue(file.ContentType);
-
-        //             content.Add(
-        //                 content: fileContent,
-        //                 name: "\"files\"",
-        //                 fileName: file.Name);
-
-        //             upload = true;
-        //         }
-        //         catch (Exception ex)
-        //         {
-        //             // Logger.LogInformation(
-        //             //     "{FileName} not uploaded (Err: 6): {Message}",
-        //             //     file.Name, ex.Message);
-
-        //             uploadResults.Add(
-        //                 new()
-        //                     {
-        //                         FileName = file.Name,
-        //                         ErrorCode = 6,
-        //                         Uploaded = false
-        //                     });
-        //         }
-        //     }
-        // }
-
-        // if (upload)
-        // {
-        //     var response = await _httpClient.PostAsync("/api/league/postFile", content);
-        //     // var message = new HttpRequestMessage(HttpMethod.Post, "api/league/postFile");
-        //     // message.Content = new StringContent(JsonConvert.SerializeObject(content));
-        //     // message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        //     // var result = await _httpClient.SendAsync(message);
-
-        //     // if (result.IsSuccessStatusCode)
-        //     // {
-        //     //     var json = await result.Content.ReadAsStringAsync();
-        //     //     //return JsonConvert.DeserializeObject<List<MatchDto>>(json);
-        //     // }
-        //     //return Enumerable.Empty<MatchDto>();
-
-        //     var newUploadResults = await response.Content
-        //         .ReadFromJsonAsync<IList<UploadResult>>();
-
-        //     if (newUploadResults is not null)
-        //     {
-        //         uploadResults = uploadResults.Concat(newUploadResults).ToList();
-        //     }
-        // }
-
-        // shouldRender = true;
-    }
-
-    private class File
-    {
-        public string? Name { get; set; }
+        uploadResults = await _fileService.UploadFile(e);
     }
 
     public async Task HandleOk(MouseEventArgs e)
@@ -140,7 +60,7 @@
     {
         if (uploadResults.FirstOrDefault() is not null)
         {
-            league.Logo = uploadResults.FirstOrDefault().FileName;
+            league.Logo = uploadResults.FirstOrDefault()?.StoredFileName;
         }
         var result = await Server.Leagues.Add(league);
         if (result)

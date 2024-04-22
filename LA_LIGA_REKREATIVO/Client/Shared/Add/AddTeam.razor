@@ -6,7 +6,7 @@
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server
 @inject IMessageService MessageService
-@inject UploadService _uploadService
+@inject FileService _fileService
 
 
 <Modal Title="Create new team"
@@ -72,7 +72,7 @@
     {
         if (uploadResults.FirstOrDefault() is not null)
         {
-            team.LogoSrc = uploadResults.FirstOrDefault()?.FileName;
+            team.LogoSrc = uploadResults.FirstOrDefault()?.StoredFileName;
         }
         team.Leagues.AddRange(selectedLeagues);
         var result = await Server.Teams.Add(team);
@@ -94,6 +94,6 @@
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        uploadResults = await _uploadService.UploadFile(e);
+        uploadResults = await _fileService.UploadFile(e);
     }
 }

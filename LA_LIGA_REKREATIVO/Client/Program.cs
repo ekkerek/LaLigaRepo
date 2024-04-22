@@ -14,7 +14,7 @@ string url = builder.Configuration["API_URL"];
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(url) });
 builder.Services.AddAntDesign();
 builder.Services.AddScoped<Server>();
-builder.Services.AddScoped<UploadService>();
+builder.Services.AddScoped<FileService>();
 
 
 await builder.Build().RunAsync();

@@ -5,20 +5,16 @@ using System.Net.Http.Json;
 
 namespace LA_LIGA_REKREATIVO.Client.Services
 {
-
-    public class File
-    {
-        public string? Name { get; set; }
-    }
-
-    public class UploadService
+    public class FileService
     {
         private HttpClient _httpClient;
-        public UploadService(HttpClient httpClient)
+        private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+
+        public FileService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-        private List<File> files = new();
+
         private List<UploadResult> uploadResults = new();
         private int maxAllowedFiles = 3;
         private bool shouldRender;
@@ -38,8 +34,6 @@ namespace LA_LIGA_REKREATIVO.Client.Services
                 {
                     try
                     {
-                        files.Add(new() { Name = file.Name });
-
                         var fileContent =
                             new StreamContent(file.OpenReadStream(maxFileSize));
 
@@ -55,10 +49,6 @@ namespace LA_LIGA_REKREATIVO.Client.Services
                     }
                     catch (Exception ex)
                     {
-                        // Logger.LogInformation(
-                        //     "{FileName} not uploaded (Err: 6): {Message}",
-                        //     file.Name, ex.Message);
-
                         uploadResults.Add(
                             new()
                             {
@@ -72,29 +62,22 @@ namespace LA_LIGA_REKREATIVO.Client.Services
 
             if (upload)
             {
-                var response = await _httpClient.PostAsync("/api/league/postFile", content);
-                // var message = new HttpRequestMessage(HttpMethod.Post, "api/league/postFile");
-                // message.Content = new StringContent(JsonConvert.SerializeObject(content));
-                // message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                // var result = await _httpClient.SendAsync(message);
-
-                // if (result.IsSuccessStatusCode)
-                // {
-                //     var json = await result.Content.ReadAsStringAsync();
-                //     //return JsonConvert.DeserializeObject<List<MatchDto>>(json);
-                // }
-                //return Enumerable.Empty<MatchDto>();
-
+                var response = await _httpClient.PostAsync("/api/upload/postFile", content);
                 var newUploadResults = await response.Content
                 .ReadFromJsonAsync<IList<UploadResult>>();
 
                 if (newUploadResults is not null)
                 {
-                    uploadResults = uploadResults.Concat(newUploadResults).ToList();
+                    uploadResults = new List<UploadResult>(newUploadResults);//uploadResults.Concat(newUploadResults).ToList();
                 }
             }
             shouldRender = true;
             return uploadResults;
+        }
+
+        public string GetImagePath(string imageName)
+        {
+            return BUCKET_PATH + imageName;
         }
     }
 }

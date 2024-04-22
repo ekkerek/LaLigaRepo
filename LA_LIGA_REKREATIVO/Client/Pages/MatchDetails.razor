@@ -1,16 +1,19 @@
 ﻿@page "/matchDetails/{Id:int}"
+@using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @using LA_LIGA_REKREATIVO.Client.Shared;
 @inject Server Server;
 @inject NavigationManager Navigation
+@inject FileService _fileService;
+
 <div>
     <GridRow>
         <Divider>@title</Divider>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="https://la-liga-rekreativo-2-demo.s3.amazonaws.com/arsenal-crest.png" /> </div>
-                <div>@Match.HomeTeam.Name</div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetImagePath(Match.HomeTeam.LogoSrc)" /> </div>
+                <div style="display: flex; justify-content: center;">@Match.HomeTeam.Name</div>
             </div>
         </GridCol>
         <GridCol Style="font-weight:500; display: grid; justify-content: center" Span="8">
@@ -26,8 +29,8 @@
         </GridCol>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="./@Match.AwayTeam.LogoSrc" /> </div>
-                <div>            @Match.AwayTeam.Name</div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetImagePath(Match.AwayTeam.LogoSrc)" /> </div>
+                <div style="display: flex; justify-content: center;">@Match.AwayTeam.Name</div>
             </div>
         </GridCol>
     </GridRow>
@@ -63,6 +66,7 @@
     public int Id { get; set; }
     public MatchDto Match = new();
     private string title;
+    //private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
 
     protected async override Task OnParametersSetAsync()
     {
@@ -104,7 +108,9 @@
         {
             return string.Empty;
         }
-
     }
-
+    // private string GetImagePath(string imageName)
+    // {
+    //     return BUCKET_PATH + imageName;
+    // }
 }
