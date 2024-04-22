@@ -24,7 +24,7 @@
 <Select TItem="LeagueDto"
         TItemValue="int?"
         DataSource="@leagues"
-        DefaultValue="5"
+        DefaultValue="1"
         LabelName="@nameof(LeagueDto.Name)"
         ValueName="@nameof(PlayerDto.Id)"
         Style="width: 200px"
@@ -76,7 +76,7 @@
     {
         // var res = await Server.Players.Get();
         // players = res.Take(3).ToList();
-        var resStats = await Server.Players.GetDreamTeamByLeague(5);
+        var resStats = await Server.Players.GetDreamTeamByLeague(1);
         stats = resStats.Take(6).ToList();
         // var teamsRes = await Server.Teams.Get();
         // teams = teamsRes.ToList();
