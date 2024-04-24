@@ -10,7 +10,7 @@
 <Select TItem="LeagueDto"
         TItemValue="int?"
         DataSource="@leagues"
-        DefaultValue="5"
+        DefaultValue="@defaultLeagueId"
         LabelName="@nameof(LeagueDto.Name)"
         ValueName="@nameof(PlayerDto.Id)"
         Style="width: 200px"
@@ -20,7 +20,7 @@
         AllowClear>
 </Select>
 
-<SimpleSelect Style="width:120px;" DefaultValue="TotalGoals" OnSelectedItemChanged="SelectStatType">
+<SimpleSelect Style="width:120px;" Value="@stattt" DefaultValue="TotalGoals" OnSelectedItemChanged="SelectStatType">
     <SelectOptions>
         @foreach (var stat in statsType)
         {
@@ -84,6 +84,7 @@
 
     private List<PlayerStatsDto> stats = new();
     public bool InitLoading { get; set; } = true;
+    int defaultLeagueId;
 
     protected async override Task OnParametersSetAsync()
     {
@@ -91,7 +92,9 @@
         leagues = result.ToList();
         var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
+        defaultLeagueId = leagues.FirstOrDefault().Id;
         SetOrderId(stats);
+        StateHasChanged();
     }
 
     private void GoToProfilePage(int id)
@@ -177,7 +180,8 @@
         if (league is null) return;
 
         var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
-        stats = resStats.ToList();
+        SelectStatType("TotalGoals");
+        stats = resStats.OrderByDescending(x => x.Goals).ToList();
         StateHasChanged();
     }
 }
