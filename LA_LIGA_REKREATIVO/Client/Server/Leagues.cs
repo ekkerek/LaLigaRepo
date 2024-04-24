@@ -21,6 +21,15 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return result.IsSuccessStatusCode;
         }
 
+        public async Task<bool> Delete(LeagueDto league)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, $"api/league/delete");
+            message.Content = new StringContent(JsonConvert.SerializeObject(league));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+            return result.IsSuccessStatusCode;
+        }
+
         public async Task<bool> Update(LeagueDto league)
         {
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/league/{league.Id}");

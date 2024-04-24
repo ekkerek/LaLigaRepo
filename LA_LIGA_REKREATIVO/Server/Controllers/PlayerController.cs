@@ -68,10 +68,11 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _context.SaveChanges();
         }
 
-        // DELETE api/<PlayerController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("delete")]
+        public void Delete([FromBody] PlayerDto player)
         {
+            _context.Players.FirstOrDefault(x => x.Id == player.Id).IsDeleted = true;
+            _context.SaveChanges();
         }
 
         [HttpGet("getplayerstats/{id}")]
@@ -98,8 +99,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                     {
                         SummaryType.Assist => returnPlayer.Assists += 1,
                         SummaryType.Goal => returnPlayer.Goals += 1,
-                        SummaryType.GoalsFrom10meter => returnPlayer.GoalsFrom10meter += 1,
-                        SummaryType.GoalsFromPenalty => returnPlayer.GoalsFromPenalty += 1,
+                        SummaryType.GoalFrom10meter => returnPlayer.GoalsFrom10meter += 1,
+                        SummaryType.GoalFromPenalty => returnPlayer.GoalsFromPenalty += 1,
                         SummaryType.OwnGoal => returnPlayer.OwnGoals += 1,
                         SummaryType.RedCards => returnPlayer.RedCards += 1,
                         SummaryType.YellowCards => returnPlayer.YellowCards += 1,
@@ -147,8 +148,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                         {
                             SummaryType.Assist => returnPlayer.Assists += 1,
                             SummaryType.Goal => returnPlayer.Goals += 1,
-                            SummaryType.GoalsFrom10meter => returnPlayer.GoalsFrom10meter += 1,
-                            SummaryType.GoalsFromPenalty => returnPlayer.GoalsFromPenalty += 1,
+                            SummaryType.GoalFrom10meter => returnPlayer.GoalsFrom10meter += 1,
+                            SummaryType.GoalFromPenalty => returnPlayer.GoalsFromPenalty += 1,
                             SummaryType.OwnGoal => returnPlayer.OwnGoals += 1,
                             SummaryType.RedCards => returnPlayer.RedCards += 1,
                             SummaryType.YellowCards => returnPlayer.YellowCards += 1,
@@ -158,8 +159,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                         {
                             SummaryType.Assist => returnPlayer.TotalPoints += 3,
                             SummaryType.Goal => returnPlayer.TotalPoints += 5,
-                            SummaryType.GoalsFrom10meter => returnPlayer.TotalPoints += 3,
-                            SummaryType.GoalsFromPenalty => returnPlayer.TotalPoints += 2,
+                            SummaryType.GoalFrom10meter => returnPlayer.TotalPoints += 3,
+                            SummaryType.GoalFromPenalty => returnPlayer.TotalPoints += 2,
                             SummaryType.OwnGoal => returnPlayer.TotalPoints -= 3,
                             SummaryType.RedCards => returnPlayer.TotalPoints -= 5,
                             SummaryType.YellowCards => returnPlayer.TotalPoints -= 2,
@@ -213,8 +214,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                         {
                             SummaryType.Assist => returnPlayer.Assists += 1,
                             SummaryType.Goal => returnPlayer.Goals += 1,
-                            SummaryType.GoalsFrom10meter => returnPlayer.GoalsFrom10meter += 1,
-                            SummaryType.GoalsFromPenalty => returnPlayer.GoalsFromPenalty += 1,
+                            SummaryType.GoalFrom10meter => returnPlayer.GoalsFrom10meter += 1,
+                            SummaryType.GoalFromPenalty => returnPlayer.GoalsFromPenalty += 1,
                             SummaryType.OwnGoal => returnPlayer.OwnGoals += 1,
                             SummaryType.RedCards => returnPlayer.RedCards += 1,
                             SummaryType.YellowCards => returnPlayer.YellowCards += 1,
@@ -224,8 +225,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                         {
                             SummaryType.Assist => returnPlayer.TotalPoints += 3,
                             SummaryType.Goal => returnPlayer.TotalPoints += 5,
-                            SummaryType.GoalsFrom10meter => returnPlayer.TotalPoints += 3,
-                            SummaryType.GoalsFromPenalty => returnPlayer.TotalPoints += 2,
+                            SummaryType.GoalFrom10meter => returnPlayer.TotalPoints += 3,
+                            SummaryType.GoalFromPenalty => returnPlayer.TotalPoints += 2,
                             SummaryType.OwnGoal => returnPlayer.TotalPoints -= 3,
                             SummaryType.RedCards => returnPlayer.TotalPoints -= 5,
                             SummaryType.YellowCards => returnPlayer.TotalPoints -= 2,
@@ -234,16 +235,23 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
 
                 returnPlayer.Goals = returnPlayer.Goals + returnPlayer.GoalsFrom10meter + returnPlayer.GoalsFromPenalty;
+                if (returnPlayer.TotalMatches > 0)
+                    returnPlayer.GoalsPerMatch = returnPlayer.Goals / returnPlayer.TotalMatches;
+                else
+                    returnPlayer.GoalsPerMatch = 0;
 
-                returnPlayer.GoalsPerMatch = returnPlayer.Goals / returnPlayer.TotalMatches;
-                returnPlayer.WinPerMatch = (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
+                if (returnPlayer.TotalMatches > 0)
+                    returnPlayer.WinPerMatch = (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
+                else
+                    returnPlayer.WinPerMatch = 0;
+
                 returnPlayer.Player = _mapper.Map<PlayerDto>(player);
                 // delete if we dont need team name on dream team or other details area
                 returnPlayer.Team = _mapper.Map<TeamDto>(team);
                 //return returnPlayer;
                 playersStats.Add(returnPlayer);
             }
-            return playersStats.OrderByDescending(x => x.TotalPoints).Take(6).ToList();
+            return playersStats.OrderByDescending(x => x.TotalPoints).ToList();
 
         }
     }

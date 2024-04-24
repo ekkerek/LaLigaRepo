@@ -5,9 +5,18 @@
         Goal,
         Assist,
         OwnGoal,
-        GoalsFromPenalty,
-        GoalsFrom10meter,
+        GoalFromPenalty,
+        GoalFrom10meter,
         YellowCards,
-        RedCards
+        RedCards,
+        MissedPenalty,
+        Missed10meter,
+        CleanSheetGK,
+        CleanSheetPlayer,
+        Concided3GoalsGK,
+        Concided3GoalsPlayer,
+        FourSavesGK,
+        TeamWin
+
     }
 }

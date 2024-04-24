@@ -1,0 +1,183 @@
+﻿@page "/stats"
+@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+@inject NavigationManager Navigation
+@inject FileService _fileService;
+
+
+<Select TItem="LeagueDto"
+        TItemValue="int?"
+        DataSource="@leagues"
+        DefaultValue="5"
+        LabelName="@nameof(LeagueDto.Name)"
+        ValueName="@nameof(PlayerDto.Id)"
+        Style="width: 200px"
+        Placeholder="Select a league"
+        IgnoreItemChanges="false"
+        OnSelectedItemChanged="OnSelectedLeague"
+        AllowClear>
+</Select>
+
+<SimpleSelect Style="width:120px;" DefaultValue="TotalGoals" OnSelectedItemChanged="SelectStatType">
+    <SelectOptions>
+        @foreach (var stat in statsType)
+        {
+            <SimpleSelectOption Value="@stat" Label="@stat"></SimpleSelectOption>
+        }
+    </SelectOptions>
+</SimpleSelect>
+
+<Table TItem="PlayerStatsDto"
+       DataSource="@stats"
+       Size="TableSize.Small"
+       HidePagination>
+    <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
+    <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
+        <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
+        <span>@context.Player.FirstName @context.Player.LastName</span>
+    </PropertyColumn>
+
+    @if (stattt == "TotalGoals")
+    {
+        <PropertyColumn Title="Goals" Property="c=>c.Goals" />
+    }
+    else if (stattt == "TotalAssists")
+    {
+        <PropertyColumn Title="Assists" Property="c=>c.Assists" />
+    }
+    else if (stattt == "GoalsFrom10meter")
+    {
+        <PropertyColumn Title="Goals From 10 meter" Property="c=>c.GoalsFrom10meter" />
+    }
+    else if (stattt == "GoalsFromPenalty")
+    {
+        <PropertyColumn Title="Goals From Penalty" Property="c=>c.GoalsFromPenalty" />
+    }
+    else if (stattt == "OwnGoals")
+    {
+        <PropertyColumn Title="Own Goals" Property="c=>c.OwnGoals" />
+    }
+    else if (stattt == "GoalsPerMatch")
+    {
+        <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch" />
+    }
+    else if (stattt == "YellowCards")
+    {
+        <PropertyColumn Title="Yellow Cards" Property="c=>c.YellowCards" />
+    }
+    else if (stattt == "RedCards")
+    {
+        <PropertyColumn Title="Red Cards" Property="c=>c.RedCards" />
+    }
+
+</Table>
+
+@code {
+    string _selectedValue1, _selectedValue2, _selectedValue3;
+    List<string> statsType = new List<string>()
+                { "TotalGoals", "TotalAssists", "GoalsFrom10meter", "GoalsFromPenalty", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards" };
+
+    string stattt = "TotalGoals";
+    private List<LeagueDto> leagues = new();
+
+    private List<PlayerStatsDto> stats = new();
+    public bool InitLoading { get; set; } = true;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+        var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
+        stats = resStats.OrderByDescending(x => x.Goals).ToList();
+        SetOrderId(stats);
+    }
+
+    private void GoToProfilePage(int id)
+    {
+        Navigation.NavigateTo($"/playerProfile/{id}");
+    }
+
+    public async void SelectStatType(string value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+        else if (value == "TotalGoals")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            var i = 1;
+            stats = stats.OrderByDescending(x => x.Goals).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "TotalAssists")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.Assists).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "GoalsFrom10meter")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.GoalsFrom10meter).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "GoalsFromPenalty")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.GoalsFromPenalty).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "OwnGoals")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.OwnGoals).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "GoalsPerMatch")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.GoalsPerMatch).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "YellowCards")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.YellowCards).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "RedCards")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.RedCards).ToList();
+            SetOrderId(stats);
+        }
+        //StateHasChanged();
+    }
+
+    private void SetOrderId(List<PlayerStatsDto> playerStats)
+    {
+        int orderId = 1;
+        playerStats.ForEach(x => { x.OrderId = orderId; orderId++; });
+        StateHasChanged();
+    }
+
+    private async Task OnSelectedLeague(LeagueDto league)
+    {
+        if (league is null) return;
+
+        var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
+        stats = resStats.ToList();
+        StateHasChanged();
+    }
+}

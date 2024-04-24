@@ -25,17 +25,22 @@
     <ActionColumn Title="Edit">
         <Space>
             <SpaceItem><Button Danger OnClick="()=>Edit(context.Id)">Edit</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
-     <ActionColumn Title="Delete">
-         <Space>
-             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
- </Table>
- <Button OnClick="OpenAddTeamModal">Add new team</Button>
+        </Space>
+    </ActionColumn>
+    <ActionColumn Title="Delete">
+        <Space>
+            <SpaceItem>
+                <Popconfirm Title="Are you sure delete this team?"
+                            OnConfirm="() => Delete(context)">
+                    <Button Danger>Delete</Button>
+                </Popconfirm>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<Button OnClick="OpenAddTeamModal">Add new team</Button>
 
- @code {
+@code {
     private IEnumerable<TeamDto> teams = Enumerable.Empty<TeamDto>();
     private int Id { get; set; }
     private bool showEditTeamModal;
@@ -59,13 +64,9 @@
         showAddTeamModal = false;
         StateHasChanged();
     }
-
     #endregion
 
-    private void Delete(int id)
-    {
-    }
-
+    #region EditTeam
     private void Edit(int id)
     {
         Id = id;
@@ -76,6 +77,15 @@
     {
         teams = await Server.Teams.Get();
         showEditTeamModal = false;
+        StateHasChanged();
+    }
+    #endregion
+
+    private async void Delete(TeamDto team)
+    {
+        await Server.Teams.Delete(team.Id);
+        _ = MessageService.Success($"Team {team.Name} is deleted.");
+        teams = await Server.Teams.Get();
         StateHasChanged();
     }
 }

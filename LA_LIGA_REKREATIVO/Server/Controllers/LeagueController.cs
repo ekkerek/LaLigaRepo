@@ -62,10 +62,11 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _context.SaveChanges();
         }
 
-        // DELETE api/<LeagueController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("delete")]
+        public void Delete([FromBody] LeagueDto league)
         {
+            _context.Leagues.FirstOrDefault(x => x.Id == league.Id).IsDeleted = true;
+            _context.SaveChanges();
         }
 
         //[HttpPost("addTeams")]

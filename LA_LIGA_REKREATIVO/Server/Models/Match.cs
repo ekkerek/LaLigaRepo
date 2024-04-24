@@ -6,7 +6,6 @@
         {
             Summaries = new List<Summary>();
             Players = new List<Player>();
-            //AwayTeamPlayers = new List<Player>();
         }
 
         public int Id { get; set; }
@@ -17,6 +16,7 @@
         public int AwayTeamGoals { get; set; }
         public int HomeTeamId { get; set; }
         public int AwayTeamId { get; set; }
+        public bool IsDeleted { get; set; }
         public ICollection<Summary> Summaries { get; set; }
         public ICollection<Player> Players { get; set; }
         public League League { get; set; }

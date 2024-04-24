@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
-<div class="page" style="height: 100vh">
+<div class="page" style="height: 100vh; min-height: -webkit-fill-available;">
     <div class="sidebar">
         <NavMenu />
     </div>
@@ -51,7 +51,7 @@
                     <span>Dream team</span>
                 </div>
             </Button>
-            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; ">
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToStats">
                 <div style="display:flex; flex-direction: column;">
                     <span style="display:flex; justify-content: center">
                         <img style="max-height: 24px;max-width: 24px" src="./stats.png" />
@@ -99,6 +99,11 @@
     private void NavigateToStandings()
     {
         Navigation.NavigateTo($"/standings");
+
+    }
+    private void NavigateToStats()
+    {
+        Navigation.NavigateTo($"/stats");
 
     }
 }

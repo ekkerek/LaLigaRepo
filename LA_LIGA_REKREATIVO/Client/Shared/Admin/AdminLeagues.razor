@@ -25,17 +25,22 @@
     <ActionColumn Title="Edit">
         <Space>
             <SpaceItem><Button Danger OnClick="()=>Edit(context.Id)">Edit</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
-     <ActionColumn Title="Delete">
-         <Space>
-             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
- </Table>
- <Button OnClick="OpenAddLeagueModal">Add new league</Button>
+        </Space>
+    </ActionColumn>
+    <ActionColumn Title="Delete">
+        <Space>
+            <SpaceItem>
+                <Popconfirm Title="Are you sure delete this league?"
+                            OnConfirm="() => Delete(context)">
+                    <Button Danger>Delete</Button>
+                </Popconfirm>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<Button OnClick="OpenAddLeagueModal">Add new league</Button>
 
- @code {
+@code {
     private IEnumerable<LeagueDto> leagues = Enumerable.Empty<LeagueDto>();
     private int Id { get; set; }
     private bool showEditLeagueModal;
@@ -61,8 +66,12 @@
     }
     #endregion
 
-    private void Delete(int id)
+    private async void Delete(LeagueDto league)
     {
+        await Server.Leagues.Delete(league);
+        _ = MessageService.Success($"League {league.Name} is deleted.");
+        leagues = await Server.Leagues.Get();
+        StateHasChanged();
     }
 
     #region EditLeague

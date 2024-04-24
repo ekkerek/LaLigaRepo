@@ -15,9 +15,7 @@
 }
 
 <Table TItem="MatchDto" DataSource="@matches">
-    <PropertyColumn Property="c=>c.Id">
-        <a>@context.Id</a>
-    </PropertyColumn>
+
     <PropertyColumn Property="c=>c.GameTime"></PropertyColumn>
     <PropertyColumn Property="c=>c.GameRound"></PropertyColumn>
     <PropertyColumn Title="Home team name" Property="c=>c.HomeTeam.Name">
@@ -31,17 +29,22 @@
     <ActionColumn Title="Edit">
         <Space>
             <SpaceItem><Button Danger OnClick="()=>Edit(context)">Edit</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
-     <ActionColumn Title="Delete">
-         <Space>
-             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
- </Table>
- <Button OnClick="OpenAddMatchModal">Add new match</Button>
+        </Space>
+    </ActionColumn>
+    <ActionColumn Title="Delete">
+        <Space>
+            <SpaceItem>
+                <Popconfirm Title="Are you sure delete this match?"
+                            OnConfirm="() => Delete(context)">
+                    <Button Danger>Delete</Button>
+                </Popconfirm>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<Button OnClick="OpenAddMatchModal">Add new match</Button>
 
- @code {
+@code {
     private IEnumerable<MatchDto> matches = Enumerable.Empty<MatchDto>();
     private bool showAddMatchModal;
     private bool showEditMatchModal;
@@ -66,8 +69,12 @@
     }
     #endregion
 
-    private void Delete(int id)
+    private async void Delete(MatchDto match)
     {
+        await Server.Matches.Delete(match.Id);
+        _ = MessageService.Success($"Match Id={match.Id} is deleted.");
+        matches = await Server.Matches.Get();
+        StateHasChanged();
     }
 
     private void Edit(MatchDto match)
@@ -80,4 +87,4 @@
     {
         showEditMatchModal = false;
     }
- }
+}

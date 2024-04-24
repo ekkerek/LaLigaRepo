@@ -28,17 +28,22 @@
     <ActionColumn Title="Edit">
         <Space>
             <SpaceItem><Button Danger OnClick="()=>Edit(context.Id)">Edit</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
-     <ActionColumn Title="Delete">
-         <Space>
-             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-         </Space>
-     </ActionColumn>
- </Table>
- <Button OnClick="OpenAddPlayerModal">Add new player</Button>
+        </Space>
+    </ActionColumn>
+    <ActionColumn Title="Delete">
+        <Space>
+            <SpaceItem>
+                <Popconfirm Title="Are you sure delete this player?"
+                            OnConfirm="() => Delete(context)">
+                    <Button Danger>Delete</Button>
+                </Popconfirm>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<Button OnClick="OpenAddPlayerModal">Add new player</Button>
 
- @code {
+@code {
     private IEnumerable<PlayerDto> players = Enumerable.Empty<PlayerDto>();
     private int Id { get; set; }
     private bool showAddPlayerModal;
@@ -65,8 +70,12 @@
 
     #endregion
 
-    private void Delete(int id)
+    private async void Delete(PlayerDto player)
     {
+        await Server.Players.Delete(player);
+        _ = MessageService.Success($"Player {player.FirstName} {player.LastName} is deleted.");
+        players = await Server.Players.Get();
+        StateHasChanged();
     }
 
     private void Edit(int id)

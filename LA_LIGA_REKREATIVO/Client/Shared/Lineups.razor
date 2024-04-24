@@ -97,8 +97,8 @@
             SummaryType.Goal => "./goal.png",
             SummaryType.OwnGoal => "./own_goal.png",
             SummaryType.Assist => "./assist.png",
-            SummaryType.GoalsFrom10meter => "./10_m.png",
-            SummaryType.GoalsFromPenalty => "./penalty.png",
+            SummaryType.GoalFrom10meter => "./10_m.png",
+            SummaryType.GoalFromPenalty => "./penalty.png",
             SummaryType.RedCards => "./red_card.png",
             SummaryType.YellowCards => "./yellow_card.png",
             _ => string.Empty
@@ -118,11 +118,11 @@
         // {
         //     return "./assist.png";
         // }
-        // else if (type == SummaryType.GoalsFrom10meter)
+        // else if (type == SummaryType.GoalFrom10meter)
         // {
         //     return "./10_m.png";
         // }
-        // else if (type == SummaryType.GoalsFromPenalty)
+        // else if (type == SummaryType.GoalFromPenalty)
         // {
         //     return "./penalty.png";
         // }
@@ -154,11 +154,11 @@
             {
                 summ += 3;
             }
-            else if (sum.Type == SummaryType.GoalsFrom10meter)
+            else if (sum.Type == SummaryType.GoalFrom10meter)
             {
                 summ += 3;
             }
-            else if (sum.Type == SummaryType.GoalsFromPenalty)
+            else if (sum.Type == SummaryType.GoalFromPenalty)
             {
                 summ += 2;
             }

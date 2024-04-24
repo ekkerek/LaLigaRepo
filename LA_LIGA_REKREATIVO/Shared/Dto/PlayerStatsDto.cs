@@ -28,5 +28,7 @@
 
         public PlayerDto Player { get; set; }
         public TeamDto Team { get; set; }
+
+        public int OrderId { get; set; }
     }
 }

@@ -42,19 +42,19 @@
                 <TitleTemplate>
                     <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(item.Player.Picture)" /></span>
                     <span>                    <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a></span>
-                  @*   <span>@item?.Team?.Name</span> *@
+                    @*   <span>@item?.Team?.Name</span> *@
                 </TitleTemplate>
             </ListItemMeta>
             <div>@item?.TotalPoints</div>
         </ListItem>
     </ChildContent>
-@*     <LoadMore>
-        @if (!InitLoading && !Loading)
-        {
-            <div class="demo-loadmore-btn-content ">
-                <Button OnClick="OnLoadMore">loading more</Button>
-            </div>
-        }
+    @*     <LoadMore>
+    @if (!InitLoading && !Loading)
+    {
+    <div class="demo-loadmore-btn-content ">
+    <Button OnClick="OnLoadMore">loading more</Button>
+    </div>
+    }
     </LoadMore> *@
 </AntList>
 
@@ -76,7 +76,7 @@
     {
         // var res = await Server.Players.Get();
         // players = res.Take(3).ToList();
-        var resStats = await Server.Players.GetDreamTeamByLeague(1);
+        var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
         stats = resStats.Take(6).ToList();
         // var teamsRes = await Server.Teams.Get();
         // teams = teamsRes.ToList();

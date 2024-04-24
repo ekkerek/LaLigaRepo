@@ -17,19 +17,20 @@ namespace LA_LIGA_REKREATIVO.Server.Data
         {
             modelBuilder.HasDefaultSchema("rec");
 
-            modelBuilder.Entity<Player>().HasKey(x => x.Id);
+            modelBuilder.Entity<League>().HasQueryFilter(league => !league.IsDeleted).HasKey(x => x.Id);
 
-            modelBuilder.Entity<Team>().HasKey(x => x.Id);
+            modelBuilder.Entity<Player>().HasQueryFilter(player => !player.IsDeleted).HasKey(x => x.Id);
+
+            modelBuilder.Entity<Team>().HasQueryFilter(team => !team.IsDeleted).HasKey(x => x.Id);
             modelBuilder.Entity<Team>().HasMany(x => x.Players)
                                        .WithOne(x => x.Team);
 
-            modelBuilder.Entity<Summary>().HasKey(x => x.Id);
+            modelBuilder.Entity<Summary>().HasQueryFilter(summary => !summary.IsDeleted).HasKey(x => x.Id);
             modelBuilder.Entity<Summary>().HasOne(x => x.Match)
                                           .WithMany(x => x.Summaries);
 
             //Match
-            modelBuilder.Entity<Match>().HasKey(x => x.Id);
-
+            modelBuilder.Entity<Match>().HasQueryFilter(match => !match.IsDeleted).HasKey(x => x.Id);
             modelBuilder.Entity<Match>().HasMany(x => x.Summaries)
                                        .WithOne(x => x.Match)
                                        .OnDelete(DeleteBehavior.NoAction);

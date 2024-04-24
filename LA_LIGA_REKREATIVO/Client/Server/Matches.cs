@@ -74,6 +74,15 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return result.IsSuccessStatusCode;
         }
 
+        public async Task<bool> Delete(int matchId)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, $"api/match/delete");
+            message.Content = new StringContent(JsonConvert.SerializeObject(matchId));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+            return result.IsSuccessStatusCode;
+        }
+
         public async Task<bool> Update(MatchDto match)
         {
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/match/{match.Id}");

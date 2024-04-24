@@ -63,7 +63,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] TeamDto teamDto)
         {
-            var updatedTeam = _context.Teams.Include(x=> x.Leagues).FirstOrDefault(x => x.Id == id);
+            var updatedTeam = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == id);
             updatedTeam.Name = teamDto.Name;
             updatedTeam.ParticipantOf = teamDto.ParticipantOf;
             updatedTeam.LogoSrc = teamDto.LogoSrc;
@@ -79,10 +79,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _context.SaveChanges();
         }
 
-        // DELETE api/<TeamController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [HttpPost("delete")]
+        public void Delete([FromBody] int teamId)
         {
+            _context.Teams.FirstOrDefault(x => x.Id == teamId).IsDeleted = true;
+            _context.SaveChanges();
         }
 
         // GET api/<TeamController>/5

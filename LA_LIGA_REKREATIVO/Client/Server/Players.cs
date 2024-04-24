@@ -22,6 +22,15 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return result.IsSuccessStatusCode;
         }
 
+        public async Task<bool> Delete(PlayerDto player)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, $"api/player/delete");
+            message.Content = new StringContent(JsonConvert.SerializeObject(player));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+            return result.IsSuccessStatusCode;
+        }
+
         public async Task<IEnumerable<PlayerDto>> Get()
         {
             var result = await _httpClient.GetAsync("api/player");

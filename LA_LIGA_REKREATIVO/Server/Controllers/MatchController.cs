@@ -200,10 +200,16 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return teamStatsList.OrderByDescending(x => x.TotalPoints).ToList();
         }
 
-        // DELETE api/<MatchController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("delete")]
+        public void Delete([FromBody] int matchId)
         {
+            _context.Matches.FirstOrDefault(x => x.Id == matchId).IsDeleted = true;
+
+            // delete also summary related to this match
+            foreach (var summary in _context.Summaries.Include(x => x.Match).Where(x => x.Match.Id == matchId))
+                summary.IsDeleted = true;
+
+            _context.SaveChanges();
         }
     }
 }
