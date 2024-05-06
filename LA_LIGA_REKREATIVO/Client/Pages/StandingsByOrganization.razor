@@ -8,7 +8,7 @@
         DataSource="@leagues"
         DefaultValue="5"
         LabelName="@nameof(LeagueDto.Name)"
-        ValueName="@nameof(PlayerDto.Id)"
+        ValueName="@nameof(LeagueDto.Id)"
         Style="width: 200px"
         Placeholder="Select a league"
         IgnoreItemChanges="false"
@@ -20,11 +20,11 @@
        DataSource="@stats"
        Size="TableSize.Small"
        HidePagination>
-    <PropertyColumn Title="Name" Property="c=>c.Team.Name"></PropertyColumn>
+    <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
     <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
     <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
     <PropertyColumn Title="G" Property="c=>c.Goals">
-        @context.Goals: @context.GoalsConceded
+        @context.Goals:@context.GoalsConceded
     </PropertyColumn>
     <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
 </Table>
@@ -49,6 +49,7 @@
         leagues = result.ToList();
 
         stats = await Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
+        SetOrderId(stats);
         StateHasChanged();
     }
 
@@ -57,6 +58,7 @@
         if (league is null) return;
 
         stats = await Server.Matches.GetStandingsByLeague(league.Id);
+        SetOrderId(stats);
         //var leagueId = Int32.Parse(league.Id);
         // LeagueDto tempLeague = new()
         //     {
@@ -66,6 +68,13 @@
         //     };
         // match.League = tempLeague;
         // teams = await Server.Teams.GetTeamsByLeague(league.Id);
+        StateHasChanged();
+    }
+
+    private void SetOrderId(List<TeamStatsDto> teamStats)
+    {
+        int orderId = 1;
+        stats.ForEach(x => { x.OrderId = orderId; orderId++; });
         StateHasChanged();
     }
 }

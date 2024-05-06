@@ -182,6 +182,7 @@
         var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
         SelectStatType("TotalGoals");
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
+        SetOrderId(stats);
         StateHasChanged();
     }
 }

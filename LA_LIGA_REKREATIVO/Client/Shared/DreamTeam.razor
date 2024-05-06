@@ -24,7 +24,7 @@
 <Select TItem="LeagueDto"
         TItemValue="int?"
         DataSource="@leagues"
-        DefaultValue="1"
+        DefaultValue="@defaultLeagueId"
         LabelName="@nameof(LeagueDto.Name)"
         ValueName="@nameof(PlayerDto.Id)"
         Style="width: 200px"
@@ -65,25 +65,30 @@
     public bool Loading { get; set; } = false;
     public int count = 6;
     public int multiple = 1;
+    int defaultLeagueId;
 
 
     protected override async Task OnParametersSetAsync()
     {
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        // var res = await Server.Players.Get();
-        // players = res.Take(3).ToList();
         var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
         stats = resStats.Take(6).ToList();
-        // var teamsRes = await Server.Teams.Get();
-        // teams = teamsRes.ToList();
+        defaultLeagueId = leagues.FirstOrDefault().Id;
         InitLoading = false;
-        //await base.OnInitializedAsync();
-
     }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     // var res = await Server.Players.Get();
+    //     // players = res.Take(3).ToList();
+    //     var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
+    //     stats = resStats.Take(6).ToList();
+    //     // var teamsRes = await Server.Teams.Get();
+    //     // teams = teamsRes.ToList();
+    //     InitLoading = false;
+    //     //await base.OnInitializedAsync();
+
+    // }
     // public override async Task SetParametersAsync(ParameterView parameters)
     // {
     //     var res = await Server.Players.Get();
