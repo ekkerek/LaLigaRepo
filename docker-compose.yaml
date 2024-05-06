@@ -22,7 +22,7 @@ services:
       - local_images:/var/lib/images
 
     ports:
-      - "5001:8080"   
+      - "80:8080"   
       
   db:
     image: postgres
