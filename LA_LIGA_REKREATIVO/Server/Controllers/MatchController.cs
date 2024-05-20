@@ -27,6 +27,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             var matches = _context.Matches.Include(x => x.League).Include(x => x.Summaries).ThenInclude(x => x.Player).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(_context.Matches);
+            if (matches is null)
+            {
+                return new List<MatchDto>();
+            }
             foreach (var match in matchesDto)
             {
                 var homeTeamId = matches.FirstOrDefault(x => x.Id == match.Id).HomeTeamId;

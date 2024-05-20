@@ -20,7 +20,7 @@
                     <SelectOptions>
                         @foreach (var player in Players)
                         {
-                            <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.FirstName"></SimpleSelectOption>
+                            <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.GetFullName().ToString()"></SimpleSelectOption>
                         }
                     </SelectOptions>
                 </SimpleSelect>

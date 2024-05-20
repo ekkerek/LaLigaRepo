@@ -14,11 +14,11 @@
         <GridRow>
             <GridCol Span="12">Player name:</GridCol>
             <GridCol Span="12">
-                <SimpleSelect DefaultValue="@Players.FirstOrDefault().Id.ToString()" Style="width:120px;" OnSelectedItemChanged="setSummaryPlayer">
+                <SimpleSelect DefaultValue="@Players.FirstOrDefault().Id.ToString()" Style="width:100%;" OnSelectedItemChanged="setSummaryPlayer">
                     <SelectOptions>
                         @foreach (var player in Players)
                         {
-                            <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.FirstName"></SimpleSelectOption>
+                                <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.GetFullName().ToString()"></SimpleSelectOption>
                         }
                     </SelectOptions>
                 </SimpleSelect>
@@ -85,5 +85,11 @@
     {
         selectedPlayerId = Int32.Parse(value);
         summary.Player = Players.FirstOrDefault(x => x.Id == selectedPlayerId);
+    }
+
+    string GetPlayerFullName(int playerId)
+    {
+        return Players.FirstOrDefault(x => x.Id == playerId).FirstName + " " + Players.FirstOrDefault(x => x.Id == playerId).LastName;
+
     }
 }

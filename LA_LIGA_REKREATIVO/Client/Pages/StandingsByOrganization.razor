@@ -26,7 +26,13 @@
     <PropertyColumn Title="G" Property="c=>c.Goals">
         @context.Goals:@context.GoalsConceded
     </PropertyColumn>
-    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+    @if (selectedleagueId == 10000)
+    {
+        <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
+    }else
+    {
+             <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />   
+    }
 </Table>
 
 @* <Collapse DefaultActiveKey="@(new[]{"5"})" Animation>
@@ -42,11 +48,14 @@
     private List<LeagueDto> leagues = new();
     List<TeamStatsDto> stats = new();
     int defaultvalue = 1;
+    int selectedleagueId = 1;
 
     protected async override Task OnParametersSetAsync()
     {
         var result = await Server.Leagues.GetLeaguesIncudeOverall();
         leagues = result.ToList();
+
+        selectedleagueId = leagues.FirstOrDefault().Id;
 
         stats = await Server.Matches.GetCommonStanding();//Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
         SetOrderId(stats);
@@ -56,6 +65,8 @@
     private async Task OnSelectedLeague(LeagueDto league)
     {
         if (league is null) return;
+
+        selectedleagueId = league.Id;
         if (league.Name == "OverallLeague")
         {
             stats = await Server.Matches.GetCommonStanding();

@@ -27,7 +27,7 @@
                     <ChildContent>
                         <div>
                             <div>
-                                <Tooltip Title="match attended" Style="padding-right: 10%">
+                                <Tooltip Title="Match attended 2 pts" Style="padding-right: 10%">
                                     <img height="24px;" src="./football-jersey.png" />
                                 </Tooltip>
                                 @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
@@ -65,7 +65,7 @@
                     <ChildContent>
                         <div>
                             <div>
-                                <Tooltip Title="match attended" Style="padding-right: 10%">
+                                    <Tooltip Title="Match attended 2 pts" Style="padding-right: 10%">
                                     <img height="24px;" src="./football-jersey.png" />
                                 </Tooltip>
                                 @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
@@ -110,7 +110,7 @@
                 SummaryType.SavedFrom10meterGK => totalPoints += 2
             };
         }
-        totalPoints += 1; //match attended
+        totalPoints += 2; //match attended
         return totalPoints;
     }
 

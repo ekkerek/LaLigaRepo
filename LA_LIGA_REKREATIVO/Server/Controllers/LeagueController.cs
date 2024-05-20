@@ -63,6 +63,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var updatedLeague = _context.Leagues.FirstOrDefault(x => x.Id == id);
             updatedLeague.Name = league.Name;
             updatedLeague.Year = league.Year;
+            updatedLeague.Coefficient = league.Coefficient;
             _context.Leagues.Update(updatedLeague);
             _context.SaveChanges();
         }
