@@ -10,5 +10,10 @@
         public bool IsActive { get; set; }
         public int TeamId { get; set; }
         public bool IsGk { get; set; }
+
+        public string GetFullName()
+        {
+            return FirstName + " " + LastName;
+        }
     }
 }

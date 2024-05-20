@@ -7,7 +7,7 @@ namespace LA_LIGA_REKREATIVO.Shared.Dto
     {
         [Display(Name = "Goal 5 pts")]
         Goal,
-        [Display(Name = "Assist 3 pts")]
+        [Display(Name = "Assist 2 pts")]
         Assist,
         [Display(Name = "Own Goal -3 pts")]
         OwnGoal,
