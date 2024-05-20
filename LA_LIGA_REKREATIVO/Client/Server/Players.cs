@@ -64,9 +64,9 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new PlayerStatsDto();
         }
 
-        public async Task<List<PlayerStatsDto>> GetPlayersStats(int leagueId, int count)
+        public async Task<List<PlayerStatsDto>> GetPlayersStats(int leagueId)
         {
-            var result = await _httpClient.GetAsync($"api/player/getplayersstats/{leagueId}/{count}");
+            var result = await _httpClient.GetAsync($"api/player/getplayersstats/{leagueId}");
             if (result.IsSuccessStatusCode)
             {
                 var json = await result.Content.ReadAsStringAsync();

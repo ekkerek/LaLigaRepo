@@ -90,7 +90,7 @@
     {
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
-        var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
+        var resStats = await Server.Players.GetPlayersStats(leagues.FirstOrDefault().Id);
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
         defaultLeagueId = leagues.FirstOrDefault().Id;
         SetOrderId(stats);
