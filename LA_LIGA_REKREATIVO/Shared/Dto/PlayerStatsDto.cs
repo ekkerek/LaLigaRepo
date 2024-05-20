@@ -23,8 +23,16 @@
         public int RedCards { get; set; }
 
         //Penals
-        public int GoalsFromPenalty { get; set; }
-        public int GoalsFrom10meter { get; set; }
+        public int MissedPenalty { get; set; }
+        public int Missed10meter { get; set; }
+
+        //
+        public int CleanSheetGK { get; set; }
+        public int FourSavesGK { get; set; }
+        public int SavedFromPenaltyGK { get; set; }
+        public int SavedFrom10meterGK { get; set; }
+        //public int MatchAttended { get; set; }
+
 
         public PlayerDto Player { get; set; }
         public TeamDto Team { get; set; }

@@ -61,6 +61,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new LeagueDto();
         }
 
+        public async Task<IEnumerable<LeagueDto>> GetLeaguesIncudeOverall()
+        {
+            var result = await _httpClient.GetAsync($"api/league/getLeaguesIncudeOverall");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<LeagueDto>>(json);
+            }
+            return Enumerable.Empty<LeagueDto>();
+        }
+
         public async Task<bool> AddTeamsToLeague(LeagueDto league)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/league/addTeams");

@@ -1,14 +1,9 @@
-﻿using Amazon.S3;
-using Amazon.S3.Model;
-using AutoMapper;
+﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
-using LA_LIGA_REKREATIVO.Server.Services;
-using LA_LIGA_REKREATIVO.Shared;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,7 +27,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public IEnumerable<LeagueDto> Get()
         {
             var leagues = _context.Leagues.Include(x => x.Teams);
-            return _mapper.Map<List<LeagueDto>>(leagues);
+            return _mapper.Map<List<LeagueDto>>(leagues).OrderByDescending(x => x.Id);
         }
 
         // GET api/<LeagueController>/5
@@ -41,6 +36,16 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             var league = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id);
             return _mapper.Map<LeagueDto>(league);
+        }
+
+        [HttpGet("getLeaguesIncudeOverall")]
+        public IEnumerable<LeagueDto> GetLeaguesIncudeOverall()
+        {
+            var leagues = _context.Leagues.Include(x => x.Teams);
+            var overroalLeague = new LeagueDto { Id = 10000, Coefficient = 1, Name = "OverallLeague", Year = 2024 };
+            var leaguesDto = _mapper.Map<List<LeagueDto>>(leagues);
+            leaguesDto.Add(overroalLeague);
+            return leaguesDto.OrderByDescending(x => x.Id);
         }
 
         // POST api/<LeagueController>

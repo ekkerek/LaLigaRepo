@@ -74,41 +74,41 @@
         title = Match.League.Name.ToString() + " - " + " round " + Match.GameRound.ToString();
     }
 
-    private string GetImgSrc(SummaryType type)
-    {
-        if (type == SummaryType.Goal)
-        {
-            return "./goal.png";
-        }
-        if (type == SummaryType.OwnGoal)
-        {
-            return "./own_goal.png";
-        }
-        else if (type == SummaryType.Assist)
-        {
-            return "./assist.png";
-        }
-        else if (type == SummaryType.GoalFrom10meter)
-        {
-            return "./10_m.png";
-        }
-        else if (type == SummaryType.GoalFromPenalty)
-        {
-            return "./penalty.png";
-        }
-        else if (type == SummaryType.RedCards)
-        {
-            return "./red_card.png";
-        }
-        else if (type == SummaryType.YellowCards)
-        {
-            return "./yellow_card.png";
-        }
-        else
-        {
-            return string.Empty;
-        }
-    }
+    // private string GetImgSrc(SummaryType type)
+    // {
+    //     if (type == SummaryType.Goal)
+    //     {
+    //         return "./goal.png";
+    //     }
+    //     if (type == SummaryType.OwnGoal)
+    //     {
+    //         return "./own_goal.png";
+    //     }
+    //     else if (type == SummaryType.Assist)
+    //     {
+    //         return "./assist.png";
+    //     }
+    //     else if (type == SummaryType.SavedFrom10meterGK)
+    //     {
+    //         return "./10_m.png";
+    //     }
+    //     else if (type == SummaryType.SavedFromPenaltyGK)
+    //     {
+    //         return "./penalty.png";
+    //     }
+    //     else if (type == SummaryType.RedCards)
+    //     {
+    //         return "./red_card.png";
+    //     }
+    //     else if (type == SummaryType.YellowCards)
+    //     {
+    //         return "./yellow_card.png";
+    //     }
+    //     else
+    //     {
+    //         return string.Empty;
+    //     }
+    // }
     // private string GetImagePath(string imageName)
     // {
     //     return BUCKET_PATH + imageName;

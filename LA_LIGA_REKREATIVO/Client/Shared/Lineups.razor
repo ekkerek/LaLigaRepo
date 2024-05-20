@@ -1,5 +1,10 @@
-﻿@using LA_LIGA_REKREATIVO.Shared.Dto
+﻿@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
 @inject NavigationManager Navigation
+@inject FileService _fileService;
+
 
 <GridRow>
     <GridCol Span="12" Style="padding:4px;">
@@ -8,15 +13,12 @@
             {
                 <Panel Key="@player.Id.ToString()">
                     <HeaderTemplate>
-                        @*        <div>
-                    @player.FirstName
-                    </div> *@
                         <div style="word-break:break-word">
                             <span style="font-size:small">    @player.FirstName</span>
                             <span style="font-size: small; font-weight: 700;">@player.LastName</span>
                             <span style="float: right; font-weight: 700;">
                                 @GetTotalPoint(player)
-                                <Icon  Type="star" Theme="outline" />
+                                <Icon Type="star" Theme="outline" />
                             </span>
 
 
@@ -30,8 +32,8 @@
                                 </Tooltip>
                                 @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
                                 {
-                                    <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
-                                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                                    <Tooltip Title="@pp(item.Type)" Style="padding-right: 10%;">
+                                        <img height="24px;" src="@_fileService.GetImgSrc(item.Type)" />
                                     </Tooltip>
                                 }
                             </div>
@@ -50,9 +52,6 @@
             {
                 <Panel Key="@player.Id.ToString()">
                     <HeaderTemplate>
-                        @*   <div>
-                    @player.FirstName
-                    </div> *@
                         <div style="word-break:break-word">
                             <span style="font-size:small">    @player.FirstName</span>
                             <span style="font-size: small; font-weight: 700;">@player.LastName</span>
@@ -72,7 +71,7 @@
                                 @foreach (var item in Match.Summaries.Where(x => x.Player.Id == player.Id))
                                 {
                                     <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
-                                        <img height="24px;" src="@GetImgSrc(item.Type)" />
+                                        <img height="24px;" src="@_fileService.GetImgSrc(item.Type)" />
                                     </Tooltip>
                                 }
                             </div>
@@ -90,94 +89,96 @@
 @code {
     [Parameter] public MatchDto Match { get; set; }
 
-    private string GetImgSrc(SummaryType type)
-    {
-        var result = type switch
-        {
-            SummaryType.Goal => "./goal.png",
-            SummaryType.OwnGoal => "./own_goal.png",
-            SummaryType.Assist => "./assist.png",
-            SummaryType.GoalFrom10meter => "./10_m.png",
-            SummaryType.GoalFromPenalty => "./penalty.png",
-            SummaryType.RedCards => "./red_card.png",
-            SummaryType.YellowCards => "./yellow_card.png",
-            _ => string.Empty
-        };
-
-        return result;
-
-        // if (type == SummaryType.Goal)
-        // {
-        //     return "./goal.png";
-        // }
-        // if (type == SummaryType.OwnGoal)
-        // {
-        //     return "./own_goal.png";
-        // }
-        // else if (type == SummaryType.Assist)
-        // {
-        //     return "./assist.png";
-        // }
-        // else if (type == SummaryType.GoalFrom10meter)
-        // {
-        //     return "./10_m.png";
-        // }
-        // else if (type == SummaryType.GoalFromPenalty)
-        // {
-        //     return "./penalty.png";
-        // }
-        // else if (type == SummaryType.RedCards)
-        // {
-        //     return "./red_card.png";
-        // }
-        // else if (type == SummaryType.YellowCards)
-        // {
-        //     return "./yellow_card.png";
-        // }
-        // else
-        // {
-        //     return string.Empty;
-        // }
-    }
-
     private double GetTotalPoint(PlayerDto playerDto)
     {
-        var summaries = Match.Summaries.Where(x => x.Player.Id == playerDto.Id);
-        double summ = 0;
+        var summaries = Match.Summaries.Where(x => x.Player.Id == playerDto.Id).ToList();
+        double totalPoints = 0;
         foreach (var sum in summaries)
         {
-            if (sum.Type == SummaryType.Goal)
+            var temp = sum.Type switch
             {
-                summ += 5;
-            }
-            else if (sum.Type == SummaryType.Assist)
-            {
-                summ += 3;
-            }
-            else if (sum.Type == SummaryType.GoalFrom10meter)
-            {
-                summ += 3;
-            }
-            else if (sum.Type == SummaryType.GoalFromPenalty)
-            {
-                summ += 2;
-            }
-            else if (sum.Type == SummaryType.YellowCards)
-            {
-                summ -= 2;
-            }
-            else if (sum.Type == SummaryType.RedCards)
-            {
-                summ -= 5;
-            }
+                SummaryType.Goal => totalPoints += 5,
+                SummaryType.Assist => totalPoints += 2,
+                SummaryType.OwnGoal => totalPoints -= 3,
+                SummaryType.YellowCards => totalPoints -= 2,
+                SummaryType.RedCards => totalPoints -= 7,
+                SummaryType.MissedPenalty => totalPoints -= 3,
+                SummaryType.Missed10meter => totalPoints -= 2,
+                SummaryType.CleanSheetGK => totalPoints += 5,
+                SummaryType.FourSavesGK => totalPoints += 1,
+                SummaryType.SavedFromPenaltyGK => totalPoints += 3,
+                SummaryType.SavedFrom10meterGK => totalPoints += 2
+            };
         }
-        return summ;
-
+        totalPoints += 1; //match attended
+        return totalPoints;
     }
 
     private void GoToPlayerProfile(int playerId)
     {
-
         Navigation.NavigateTo($"/playerProfile/{playerId}");
+    }
+
+    private string pp(SummaryType type)
+    {
+        var aa =  EnumHelper<SummaryType>.GetDisplayValue(type);
+        return aa;
+    }
+
+    public static class EnumHelper<T>
+    where T : struct, Enum // This constraint requires C# 7.3 or later.
+    {
+        public static IList<T> GetValues(Enum value)
+        {
+            var enumValues = new List<T>();
+
+            foreach (FieldInfo fi in value.GetType().GetFields(BindingFlags.Static | BindingFlags.Public))
+            {
+                enumValues.Add((T)Enum.Parse(value.GetType(), fi.Name, false));
+            }
+            return enumValues;
+        }
+
+        public static T Parse(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+        public static IList<string> GetNames(Enum value)
+        {
+            return value.GetType().GetFields(BindingFlags.Static | BindingFlags.Public).Select(fi => fi.Name).ToList();
+        }
+
+        public static IList<string> GetDisplayValues(Enum value)
+        {
+            return GetNames(value).Select(obj => GetDisplayValue(Parse(obj))).ToList();
+        }
+
+        private static string lookupResource(Type resourceManagerProvider, string resourceKey)
+        {
+            var resourceKeyProperty = resourceManagerProvider.GetProperty(resourceKey,
+                BindingFlags.Static | BindingFlags.Public, null, typeof(string),
+                new Type[0], null);
+            if (resourceKeyProperty != null)
+            {
+                return (string)resourceKeyProperty.GetMethod.Invoke(null, null);
+            }
+
+            return resourceKey; // Fallback with the key name
+        }
+
+        public static string GetDisplayValue(T value)
+        {
+            var fieldInfo = value.GetType().GetField(value.ToString());
+
+            var descriptionAttributes = fieldInfo.GetCustomAttributes(
+                typeof(DisplayAttribute), false) as DisplayAttribute[];
+
+            if (descriptionAttributes != null && descriptionAttributes[0].ResourceType != null)
+                return lookupResource(descriptionAttributes[0].ResourceType, descriptionAttributes[0].Name);
+
+            if (descriptionAttributes == null) return string.Empty;
+            return (descriptionAttributes.Length > 0) ? descriptionAttributes[0].Name : value.ToString();
+        }
     }
 }

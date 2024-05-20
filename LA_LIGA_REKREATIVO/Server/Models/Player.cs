@@ -15,6 +15,7 @@ namespace LA_LIGA_REKREATIVO.Server.Models
         public string? Picture { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
+        public bool IsGk { get; set; }
         public Team Team { get; set; }
         public ICollection<Match> Matches { get; set; }
     }

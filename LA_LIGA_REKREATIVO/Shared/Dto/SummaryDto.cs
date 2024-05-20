@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int Time { get; set; }
         public PlayerDto Player { get; set; }
+        public bool IsDeleted { get; set; }
         public SummaryType Type
         {
             get; set;

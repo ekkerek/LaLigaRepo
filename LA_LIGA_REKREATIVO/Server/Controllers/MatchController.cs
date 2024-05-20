@@ -43,7 +43,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("getByDate")]
         public IEnumerable<MatchDto> GetByDate([FromBody] DateTime date)
         {
-            var matches = _context.Matches.Where(x => x.GameTime.ToUniversalTime().Date == date.ToUniversalTime().Date).ToList();
+            var matches = _context.Matches.Include(x => x.Players).Where(x => x.GameTime.ToUniversalTime().Date == date.ToUniversalTime().Date).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches);
             foreach (var match in matchesDto)
             {
@@ -84,6 +84,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //map summaries
             foreach (var summary in mappedMatch.Summaries)
                 summary.Player = players.FirstOrDefault(x => x.Id == summary.Player.Id);
+            //foreach (var player in players)
+            //    mappedMatch.Summaries.Add(new Summary() { Player = player, Time = 1, Type = SummaryType.TeamWin });
 
             mappedMatch.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
 
@@ -198,6 +200,73 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 teamStatsList.Add(teamStatsDto);
             }
             return teamStatsList.OrderByDescending(x => x.TotalPoints).ToList();
+        }
+
+        [HttpGet("getStandings")]
+        public async Task<List<LeagueStatsDto>> GetStandings()
+        {
+            var leagues = _context.Leagues.ToList();
+            var leagueStatsList = new List<LeagueStatsDto>();
+            foreach (var league in leagues)
+            {
+                var matches = _context.Matches.Where(x => x.League.Id == league.Id);
+                var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == league.Id).Teams;
+                LeagueStatsDto leagueStats = new();
+                var teamStatsList = new List<TeamStatsDto>();
+                foreach (var team in teams)
+                {
+                    var teamStatsDto = new TeamStatsDto();
+                    teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+                    teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id);
+                    teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum() +
+                                         matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum();
+                    teamStatsDto.GoalsConceded = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum() +
+                                         matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum();
+                    teamStatsDto.Wins = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                        matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals);
+                    teamStatsDto.Losts = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                        matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals);
+                    teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                        matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals);
+                    teamStatsDto.TotalPoints = teamStatsDto.Wins * 3 + teamStatsDto.Draws;
+
+                    teamStatsList.Add(teamStatsDto);
+                }
+                leagueStats.TeamStats.AddRange(teamStatsList.OrderByDescending(x => x.TotalPoints).ToList());
+                leagueStats.League = _mapper.Map<LeagueDto>(league);
+
+                leagueStatsList.Add(leagueStats);
+            }
+            return leagueStatsList;
+        }
+
+        [HttpGet("getCommonStanding")]
+        public async Task<List<TeamStatsDto>> GetCommonStanding()
+        {
+            var matches = _context.Matches.ToList();
+            var teams = _context.Leagues.Include(x => x.Teams).ThenInclude(x => x.Leagues).SelectMany(x => x.Teams);
+            var teamStatsList = new List<TeamStatsDto>();
+            foreach (var team in teams)
+            {
+                var teamStatsDto = new TeamStatsDto();
+                teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+                teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id);
+                teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum() +
+                                     matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum();
+                teamStatsDto.GoalsConceded = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum() +
+                                     matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum();
+                teamStatsDto.Wins = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals);
+                teamStatsDto.Losts = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals);
+                teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                    matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals);
+                teamStatsDto.TotalPoints = (teamStatsDto.Wins * 3 + teamStatsDto.Draws);
+                teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
+
+                teamStatsList.Add(teamStatsDto);
+            }
+            return teamStatsList.OrderByDescending(x => x.PointsByCoefficient).ToList();
         }
 
         [HttpPost("delete")]

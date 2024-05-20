@@ -6,7 +6,7 @@
 <Select TItem="LeagueDto"
         TItemValue="int?"
         DataSource="@leagues"
-        DefaultValue="5"
+        DefaultValue="10000"
         LabelName="@nameof(LeagueDto.Name)"
         ValueName="@nameof(LeagueDto.Id)"
         Style="width: 200px"
@@ -45,10 +45,10 @@
 
     protected async override Task OnParametersSetAsync()
     {
-        var result = await Server.Leagues.Get();
+        var result = await Server.Leagues.GetLeaguesIncudeOverall();
         leagues = result.ToList();
 
-        stats = await Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
+        stats = await Server.Matches.GetCommonStanding();//Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
         SetOrderId(stats);
         StateHasChanged();
     }
@@ -56,8 +56,15 @@
     private async Task OnSelectedLeague(LeagueDto league)
     {
         if (league is null) return;
+        if (league.Name == "OverallLeague")
+        {
+            stats = await Server.Matches.GetCommonStanding();
+        }
+        else
+        {
+            stats = await Server.Matches.GetStandingsByLeague(league.Id);
+        }
 
-        stats = await Server.Matches.GetStandingsByLeague(league.Id);
         SetOrderId(stats);
         //var leagueId = Int32.Parse(league.Id);
         // LeagueDto tempLeague = new()

@@ -1,4 +1,5 @@
 ﻿using LA_LIGA_REKREATIVO.Shared;
+using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -78,6 +79,27 @@ namespace LA_LIGA_REKREATIVO.Client.Services
         public string GetImagePath(string imageName)
         {
             return BUCKET_PATH + imageName;
+        }
+
+        public string GetImgSrc(SummaryType type)
+        {
+            var result = type switch
+            {
+                SummaryType.Goal => "./goal.png",
+                SummaryType.OwnGoal => "./own_goal.png",
+                SummaryType.Assist => "./assist.png",
+                SummaryType.SavedFrom10meterGK => "./SavedFrom10meterGK.png",
+                SummaryType.SavedFromPenaltyGK => "./SavedFromPenaltyGK.png",
+                SummaryType.RedCards => "./red_card.png",
+                SummaryType.YellowCards => "./yellow_card.png",
+                SummaryType.CleanSheetGK => "./CleanSheetGK.png",
+                SummaryType.MissedPenalty => "./MissedPenalty.png",
+                SummaryType.Missed10meter => "./10_m.png",
+                SummaryType.FourSavesGK => "./FourSavesGK.png",
+                _ => string.Empty
+            };
+
+            return result;
         }
     }
 }

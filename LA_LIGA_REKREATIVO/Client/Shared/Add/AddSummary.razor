@@ -12,7 +12,7 @@
           WrapperColSpan="16"
     @ref="@addSummaryForm">
         <GridRow>
-            <GridCol Span="12">Config name</GridCol>
+            <GridCol Span="12">Player name:</GridCol>
             <GridCol Span="12">
                 <SimpleSelect DefaultValue="@Players.FirstOrDefault().Id.ToString()" Style="width:120px;" OnSelectedItemChanged="setSummaryPlayer">
                     <SelectOptions>
@@ -25,11 +25,11 @@
             </GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12">Time:</GridCol>
             <GridCol Span="12"><Input Type="number" @bind-Value="@summary.Time" /></GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12">Action:</GridCol>
             <GridCol Span="12">
                 <EnumSelect TEnum="SummaryType" OnSelectedItemChanged="setSummaryType"></EnumSelect>
             </GridCol>

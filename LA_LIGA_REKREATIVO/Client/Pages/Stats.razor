@@ -49,11 +49,11 @@
     }
     else if (stattt == "GoalsFrom10meter")
     {
-        <PropertyColumn Title="Goals From 10 meter" Property="c=>c.GoalsFrom10meter" />
+        <PropertyColumn Title="Missed From 10 meter" Property="c=>c.Missed10meter" />
     }
     else if (stattt == "GoalsFromPenalty")
     {
-        <PropertyColumn Title="Goals From Penalty" Property="c=>c.GoalsFromPenalty" />
+        <PropertyColumn Title="Missed From Penalty" Property="c=>c.MissedPenalty" />
     }
     else if (stattt == "OwnGoals")
     {
@@ -123,20 +123,20 @@
             stats = stats.OrderByDescending(x => x.Assists).ToList();
             SetOrderId(stats);
         }
-        else if (value == "GoalsFrom10meter")
-        {
-            stattt = value;
-            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
-            stats = stats.OrderByDescending(x => x.GoalsFrom10meter).ToList();
-            SetOrderId(stats);
-        }
-        else if (value == "GoalsFromPenalty")
-        {
-            stattt = value;
-            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
-            stats = stats.OrderByDescending(x => x.GoalsFromPenalty).ToList();
-            SetOrderId(stats);
-        }
+        // else if (value == "GoalsFrom10meter")
+        // {
+        //     stattt = value;
+        //     //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+        //     stats = stats.OrderByDescending(x => x.GoalsFrom10meter).ToList();
+        //     SetOrderId(stats);
+        // }
+        // else if (value == "GoalsFromPenalty")
+        // {
+        //     stattt = value;
+        //     //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+        //     stats = stats.OrderByDescending(x => x.GoalsFromPenalty).ToList();
+        //     SetOrderId(stats);
+        // }
         else if (value == "OwnGoals")
         {
             stattt = value;

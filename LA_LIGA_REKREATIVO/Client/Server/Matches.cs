@@ -44,7 +44,30 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return new List<TeamStatsDto>();
         }
-        
+
+        public async Task<List<TeamStatsDto>> GetCommonStanding()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getCommonStanding");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<TeamStatsDto>>(json);
+            }
+            return new List<TeamStatsDto>();
+        }
+
+
+        public async Task<List<LeagueStatsDto>> GetStandings()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getStandings");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<LeagueStatsDto>>(json);
+            }
+            return new List<LeagueStatsDto>();
+        }
+
 
         public async Task<IEnumerable<MatchDto>> GetByDate(DateTime dateTime)
         {

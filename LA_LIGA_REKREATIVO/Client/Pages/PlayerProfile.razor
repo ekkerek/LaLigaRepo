@@ -80,12 +80,28 @@
     <Divider Style="margin: 12px;" />
 
     <GridRow>
-        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 7m:</GridCol>
-        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFromPenalty</GridCol>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Missed Penalty:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.MissedPenalty</GridCol>
     </GridRow>
     <GridRow>
-        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Goals From 10m:</GridCol>
-        <GridCol Span="12" Style="font-size: medium">@playerStats.GoalsFrom10meter</GridCol>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Missed From 10m:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.Missed10meter</GridCol>
+    </GridRow>
+
+    <Divider Style="margin: 12px;" />
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Clean Sheets:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.CleanSheetGK</GridCol>
+    </GridRow>
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Saved Penalties:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.SavedFromPenaltyGK</GridCol>
+    </GridRow>
+
+    <GridRow>
+        <GridCol Span="12" Style="font-weight: 700;font-size: medium">Saved From 10 meter:</GridCol>
+        <GridCol Span="12" Style="font-size: medium">@playerStats.SavedFrom10meterGK</GridCol>
     </GridRow>
 </div>
 

@@ -9,5 +9,6 @@
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public int TeamId { get; set; }
+        public bool IsGk { get; set; }
     }
 }

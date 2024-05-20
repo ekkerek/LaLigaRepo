@@ -11,7 +11,7 @@
         public int Id { get; set; }
         public DateTime GameTime { get; set; }
         public int GameRound { get; set; }
-        public string GamePlace { get; set; }
+        public string? GamePlace { get; set; }
         public int HomeTeamGoals { get; set; }
         public int AwayTeamGoals { get; set; }
         public int HomeTeamId { get; set; }

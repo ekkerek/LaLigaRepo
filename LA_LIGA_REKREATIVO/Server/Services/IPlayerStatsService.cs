@@ -8,5 +8,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
     {
         List<PlayerStatsDto> GetStatsByGoal(int leagueId);
         List<PlayerStatsDto> GetStatsByAssists(int leagueId);
+        List<PlayerStatsDto> GetDreamTeamByLeague(int leagueId);
+        PlayerStatsDto GetPlayerStats(int id);
     }
 }

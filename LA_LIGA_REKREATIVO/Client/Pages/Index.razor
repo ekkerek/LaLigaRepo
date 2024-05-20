@@ -1,11 +1,80 @@
 ﻿@page "/"
+@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@inject Server Server;
 
-<PageTitle>Index</PageTitle>
+<h2 style="display: flex; justify-content: center;">Fantasy pravila</h2>
 
-<h1>La Liga Rekreativo</h1>
+<AntList Class="demo-loadmore-list" DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
+    <ChildContent Context="item">
+        <ListItem>
+            <ListItemMeta>
+                <TitleTemplate>
+                   <span>@item.Key.ToString()</span>
+                </TitleTemplate>
+            </ListItemMeta>
+            <div>@item.Value.ToString()</div>
+        </ListItem>
+    </ChildContent>
+    @*     <LoadMore>
+    @if (!InitLoading && !Loading)
+    {
+    <div class="demo-loadmore-btn-content ">
+    <Button OnClick="OnLoadMore">loading more</Button>
+    </div>
+    }
+    </LoadMore> *@
+</AntList>
 
-@* <Card Size="small" Title="Dream Team" Style="width:300px;">
-    <Body>
-        <DreamTeam></DreamTeam>
-    </Body>
-</Card> *@
+@* <Table TItem="TeamStatsDto"
+       DataSource="@stats"
+       Size="TableSize.Small"
+       HidePagination>
+    <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
+    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
+    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
+    <PropertyColumn Title="G" Property="c=>c.Goals">
+        @context.Goals:@context.GoalsConceded
+    </PropertyColumn>
+    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+    <PropertyColumn Title="P" Property="c=>c.PointsByCoefficient" />
+</Table> *@
+
+
+@code {
+    // private List<LeagueDto> leagues = new();
+    // List<TeamStatsDto> stats = new();
+    // int defaultvalue = 1;
+    Dictionary<string, int> fantasyRules = new();
+    public bool InitLoading { get; set; } = true;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        fantasyRules.Add("Gol", 5);
+        fantasyRules.Add("Asistencija", 3);
+        fantasyRules.Add("Ucestovanje na mecu", 2);
+        fantasyRules.Add("Auto gol", -3);
+        fantasyRules.Add("Zuti karton", -2);
+        fantasyRules.Add("Crveni karton", -7);
+        fantasyRules.Add("Promasen penal", -3);
+        fantasyRules.Add("Promasen udarac sa 10 m", -2);
+        fantasyRules.Add("Clean sheet golman", 5);
+        fantasyRules.Add("Svake 4 odbrane golman", 1);
+        fantasyRules.Add("Odbranjen penal golman", 3);
+        fantasyRules.Add("Odbranjen udarac sa 10 m golman", 2);
+
+        // var result = await Server.Leagues.Get();
+        // leagues = result.ToList();
+
+        // stats = await Server.Matches.GetCommonStanding();// GetStandingsByLeague(leagues.FirstOrDefault().Id);
+        // SetOrderId(stats);
+        // StateHasChanged();
+    }
+
+    // private void SetOrderId(List<TeamStatsDto> teamStats)
+    // {
+    //     int orderId = 1;
+    //     stats.ForEach(x => { x.OrderId = orderId; orderId++; });
+    //     StateHasChanged();
+    // }
+}
