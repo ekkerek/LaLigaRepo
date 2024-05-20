@@ -36,6 +36,13 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return playersStats;
         }
 
+        public List<PlayerStatsDto> GetPlayersStats23(int leagueId)
+        {
+            var playersStats = GetPlayersStats(leagueId).OrderByDescending(x => x.TotalPoints).ToList();
+            SetOrderId(playersStats);
+            return playersStats;
+        }
+
         private void SetOrderId(List<PlayerStatsDto> playerStats)
         {
             int orderId = 1;
@@ -54,14 +61,14 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 returnPlayer = GetPlayerStats(playerId);
                 playersStats.Add(returnPlayer);
             }
-
+            //SetOrderId(playersStats);
             return playersStats.ToList();
 
         }
 
         public PlayerStatsDto GetPlayerStats(int id)
         {
-            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x=> x.Player).FirstOrDefault(x => x.Id == id);
+            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
             var playerStats = player.Matches.Select(x => x.Summaries);
             PlayerStatsDto returnPlayer = new PlayerStatsDto();
             returnPlayer.TotalMatches = player.Matches.Count();
@@ -114,8 +121,10 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             }
             returnPlayer.TotalPoints += returnPlayer.TotalMatches * 2; // match attened
             //returnPlayer.TotalPoints += returnPlayer.Wins * 2; // team win
-            returnPlayer.GoalsPerMatch = (double)returnPlayer.Goals / (double)returnPlayer.TotalMatches;
-            returnPlayer.WinPerMatch = (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
+            returnPlayer.GoalsPerMatch = returnPlayer.Goals == 0 ? 0 :
+                (double)returnPlayer.Goals / (double)returnPlayer.TotalMatches;
+            returnPlayer.WinPerMatch = returnPlayer.Wins == 0 ? 0 :
+                (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
             returnPlayer.Player = _mapper.Map<PlayerDto>(player);
             return returnPlayer;
         }
