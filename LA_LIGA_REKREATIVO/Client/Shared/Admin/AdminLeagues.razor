@@ -15,10 +15,10 @@
 }
 
 <Table TItem="LeagueDto" DataSource="@leagues">
-    <PropertyColumn Property="c=>c.Id">
+    <PropertyColumn Sortable Filterable Property="c=>c.Id">
         <a>@context.Id</a>
     </PropertyColumn>
-    <PropertyColumn Property="c=>c.Name">
+    <PropertyColumn Sortable Filterable Property="c=>c.Name">
         <a>@context.Name</a>
     </PropertyColumn>
     <PropertyColumn Property="c=>c.Year"></PropertyColumn>

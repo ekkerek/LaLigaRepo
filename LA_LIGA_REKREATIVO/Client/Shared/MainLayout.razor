@@ -17,7 +17,7 @@
             </article>
         </Content>
         <Footer Style="padding: 4px;display: flex; justify-content:space-evenly">
-            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; ">
+            <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToHome">
                 <div style="display:flex; flex-direction: column;">
                     <span>
                         <img style="max-height: 24px;max-width: 24px" src="./home.png" />
@@ -85,6 +85,12 @@
 <RadzenComponents />
 
 @code {
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo($"/");
+    }
+
     private void NavigateTodreamTeam()
     {
         Navigation.NavigateTo($"/dreamteam");

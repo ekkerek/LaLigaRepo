@@ -22,6 +22,9 @@
         <FormItem Label="Last Name">
             <Input @bind-Value="@context.LastName" />
         </FormItem>
+        <FormItem Label="Is Gk">
+            <Switch @bind-Checked="@context.IsGk" />
+        </FormItem>
         <FormItem Label="Team">
             <SimpleSelect Value="@context.TeamId.ToString()" DefaultValue="lucy" OnSelectedItemChanged="SelectTeam">
                 <SelectOptions>

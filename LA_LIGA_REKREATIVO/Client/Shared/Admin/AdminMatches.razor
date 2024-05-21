@@ -16,16 +16,16 @@
 
 <Table TItem="MatchDto" DataSource="@matches">
 
-    <PropertyColumn Property="c=>c.GameTime"></PropertyColumn>
-    <PropertyColumn Property="c=>c.GameRound"></PropertyColumn>
-    <PropertyColumn Title="Home team name" Property="c=>c.HomeTeam.Name">
+    <PropertyColumn Sortable Filterable Property="c=>c.GameTime"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.GameRound"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Title="Home team name" Property="c=>c.HomeTeam.Name">
         <a>@context.HomeTeam.Name</a>
     </PropertyColumn>
-    <PropertyColumn Property="c=>c.HomeTeamGoals"></PropertyColumn>
-    <PropertyColumn Property="c=>c.AwayTeamGoals"></PropertyColumn>
-    <PropertyColumn Title="Away team name" Property="c=>c.AwayTeam.Name"></PropertyColumn>
-    <PropertyColumn Property="c=>c.GamePlace"></PropertyColumn>
-    <PropertyColumn Title="League" Property="c=>c.League.Name"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.HomeTeamGoals"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.AwayTeamGoals"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Title="Away team name" Property="c=>c.AwayTeam.Name"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.GamePlace"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Title="League" Property="c=>c.League.Name"></PropertyColumn>
     <ActionColumn Title="Edit">
         <Space>
             <SpaceItem><Button Danger OnClick="()=>Edit(context)">Edit</Button></SpaceItem>

@@ -1,62 +1,45 @@
-﻿@* @page "/dreamTeam" *@
-@using LA_LIGA_REKREATIVO.Client.Services
+﻿@using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
 @inject Server Server
 @inject NavigationManager Navigation
 @inject FileService _fileService;
 
+<Spin Spinning=loading>
 
-@* <style>
-
-    .demo-loadmore-list {
-        min-height: 350px;
-    }
-
-    .demo-loadmore-btn-content {
-        text-align: center;
-        margin-top: 12px;
-        height: 32px;
-        line-height: 32px;
-    }
-</style> *@
-
-<Select TItem="LeagueDto"
-        TItemValue="int?"
-        DataSource="@leagues"
-        DefaultValue="@defaultLeagueId"
-        LabelName="@nameof(LeagueDto.Name)"
-        ValueName="@nameof(PlayerDto.Id)"
-        Style="width: 200px"
-        Placeholder="Select a league"
-        IgnoreItemChanges="false"
-        OnSelectedItemChanged="OnSelectedLeague"
-        AllowClear>
-</Select>
+    <Select TItem="LeagueDto"
+            TItemValue="int?"
+            DataSource="@leagues"
+            DefaultValue="@defaultLeagueId"
+            LabelName="@nameof(LeagueDto.Name)"
+            ValueName="@nameof(PlayerDto.Id)"
+            Style="width: 200px"
+            Placeholder="Select a league"
+            IgnoreItemChanges="false"
+            OnSelectedItemChanged="OnSelectedLeague"
+            AllowClear>
+    </Select>
 
 
-<AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
-    <ChildContent Context="item">
-        <ListItem>
-            <ListItemMeta>
-                <TitleTemplate>
-                    <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(item.Player.Picture)" /></span>
-                    <span>                    <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a></span>
-                    @*   <span>@item?.Team?.Name</span> *@
-                </TitleTemplate>
-            </ListItemMeta>
-            <div>@item?.TotalPoints</div>
-        </ListItem>
-    </ChildContent>
-    @*     <LoadMore>
-    @if (!InitLoading && !Loading)
-    {
-    <div class="demo-loadmore-btn-content ">
-    <Button OnClick="OnLoadMore">loading more</Button>
-    </div>
-    }
-    </LoadMore> *@
-</AntList>
+    <AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
+        <ChildContent Context="item">
+            <ListItem>
+                <ListItemMeta>
+                    <TitleTemplate>
+                        <span>
+                            <img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(item.Player.Picture)" />
+                        </span>
+                        <span>
+                            <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a>
+                        </span>
+                    </TitleTemplate>
+                </ListItemMeta>
+                <div>@item?.TotalPoints</div>
+            </ListItem>
+        </ChildContent>
+    </AntList>
+
+</Spin>
 
 @code {
     private List<PlayerStatsDto> stats = new();
@@ -66,46 +49,20 @@
     public int count = 6;
     public int multiple = 1;
     int defaultLeagueId;
+    private bool loading;
 
 
     protected override async Task OnParametersSetAsync()
     {
+        loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
         var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
         stats = resStats.Take(6).ToList();
         defaultLeagueId = leagues.FirstOrDefault().Id;
         InitLoading = false;
+        loading = false;
     }
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     // var res = await Server.Players.Get();
-    //     // players = res.Take(3).ToList();
-    //     var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
-    //     stats = resStats.Take(6).ToList();
-    //     // var teamsRes = await Server.Teams.Get();
-    //     // teams = teamsRes.ToList();
-    //     InitLoading = false;
-    //     //await base.OnInitializedAsync();
-
-    // }
-    // public override async Task SetParametersAsync(ParameterView parameters)
-    // {
-    //     var res = await Server.Players.Get();
-    //     players = res.ToList();
-    // }
-
-    // public async Task OnLoadMore()
-    // {
-    //     multiple++;
-    //     count = 3 * multiple;
-    //     var res = await Server.Players.Get();
-    //     players = res.Take(count).ToList();
-    //     Loading = true;
-    //     // var res = await GetData();
-    //     //players.AddRange(res);
-    //     Loading = false;
-    // }
 
     private void GoToProfilePage(int id)
     {
@@ -116,18 +73,10 @@
     {
         if (league is null) return;
 
+        loading = true;
         var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
         stats = resStats.ToList();
-        //stats = await Server.Matches.GetStandingsByLeague(league.Id);
-        //var leagueId = Int32.Parse(league.Id);
-        // LeagueDto tempLeague = new()
-        //     {
-        //         Id = league.Id,
-        //         Name = leagues.FirstOrDefault(x => x.Id == league.Id).Name,
-        //         Year = leagues.FirstOrDefault(x => x.Id == league.Id).Year
-        //     };
-        // match.League = tempLeague;
-        // teams = await Server.Teams.GetTeamsByLeague(league.Id);
         StateHasChanged();
+        loading = false;
     }
 }

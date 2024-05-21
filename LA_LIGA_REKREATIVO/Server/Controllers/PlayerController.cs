@@ -66,6 +66,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             updatedPlayer.FirstName = value.FirstName;
             updatedPlayer.LastName = value.LastName;
             updatedPlayer.Picture = value.Picture;
+            updatedPlayer.IsGk = value.IsGk;
             updatedPlayer.Team = _context.Teams.FirstOrDefault(x => x.Id == value.TeamId);
             _context.Players.Update(updatedPlayer);
             _context.SaveChanges();

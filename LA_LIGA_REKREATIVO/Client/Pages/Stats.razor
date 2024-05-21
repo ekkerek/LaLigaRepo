@@ -47,14 +47,6 @@
         {
             <PropertyColumn Title="Assists" Property="c=>c.Assists" />
         }
-        else if (stattt == "GoalsFrom10meter")
-        {
-            <PropertyColumn Title="Missed From 10 meter" Property="c=>c.Missed10meter" />
-        }
-        else if (stattt == "GoalsFromPenalty")
-        {
-            <PropertyColumn Title="Missed From Penalty" Property="c=>c.MissedPenalty" />
-        }
         else if (stattt == "OwnGoals")
         {
             <PropertyColumn Title="Own Goals" Property="c=>c.OwnGoals" />
@@ -71,7 +63,22 @@
         {
             <PropertyColumn Title="Red Cards" Property="c=>c.RedCards" />
         }
-
+        else if (stattt == "CleanSheetGK")
+        {
+            <PropertyColumn Title="Clean Sheet GK" Property="c=>c.CleanSheetGK" />
+        }
+        else if (stattt == "FourSavesGK")
+        {
+            <PropertyColumn Title="Four Saves GK" Property="c=>c.FourSavesGK" />
+        }
+        else if (stattt == "SavedFromPenaltyGK")
+        {
+            <PropertyColumn Title="Saved From Penalty GK" Property="c=>c.SavedFromPenaltyGK" />
+        }
+        else if (stattt == "SavedFrom10meterGK")
+        {
+            <PropertyColumn Title="Saves From 10 meter GK" Property="c=>c.SavedFrom10meterGK" />
+        }
     </Table>
 </Spin>
 
@@ -79,7 +86,8 @@
     string _selectedValue1, _selectedValue2, _selectedValue3;
     private bool loading;
     List<string> statsType = new List<string>()
-                { "Total Goals", "TotalAssists", "GoalsFrom10meter", "GoalsFromPenalty", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards" };
+                { "Total Goals", "TotalAssists", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards", "CleanSheetGK", "FourSavesGK", "SavedFromPenaltyGK", "SavedFrom10meterGK" };
+
 
     string stattt = "Total Goals";
     private List<LeagueDto> leagues = new();
@@ -127,20 +135,6 @@
             stats = stats.OrderByDescending(x => x.Assists).ToList();
             SetOrderId(stats);
         }
-        // else if (value == "GoalsFrom10meter")
-        // {
-        //     stattt = value;
-        //     //var resStats = await Server.Players.GetDreamTeamByLeague(5);
-        //     stats = stats.OrderByDescending(x => x.GoalsFrom10meter).ToList();
-        //     SetOrderId(stats);
-        // }
-        // else if (value == "GoalsFromPenalty")
-        // {
-        //     stattt = value;
-        //     //var resStats = await Server.Players.GetDreamTeamByLeague(5);
-        //     stats = stats.OrderByDescending(x => x.GoalsFromPenalty).ToList();
-        //     SetOrderId(stats);
-        // }
         else if (value == "OwnGoals")
         {
             stattt = value;
@@ -167,6 +161,34 @@
             stattt = value;
             //var resStats = await Server.Players.GetDreamTeamByLeague(5);
             stats = stats.OrderByDescending(x => x.RedCards).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "CleanSheetGK")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.CleanSheetGK).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "FourSavesGK")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.FourSavesGK).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "SavedFromPenaltyGK")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.SavedFromPenaltyGK).ToList();
+            SetOrderId(stats);
+        }
+        else if (value == "SavedFrom10meterGK")
+        {
+            stattt = value;
+            //var resStats = await Server.Players.GetDreamTeamByLeague(5);
+            stats = stats.OrderByDescending(x => x.SavedFrom10meterGK).ToList();
             SetOrderId(stats);
         }
         //StateHasChanged();

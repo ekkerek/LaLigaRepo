@@ -15,14 +15,15 @@
 }
 
 <Table TItem="PlayerDto" DataSource="@players">
-    <PropertyColumn Property="c=>c.Id">
+    <PropertyColumn Sortable Filterable Property="c=>c.Id">
         <a>@context.Id</a>
     </PropertyColumn>
-    <PropertyColumn Property="c=>c.FirstName">
+    <PropertyColumn Sortable Filterable Property="c=>c.FirstName">
         <a>@context.FirstName</a>
     </PropertyColumn>
-    <PropertyColumn Property="c=>c.LastName"></PropertyColumn>
-    <PropertyColumn Property="c=>c.TeamId"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.LastName"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.IsGk"></PropertyColumn>
+    <PropertyColumn Sortable Filterable Property="c=>c.TeamId"></PropertyColumn>
     <ColumnDefinition>
     </ColumnDefinition>
     <ActionColumn Title="Edit">

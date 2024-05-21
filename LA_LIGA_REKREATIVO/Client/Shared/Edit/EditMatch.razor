@@ -29,14 +29,6 @@
                       WrapperColSpan="16"
                       @ref="@editMatchForm">
                     <FormItem Label="Select League">
-                        @*   <SimpleSelect DefaultValue="@Match.League.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectLeague">
-                        <SelectOptions>
-                        @foreach (var league in leagues)
-                        {
-                        <SimpleSelectOption Value="@league.Id.ToString()" Label="@league.Name"></SimpleSelectOption>
-                        }
-                        </SelectOptions>
-                        </SimpleSelect> *@
                         <Select TItem="LeagueDto"
                                 TItemValue="int?"
                                 DataSource="@leagues"
@@ -51,15 +43,6 @@
                         </Select>
                     </FormItem>
                     <FormItem Label="Home Team">
-                        @*   <SimpleSelect DefaultValue="@Match.HomeTeam.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectHomeTeam">
-                        <SelectOptions>
-                        @foreach (var team in teams)
-                        {
-                        <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
-                        }
-
-                        </SelectOptions>
-                        </SimpleSelect> *@
                         <Select TItem="TeamDto"
                                 TItemValue="int?"
                                 DataSource="@teams"
@@ -74,19 +57,6 @@
                         </Select>
                     </FormItem>
                     <FormItem Label="Home team players">
-                        @*     <Select Mode="multiple"
-                        @bind-Values="@_selectedValues1"
-                        Placeholder="Please select"
-                        TItemValue="string"
-                        TItem="string"
-                        Style="width: 100%; margin-bottom: 8px;">
-                        <SelectOptions>
-                        @foreach (var player in homeTeamPlayers)
-                        {
-                        <SelectOption TItemValue="string" TItem="string" Value=@player.Id.ToString() Label=@player.FirstName />
-                        }
-                        </SelectOptions>
-                        </Select> *@
                         <Select Mode="multiple"
                                 TItem="PlayerDto"
                                 TItemValue="int?"
@@ -102,15 +72,6 @@
                         </Select>
                     </FormItem>
                     <FormItem Label="Away Team">
-                        @*      <SimpleSelect DefaultValue="@Match.AwayTeam.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="SelectAwayTeam">
-                        <SelectOptions>
-                        @foreach (var team in teams)
-                        {
-                        <SimpleSelectOption Value="@team.Id.ToString()" Label="@team.Name"></SimpleSelectOption>
-                        }
-
-                        </SelectOptions>
-                        </SimpleSelect> *@
                         <Select TItem="TeamDto"
                                 TItemValue="int?"
                                 DataSource="@teams"
@@ -125,19 +86,6 @@
                         </Select>
                     </FormItem>
                     <FormItem Label="Away team players">
-                        @*     <Select Mode="multiple"
-                        @bind-Values="@_selectedValues2"
-                        Placeholder="Please select"
-                        TItemValue="string"
-                        TItem="string"
-                        Style="width: 100%; margin-bottom: 8px;">
-                        <SelectOptions>
-                        @foreach (var player in awayTeamPlayers)
-                        {
-                        <SelectOption TItemValue="string" TItem="string" Value=@player.Id.ToString() Label=@player.FirstName />
-                        }
-                        </SelectOptions>
-                        </Select> *@
                         <Select Mode="multiple"
                                 TItem="PlayerDto"
                                 TItemValue="int?"
@@ -171,7 +119,7 @@
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
                     </FormItem>
-                   @*  <Button OnClick="GetPlayerSummaries"></Button> *@
+                    @*  <Button OnClick="GetPlayerSummaries"></Button> *@
                 </Form>
             </GridCol>
             <GridCol Span="11" Offset="1">
@@ -187,22 +135,22 @@
                     <ActionColumn Title="Edit">
                         <Space>
                             <SpaceItem><Button Danger OnClick="()=>OpenEditSummaryModal(context)">Edit</Button></SpaceItem>
-                         </Space>
-                     </ActionColumn>
-                     <ActionColumn Title="Delete">
-                         <Space>
-                             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-                         </Space>
-                     </ActionColumn>
-                 </Table>
-             </GridCol>
-         </GridRow>
-     </div>
+                        </Space>
+                    </ActionColumn>
+                    <ActionColumn Title="Delete">
+                        <Space>
+                            <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+                        </Space>
+                    </ActionColumn>
+                </Table>
+            </GridCol>
+        </GridRow>
+    </div>
 
 
- </Modal>
+</Modal>
 
- @code {
+@code {
     [Parameter] public EventCallback CloseModal { get; set; }
     [Parameter] public int MatchId { get; set; }
     private Form<MatchDto> editMatchForm = null!;
@@ -241,23 +189,6 @@
         // selectedAwayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
     }
 
-    // protected async override Task OnInitializedAsync()
-    // {
-    //     // var resultTeams = await Server.Teams.Get();
-    //     // teams = resultTeams.ToList();
-    //     // var resultPlayers = await Server.Players.Get();
-    //     // matchPlayers = resultPlayers.ToList();
-    //     // var resultLeague = await Server.Leagues.Get();
-    //     // leagues = resultLeague.ToList();
-    //     // Match = await Server.Matches.Get(MatchId);
-    //     // homeTeam = Match.HomeTeam;
-    //     // awayTeam = Match.AwayTeam;
-    //     // _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
-    //     // _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
-    //     base.OnInitialized();
-    // }
-
-
     public async Task HandleOk(MouseEventArgs e)
     {
         submitting = true;
@@ -284,32 +215,6 @@
         ///Console.WriteLine($"Failed:{JsonSerializer.Serialize(player.LastName)}");
     }
 
-    // public async Task SelectHomeTeam(string value)
-    // {
-    //     if (value is null)
-    //     {
-    //         return;
-    //     }
-    //     var homeSelectedTeamId = Int32.Parse(value);
-    //     Match.HomeTeam = teams.FirstOrDefault(x => x.Id == homeSelectedTeamId);
-    //     await Task.Delay(10); // state has changed not worked withoud this delay.
-    //     homeTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToList();
-    //     StateHasChanged();
-
-    // }
-
-    // public async Task SelectAwayTeam(string value)
-    // {
-    //     if (value is null)
-    //     {
-    //         return;
-    //     }
-    //     var awaySelectedTeamId = Int32.Parse(value);
-    //     Match.AwayTeam = teams.FirstOrDefault(x => x.Id == awaySelectedTeamId);
-    //     await Task.Delay(10); // state has changed not worked withoud this delay.
-    //     awayTeamPlayers = matchPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToList();
-    //     StateHasChanged();
-    // }
     private async void OnSelectedHomeTeam(TeamDto team)
     {
         if (team is null) return;
@@ -369,29 +274,6 @@
         showEditSummaryModal = false;
     }
 
-    //TODO: It will be deleted
-    // protected async void GetPlayerSummaries()
-    // {
-    //     var playerStat = await Server.Players.GetPlayerStats();
-    //     var kk = playerStat;
-    // }
-
-    // public void SelectLeague(string value)
-    // {
-    //     if (value is null)
-    //     {
-    //         return;
-    //     }
-    //     var leagueId = Int32.Parse(value);
-    //     LeagueDto tempLeague = new()
-    //         {
-    //             Id = leagueId,
-    //             Name = leagues.FirstOrDefault(x => x.Id == leagueId).Name,
-    //             Year = leagues.FirstOrDefault(x => x.Id == leagueId).Year
-    //         };
-    //     Match.League = tempLeague;
-    // }
-
     private async Task OnSelectedLeague(LeagueDto league)
     {
         if (league is null) return;
@@ -423,14 +305,6 @@
         Match.Players.Clear();
         Match.Players.AddRange(selectedHomeTeamPlayers);
         Match.Players.AddRange(selectedAwayTeamPlayers);
-        // Match.Players.Clear();
-        // HashSet<string> selectedHomePlayerIds = _selectedValues1 is null ? new HashSet<string>() : _selectedValues1.ToHashSet();
-        // var selectedHomeTeamPlayer = matchPlayers.Where(x => selectedHomePlayerIds.Contains(x.Id.ToString()));
-        // Match.Players.AddRange(selectedHomeTeamPlayer.ToList());
-
-        // HashSet<string> selectedAwayPlayerIds = _selectedValues2 is null ? new HashSet<string>() : _selectedValues2.ToHashSet();
-        // var selectedAwayTeamPlayer = matchPlayers.Where(x => selectedAwayPlayerIds.Contains(x.Id.ToString()));
-        // Match.Players.AddRange(selectedAwayTeamPlayer.ToList());
     }
 
     private void Delete(int id)
