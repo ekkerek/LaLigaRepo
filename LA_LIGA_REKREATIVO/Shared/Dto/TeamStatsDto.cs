@@ -11,7 +11,7 @@
         public int Goals { get; set; }
         public int GoalsConceded { get; set; }
         public int TotalPoints { get; set; }
-        public double PointsByCoefficient { get; set; }
+        public decimal PointsByCoefficient { get; set; }
         public TeamDto Team { get; set; }
         public int OrderId { get; set; }
     }

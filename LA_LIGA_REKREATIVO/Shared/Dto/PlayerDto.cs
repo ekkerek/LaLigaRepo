@@ -11,6 +11,20 @@
         public int TeamId { get; set; }
         public bool IsGk { get; set; }
 
+        private string fullName;
+        public string FullName
+        {
+            get
+            {
+                if (fullName == null)
+                {
+                    fullName = GetFullName(); // slow
+                }
+                return fullName;
+            }
+            set { }
+        }
+
         public string GetFullName()
         {
             return FirstName + " " + LastName;

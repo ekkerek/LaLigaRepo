@@ -8,6 +8,6 @@
         public string? Logo { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
-        public double Coefficient { get; set; }
+        public decimal Coefficient { get; set; }
     }
 }

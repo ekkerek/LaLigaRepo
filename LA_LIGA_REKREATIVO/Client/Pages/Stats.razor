@@ -6,80 +6,82 @@
 @inject NavigationManager Navigation
 @inject FileService _fileService;
 
+<Spin Spinning=loading>
+    <Select TItem="LeagueDto"
+            TItemValue="int?"
+            DataSource="@leagues"
+            DefaultValue="@defaultLeagueId"
+            LabelName="@nameof(LeagueDto.Name)"
+            ValueName="@nameof(PlayerDto.Id)"
+            Style="width: 200px"
+            Placeholder="Select a league"
+            IgnoreItemChanges="false"
+            OnSelectedItemChanged="OnSelectedLeague"
+            AllowClear>
+    </Select>
 
-<Select TItem="LeagueDto"
-        TItemValue="int?"
-        DataSource="@leagues"
-        DefaultValue="@defaultLeagueId"
-        LabelName="@nameof(LeagueDto.Name)"
-        ValueName="@nameof(PlayerDto.Id)"
-        Style="width: 200px"
-        Placeholder="Select a league"
-        IgnoreItemChanges="false"
-        OnSelectedItemChanged="OnSelectedLeague"
-        AllowClear>
-</Select>
+    <SimpleSelect Style="width:120px;" Value="@stattt" DefaultValue="Total Goals" OnSelectedItemChanged="SelectStatType">
+        <SelectOptions>
+            @foreach (var stat in statsType)
+            {
+                <SimpleSelectOption Value="@stat" Label="@stat"></SimpleSelectOption>
+            }
+        </SelectOptions>
+    </SimpleSelect>
 
-<SimpleSelect Style="width:120px;" Value="@stattt" DefaultValue="TotalGoals" OnSelectedItemChanged="SelectStatType">
-    <SelectOptions>
-        @foreach (var stat in statsType)
+    <Table TItem="PlayerStatsDto"
+           DataSource="@stats"
+           Size="TableSize.Small"
+           HidePagination>
+        <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
+        <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
+            <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
+            <span>@context.Player.FirstName @context.Player.LastName</span>
+        </PropertyColumn>
+
+        @if (stattt == "Total Goals")
         {
-            <SimpleSelectOption Value="@stat" Label="@stat"></SimpleSelectOption>
+            <PropertyColumn Title="Goals" Property="c=>c.Goals" />
         }
-    </SelectOptions>
-</SimpleSelect>
+        else if (stattt == "TotalAssists")
+        {
+            <PropertyColumn Title="Assists" Property="c=>c.Assists" />
+        }
+        else if (stattt == "GoalsFrom10meter")
+        {
+            <PropertyColumn Title="Missed From 10 meter" Property="c=>c.Missed10meter" />
+        }
+        else if (stattt == "GoalsFromPenalty")
+        {
+            <PropertyColumn Title="Missed From Penalty" Property="c=>c.MissedPenalty" />
+        }
+        else if (stattt == "OwnGoals")
+        {
+            <PropertyColumn Title="Own Goals" Property="c=>c.OwnGoals" />
+        }
+        else if (stattt == "GoalsPerMatch")
+        {
+            <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch" />
+        }
+        else if (stattt == "YellowCards")
+        {
+            <PropertyColumn Title="Yellow Cards" Property="c=>c.YellowCards" />
+        }
+        else if (stattt == "RedCards")
+        {
+            <PropertyColumn Title="Red Cards" Property="c=>c.RedCards" />
+        }
 
-<Table TItem="PlayerStatsDto"
-       DataSource="@stats"
-       Size="TableSize.Small"
-       HidePagination>
-    <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
-    <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
-        <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
-        <span>@context.Player.FirstName @context.Player.LastName</span>
-    </PropertyColumn>
-
-    @if (stattt == "TotalGoals")
-    {
-        <PropertyColumn Title="Goals" Property="c=>c.Goals" />
-    }
-    else if (stattt == "TotalAssists")
-    {
-        <PropertyColumn Title="Assists" Property="c=>c.Assists" />
-    }
-    else if (stattt == "GoalsFrom10meter")
-    {
-        <PropertyColumn Title="Missed From 10 meter" Property="c=>c.Missed10meter" />
-    }
-    else if (stattt == "GoalsFromPenalty")
-    {
-        <PropertyColumn Title="Missed From Penalty" Property="c=>c.MissedPenalty" />
-    }
-    else if (stattt == "OwnGoals")
-    {
-        <PropertyColumn Title="Own Goals" Property="c=>c.OwnGoals" />
-    }
-    else if (stattt == "GoalsPerMatch")
-    {
-        <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch" />
-    }
-    else if (stattt == "YellowCards")
-    {
-        <PropertyColumn Title="Yellow Cards" Property="c=>c.YellowCards" />
-    }
-    else if (stattt == "RedCards")
-    {
-        <PropertyColumn Title="Red Cards" Property="c=>c.RedCards" />
-    }
-
-</Table>
+    </Table>
+</Spin>
 
 @code {
     string _selectedValue1, _selectedValue2, _selectedValue3;
+    private bool loading;
     List<string> statsType = new List<string>()
-                { "TotalGoals", "TotalAssists", "GoalsFrom10meter", "GoalsFromPenalty", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards" };
+                { "Total Goals", "TotalAssists", "GoalsFrom10meter", "GoalsFromPenalty", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards" };
 
-    string stattt = "TotalGoals";
+    string stattt = "Total Goals";
     private List<LeagueDto> leagues = new();
 
     private List<PlayerStatsDto> stats = new();
@@ -88,6 +90,7 @@
 
     protected async override Task OnParametersSetAsync()
     {
+        loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
         var resStats = await Server.Players.GetPlayersStats(leagues.FirstOrDefault().Id);
@@ -95,6 +98,7 @@
         defaultLeagueId = leagues.FirstOrDefault().Id;
         SetOrderId(stats);
         StateHasChanged();
+        loading = false;
     }
 
     private void GoToProfilePage(int id)
@@ -108,7 +112,7 @@
         {
             return;
         }
-        else if (value == "TotalGoals")
+        else if (value == "Total Goals")
         {
             stattt = value;
             //var resStats = await Server.Players.GetDreamTeamByLeague(5);
@@ -179,10 +183,12 @@
     {
         if (league is null) return;
 
-        var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
-        SelectStatType("TotalGoals");
+        loading = true;
+        var resStats = await Server.Players.GetPlayersStats(league.Id);
+        SelectStatType("Total Goals");
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
         SetOrderId(stats);
         StateHasChanged();
+        loading = false;
     }
 }
