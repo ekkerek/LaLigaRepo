@@ -91,10 +91,22 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _playerStatsService.GetPlayersStats23(leagueId);
         }
 
+        [HttpGet("getplayersstatsoverall")]
+        public List<PlayerStatsDto> GetPlayersStatsOverall()
+        {
+            return _playerStatsService.GetPlayersStatsOverall();
+        }
+
         [HttpGet("getDreamTeam/{leagueId}")]
         public List<PlayerStatsDto> GetDreamTeam(int leagueId)
         {
             return _playerStatsService.GetDreamTeamByLeague(leagueId);
+        }
+
+        [HttpGet("getDreamTeamOverall")]
+        public List<PlayerStatsDto> GetDreamTeamOverall()
+        {
+            return _playerStatsService.GetDreamTeamOverall();
         }
     }
 }

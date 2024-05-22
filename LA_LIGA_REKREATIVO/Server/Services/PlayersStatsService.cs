@@ -17,28 +17,35 @@ namespace LA_LIGA_REKREATIVO.Server.Services
 
         public List<PlayerStatsDto> GetStatsByGoal(int leagueId)
         {
-            var playersStats = GetPlayersStats(leagueId).OrderByDescending(x => x.Goals).ToList();
+            var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.Goals).ToList();
             SetOrderId(playersStats);
             return playersStats;
         }
 
         public List<PlayerStatsDto> GetStatsByAssists(int leagueId)
         {
-            var playersStats = GetPlayersStats(leagueId).OrderByDescending(x => x.Assists).ToList();
+            var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.Assists).ToList();
             SetOrderId(playersStats);
             return playersStats;
         }
 
         public List<PlayerStatsDto> GetDreamTeamByLeague(int leagueId)
         {
-            var playersStats = GetPlayersStats(leagueId).OrderByDescending(x => x.TotalPoints).Take(6).ToList();
+            var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.TotalPoints).Take(6).ToList();
+            SetOrderId(playersStats);
+            return playersStats;
+        }
+
+        public List<PlayerStatsDto> GetDreamTeamOverall()
+        {
+            var playersStats = GetPlayersStatsOverall().OrderByDescending(x => x.TotalPoints).Take(6).ToList();
             SetOrderId(playersStats);
             return playersStats;
         }
 
         public List<PlayerStatsDto> GetPlayersStats23(int leagueId)
         {
-            var playersStats = GetPlayersStats(leagueId).OrderByDescending(x => x.TotalPoints).ToList();
+            var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.TotalPoints).ToList();
             SetOrderId(playersStats);
             return playersStats;
         }
@@ -49,7 +56,20 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             playerStats.ForEach(x => { x.OrderId = orderId; orderId++; });
         }
 
-        private List<PlayerStatsDto> GetPlayersStats(int leagueId)
+        public List<PlayerStatsDto> GetPlayersStatsOverall()
+        {
+            var playerIds = _context.Players.AsNoTracking().Select(x => x.Id).ToList();
+            List<PlayerStatsDto> playersStats = new();
+            foreach (var playerId in playerIds)
+            {
+                PlayerStatsDto returnPlayer = new();
+                returnPlayer = GetPlayerStats(playerId);
+                playersStats.Add(returnPlayer);
+            }
+            return playersStats.ToList();
+        }
+
+        private List<PlayerStatsDto> GetPlayersStatsByLeague(int leagueId)
         {
             var players = _context.Players.Include(x => x.Team).ThenInclude(x => x.Leagues).AsNoTracking();
             var playerIdsByLeague = players.Where(x => x.Team.Leagues.Select(x => x.Id).Contains(leagueId)).Select(x => x.Id).ToList();
@@ -61,9 +81,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 returnPlayer = GetPlayerStats(playerId);
                 playersStats.Add(returnPlayer);
             }
-            //SetOrderId(playersStats);
             return playersStats.ToList();
-
         }
 
         public PlayerStatsDto GetPlayerStats(int id)

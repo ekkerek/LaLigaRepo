@@ -3,90 +3,78 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @inject Server Server;
 
-<Select TItem="LeagueDto"
-        TItemValue="int?"
-        DataSource="@leagues"
-        DefaultValue="10000"
-        LabelName="@nameof(LeagueDto.Name)"
-        ValueName="@nameof(LeagueDto.Id)"
-        Style="width: 200px"
-        Placeholder="Select a league"
-        IgnoreItemChanges="false"
-        OnSelectedItemChanged="OnSelectedLeague"
-        AllowClear>
-</Select>
+<Spin Spinning=loading>
+    <Select TItem="LeagueDto"
+            TItemValue="int?"
+            DataSource="@leagues"
+            DefaultValue="@defaultvalue"
+            LabelName="@nameof(LeagueDto.Name)"
+            ValueName="@nameof(LeagueDto.Id)"
+            Style="width: 200px"
+            Placeholder="Select a league"
+            IgnoreItemChanges="false"
+            OnSelectedItemChanged="OnSelectedLeague"
+            AllowClear>
+    </Select>
 
-<Table TItem="TeamStatsDto"
-       DataSource="@stats"
-       Size="TableSize.Small"
-       HidePagination>
-    <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
-    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
-    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
-    <PropertyColumn Title="G" Property="c=>c.Goals">
-        @context.Goals:@context.GoalsConceded
-    </PropertyColumn>
-    @if (selectedleagueId == 10000)
-    {
-        <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
-    }else
-    {
-             <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />   
-    }
-</Table>
+    <Table TItem="TeamStatsDto"
+           DataSource="@stats"
+           Size="TableSize.Small"
+           HidePagination>
+        <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
+        <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
+        <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
+        <PropertyColumn Title="G" Property="c=>c.Goals">
+            @context.Goals:@context.GoalsConceded
+        </PropertyColumn>
+        @if (selectedleagueId == defaultvalue)
+        {
+            <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
+        }
+        else
+        {
+            <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+        }
+    </Table>
 
-@* <Collapse DefaultActiveKey="@(new[]{"5"})" Animation>
-    @foreach (var league in leagues)
-    {
-        <Panel Header="@league.Name" Key="@league.Id.ToString()">
-            <Standings LeagueId="league.Id"></Standings>
-        </Panel>
-    }
-</Collapse> *@
+</Spin>
 
 @code {
     private List<LeagueDto> leagues = new();
     List<TeamStatsDto> stats = new();
-    int defaultvalue = 1;
-    int selectedleagueId = 1;
+    int defaultvalue;
+    int selectedleagueId;
+    bool loading;
 
     protected async override Task OnParametersSetAsync()
     {
-        var result = await Server.Leagues.GetLeaguesIncudeOverall();
+        loading = true;
+        var result = await Server.Leagues.Get();
         leagues = result.ToList();
 
         selectedleagueId = leagues.FirstOrDefault().Id;
+        defaultvalue = leagues.FirstOrDefault(x => x.Name == "Overall league").Id;
 
-        stats = await Server.Matches.GetCommonStanding();//Server.Matches.GetStandingsByLeague(leagues.FirstOrDefault().Id);
+        stats = await Server.Matches.GetCommonStanding();
         SetOrderId(stats);
         StateHasChanged();
+        loading = false;
     }
 
     private async Task OnSelectedLeague(LeagueDto league)
     {
         if (league is null) return;
 
+        loading = true;
         selectedleagueId = league.Id;
-        if (league.Name == "OverallLeague")
-        {
+        if (league.Name == "Overall league")
             stats = await Server.Matches.GetCommonStanding();
-        }
         else
-        {
             stats = await Server.Matches.GetStandingsByLeague(league.Id);
-        }
 
         SetOrderId(stats);
-        //var leagueId = Int32.Parse(league.Id);
-        // LeagueDto tempLeague = new()
-        //     {
-        //         Id = league.Id,
-        //         Name = leagues.FirstOrDefault(x => x.Id == league.Id).Name,
-        //         Year = leagues.FirstOrDefault(x => x.Id == league.Id).Year
-        //     };
-        // match.League = tempLeague;
-        // teams = await Server.Teams.GetTeamsByLeague(league.Id);
         StateHasChanged();
+        loading = false;
     }
 
     private void SetOrderId(List<TeamStatsDto> teamStats)

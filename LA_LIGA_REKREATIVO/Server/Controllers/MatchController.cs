@@ -141,17 +141,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
             }
 
-
-
-
-
-            //foreach (var summary in mappedMatch.Summaries)
-            //    summary.Player = players.FirstOrDefault(x => x.Id == summary.Player.Id);
-
-            //matchToBeUpdate.Summaries.Clear();
-
-
-            //summary
             _context.Matches.Include(x => x.Players)
                             .Include(x => x.Summaries)
                             .ThenInclude(x => x.Player)

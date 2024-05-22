@@ -57,9 +57,9 @@
         loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
-        var resStats = await Server.Players.GetDreamTeamByLeague(leagues.FirstOrDefault().Id);
+        var resStats = await Server.Players.GetDreamTeamOverall();
         stats = resStats.Take(6).ToList();
-        defaultLeagueId = leagues.FirstOrDefault().Id;
+        defaultLeagueId = leagues.FirstOrDefault(x => x.Name == "Overall league").Id;
         InitLoading = false;
         loading = false;
     }
@@ -74,7 +74,16 @@
         if (league is null) return;
 
         loading = true;
-        var resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
+        List<PlayerStatsDto> resStats = new();
+        if (league.Name == "Overall league")
+        {
+            resStats = await Server.Players.GetDreamTeamOverall();
+        }
+        else
+        {
+            resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
+        }
+
         stats = resStats.ToList();
         StateHasChanged();
         loading = false;

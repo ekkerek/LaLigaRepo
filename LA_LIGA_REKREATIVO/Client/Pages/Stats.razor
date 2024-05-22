@@ -101,7 +101,7 @@
         loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
-        var resStats = await Server.Players.GetPlayersStats(leagues.FirstOrDefault().Id);
+        var resStats = await Server.Players.GetPlayersStatsOverall();
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
         defaultLeagueId = leagues.FirstOrDefault().Id;
         SetOrderId(stats);
@@ -206,7 +206,16 @@
         if (league is null) return;
 
         loading = true;
-        var resStats = await Server.Players.GetPlayersStats(league.Id);
+        List<PlayerStatsDto> resStats = new();
+        if (league.Name == "Overall league")
+        {
+            resStats = await Server.Players.GetPlayersStatsOverall();
+        }
+        else
+        {
+            resStats = await Server.Players.GetPlayersStats(league.Id);
+        }
+
         SelectStatType("Total Goals");
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
         SetOrderId(stats);
