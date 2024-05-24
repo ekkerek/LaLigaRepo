@@ -29,6 +29,9 @@
                 <FormItem Label="Coefficient">
             <Input @bind-Value="context.Coefficient" />
         </FormItem>
+        <FormItem Label="Is Overall League">
+            <Switch @bind-Checked="@context.IsOverallLeague" />
+        </FormItem>
         <FormItem>
             <InputFile OnChange="OnInputFileChange" />
         </FormItem>

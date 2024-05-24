@@ -53,7 +53,7 @@
         leagues = result.ToList();
 
         selectedleagueId = leagues.FirstOrDefault().Id;
-        defaultvalue = leagues.FirstOrDefault(x => x.Name == "Overall league").Id;
+        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? leagues.FirstOrDefault(x => x.IsOverallLeague).Id : leagues.FirstOrDefault().Id;
 
         stats = await Server.Matches.GetCommonStanding();
         SetOrderId(stats);
@@ -67,7 +67,7 @@
 
         loading = true;
         selectedleagueId = league.Id;
-        if (league.Name == "Overall league")
+        if (league.IsOverallLeague)
             stats = await Server.Matches.GetCommonStanding();
         else
             stats = await Server.Matches.GetStandingsByLeague(league.Id);

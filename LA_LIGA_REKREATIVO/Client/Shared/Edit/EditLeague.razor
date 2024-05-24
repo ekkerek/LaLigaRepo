@@ -12,7 +12,7 @@
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="@editLeagueForm">
+          @ref="@editLeagueForm">
 
         <FormItem Label="Name">
             <Input @bind-Value="context.Name" />
@@ -22,6 +22,9 @@
         </FormItem>
         <FormItem Label="Coefficient">
             <Input @bind-Value="context.Coefficient" />
+        </FormItem>
+        <FormItem Label="Is Overall League">
+            <Switch @bind-Checked="@context.IsOverallLeague" />
         </FormItem>
     </Form>
 </Modal>

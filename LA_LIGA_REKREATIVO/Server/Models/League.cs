@@ -13,6 +13,7 @@
         public bool IsDeleted { get; set; }
         public bool IsActive { get; set; }
         public decimal Coefficient { get; set; }
+        public bool IsOverallLeague { get; set; }
         public ICollection<Team> Teams { get; set; }
     }
 }

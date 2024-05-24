@@ -38,15 +38,15 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _mapper.Map<LeagueDto>(league);
         }
 
-        [HttpGet("getLeaguesIncudeOverall")]
-        public IEnumerable<LeagueDto> GetLeaguesIncudeOverall()
-        {
-            var leagues = _context.Leagues.Include(x => x.Teams);
-            var overroalLeague = new LeagueDto { Id = 10000, Coefficient = 1, Name = "OverallLeague", Year = 2024 };
-            var leaguesDto = _mapper.Map<List<LeagueDto>>(leagues);
-            leaguesDto.Add(overroalLeague);
-            return leaguesDto.OrderByDescending(x => x.Id);
-        }
+        //[HttpGet("getLeaguesIncudeOverall")]
+        //public IEnumerable<LeagueDto> GetLeaguesIncudeOverall()
+        //{
+        //    var leagues = _context.Leagues.Include(x => x.Teams);
+        //    var overroalLeague = new LeagueDto { Id = 10000, Coefficient = 1, Name = "OverallLeague", Year = 2024 };
+        //    var leaguesDto = _mapper.Map<List<LeagueDto>>(leagues);
+        //    leaguesDto.Add(overroalLeague);
+        //    return leaguesDto.OrderByDescending(x => x.Id);
+        //}
 
         // POST api/<LeagueController>
         [HttpPost]
@@ -64,6 +64,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             updatedLeague.Name = league.Name;
             updatedLeague.Year = league.Year;
             updatedLeague.Coefficient = league.Coefficient;
+            updatedLeague.IsOverallLeague = league.IsOverallLeague;
             _context.Leagues.Update(updatedLeague);
             _context.SaveChanges();
         }

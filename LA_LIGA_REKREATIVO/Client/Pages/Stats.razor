@@ -207,7 +207,7 @@
 
         loading = true;
         List<PlayerStatsDto> resStats = new();
-        if (league.Name == "Overall league")
+        if (league.IsOverallLeague)
         {
             resStats = await Server.Players.GetPlayersStatsOverall();
         }
