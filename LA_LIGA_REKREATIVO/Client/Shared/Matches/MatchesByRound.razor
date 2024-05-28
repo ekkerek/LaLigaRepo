@@ -1,0 +1,103 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto
+@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Client.Server;
+@inject Server Server
+@inject NavigationManager Navigation
+
+@foreach (var matchesByRound in matches)
+{
+    <span style="display: flex; justify-content: center; font-size: large;font-weight: 600; margin-top: 1vh; background-color: lightgray ; position: relative; bottom: 6px;">Round: @matchesByRound.Round</span>
+    <AntList DataSource="@matchesByRound.Matches" TItem="MatchDto">
+        <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+            <ListItemMeta>
+                <TitleTemplate>
+                    @if (context.GameTime > DateTime.Now || (context.HomeTeam.Players.Count() == 0 && context.AwayTeam.Players.Count() == 0))
+                    {
+                        <GridRow>
+                            <GridCol Span="22">
+                                <GridCol Style="font-weight:500" Span="24">
+                                    <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                                    <span style="padding-left:5px;">
+                                        @context.HomeTeam.Name
+                                    </span>
+                                </GridCol>
+                                <GridCol Style="font-weight:500" Span="24">
+                                    <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                                    <span style="padding-left:5px;">
+                                        @context.AwayTeam.Name
+                                    </span>
+                                </GridCol>
+                            </GridCol>
+                            <GridCol Style="display: flex;" Span="2">
+                                <span style="display: flex; align-items: center;">@context.GameTime.ToString("HH:mm")</span>
+                            </GridCol>
+                        </GridRow>
+                    }
+                    else
+                    {
+                        <GridRow>
+                            <GridCol Style="font-weight:500" Span="22">
+                                <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                                <span style="padding-left:5px;">
+                                    @context.HomeTeam.Name
+                                </span>
+                            </GridCol>
+                            <GridCol Style="font-weight:500" Span="2">
+                                @context.HomeTeamGoals
+                            </GridCol>
+                            <GridCol Style="font-weight:500" Span="22">
+                                <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                                <span style="padding-left:5px;">
+                                    @context.AwayTeam.Name
+                                </span>
+                            </GridCol>
+                            <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
+                        </GridRow>
+                    }
+                </TitleTemplate>
+            </ListItemMeta>
+        </ListItem>
+    </AntList>
+}
+
+
+@code {
+    [Parameter] public LeagueDto League { get; set; }
+    List<MatchesByRoundDto> matches = new List<MatchesByRoundDto>();
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+
+    bool loading;
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = League.IsOverallLeague ?
+                        await Server.Matches.GetByRoundOverall() :
+                        await Server.Matches.GetByRound(League.Id);
+
+        matches = result.ToList();
+        base.OnInitialized();
+    }
+
+    public async Task ReloadData(LeagueDto league)
+    {
+        League = league;
+        await OnInitializedAsync();
+        // //StateHasChanged();
+        // var result = League.IsOverallLeague ?
+        //                 await Server.Matches.GetByRoundOverall() :
+        //                 await Server.Matches.GetByRound(League.Id);
+
+        // matches = result.ToList();
+        StateHasChanged();
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
+    }
+}

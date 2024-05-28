@@ -4,6 +4,7 @@ using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +16,13 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
     {
         private readonly LaLigaContext _context;
         private readonly IMapper _mapper;
-        public MatchController(LaLigaContext context, IMapper mapper)
+        private readonly IMemoryCache _memoryCache;
+
+        public MatchController(LaLigaContext context, IMapper mapper, IMemoryCache memoryCache)
         {
             _context = context;
             _mapper = mapper;
+            _memoryCache = memoryCache;
         }
 
         // GET: api/<MatchController>
@@ -61,6 +65,72 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return matchesDto;
         }
 
+        [HttpPost("getByRound")]
+        public IEnumerable<MatchesByRoundDto> GetByRound([FromBody] int leagueId)
+        {
+            List<MatchesByRoundDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => x.GameRound);
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByRoundDto matchesByRoundDto = new();
+                matchesByRoundDto.Round = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByRoundDto.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByRoundDto);
+            }
+            return result.OrderByDescending(x => x.Round);
+        }
+
+        [HttpGet("getByRoundOverall")]
+        public IEnumerable<MatchesByRoundDto> GetByRoundOverall()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<MatchesByRoundDto>>("getByRoundOverall");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            List<MatchesByRoundDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => x.GameRound);
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByRoundDto matchesByRoundDto = new();
+                matchesByRoundDto.Round = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByRoundDto.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByRoundDto);
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(5);
+            cacheData = result.OrderByDescending(x => x.Round);//await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("getByRoundOverall", cacheData, expirationTime);
+            return cacheData;
+
+            //return result;
+        }
+
         // GET api/<MatchController>/5
         [HttpGet("{id}")]
         public MatchDto Get(int id)
@@ -98,6 +168,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             {
                 _context.SaveChanges();
             }
+            RemoveCacheObjects();
         }
 
         // PUT api/<MatchController>/5
@@ -166,7 +237,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             {
                 _context.SaveChanges();
             }
+
+            RemoveCacheObjects();
         }
+
         [HttpGet("getStandingsByLeague/{id}")]
         public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
         {
@@ -237,7 +311,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public async Task<List<TeamStatsDto>> GetCommonStanding()
         {
             var matches = _context.Matches.ToList();
-            var teams = _context.Leagues.Include(x => x.Teams).ThenInclude(x => x.Leagues).SelectMany(x => x.Teams);
+            var teams = _context.Teams.Include(x => x.Leagues);
             var teamStatsList = new List<TeamStatsDto>();
             foreach (var team in teams)
             {
@@ -272,6 +346,15 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 summary.IsDeleted = true;
 
             _context.SaveChanges();
+
+            RemoveCacheObjects();
+        }
+
+        private void RemoveCacheObjects()
+        {
+            _memoryCache.Remove("getByRoundOverall");
+            _memoryCache.Remove("getDreamTeamOverall");
+            _memoryCache.Remove("getplayersstatsoverall");
         }
     }
 }

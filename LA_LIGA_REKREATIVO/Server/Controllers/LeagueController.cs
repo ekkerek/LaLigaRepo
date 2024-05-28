@@ -38,16 +38,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _mapper.Map<LeagueDto>(league);
         }
 
-        //[HttpGet("getLeaguesIncudeOverall")]
-        //public IEnumerable<LeagueDto> GetLeaguesIncudeOverall()
-        //{
-        //    var leagues = _context.Leagues.Include(x => x.Teams);
-        //    var overroalLeague = new LeagueDto { Id = 10000, Coefficient = 1, Name = "OverallLeague", Year = 2024 };
-        //    var leaguesDto = _mapper.Map<List<LeagueDto>>(leagues);
-        //    leaguesDto.Add(overroalLeague);
-        //    return leaguesDto.OrderByDescending(x => x.Id);
-        //}
-
         // POST api/<LeagueController>
         [HttpPost]
         public void Post([FromBody] LeagueDto league)
@@ -75,21 +65,5 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _context.Leagues.FirstOrDefault(x => x.Id == league.Id).IsDeleted = true;
             _context.SaveChanges();
         }
-
-        //[HttpPost("addTeams")]
-        //public void AddTeams([FromBody] LeagueDto league)
-        //{
-        //    var l = _context.Leagues.FirstOrDefault(x => x.Id == league.Id);
-        //    //var teams = _mapper.Map<List<Team>>(league.Teams);
-        //    var tttteams = _context.Teams.Where(x => league.Teams.Select(x => x.Id).Contains(x.Id)).ToList();
-
-        //    foreach (var t in tttteams)
-        //    {
-        //        l.Teams.Add(t);
-        //    }
-        //    _context.SaveChanges();
-        //}
-
-
     }
 }

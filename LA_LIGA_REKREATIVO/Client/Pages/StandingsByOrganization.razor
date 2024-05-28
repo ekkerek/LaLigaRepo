@@ -1,5 +1,6 @@
 ﻿@page "/standings"
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared.Matches
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @inject Server Server;
 
@@ -17,26 +18,17 @@
             AllowClear>
     </Select>
 
-    <Table TItem="TeamStatsDto"
-           DataSource="@stats"
-           Size="TableSize.Small"
-           HidePagination>
-        <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
-        <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
-        <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
-        <PropertyColumn Title="G" Property="c=>c.Goals">
-            @context.Goals:@context.GoalsConceded
-        </PropertyColumn>
-        @if (selectedleagueId == defaultvalue)
-        {
-            <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
-        }
-        else
-        {
-            <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
-        }
-    </Table>
-
+    <Tabs Size="TabSize.Small" @bind-ActiveKey="@activeKey" Animated>
+        <TabPane Tab="Standings" Key="1">
+            @if (selectedLeague is not null && selectedLeague.Id > 0)
+            {
+                <Standings @ref="standingsss" League="selectedLeague"></Standings>
+            }
+        </TabPane>
+        <TabPane Tab="Teams" Key="2">
+            <MatchesByRound @ref="matchesByRound" League="selectedLeague"></MatchesByRound>
+        </TabPane>
+    </Tabs>
 </Spin>
 
 @code {
@@ -45,20 +37,42 @@
     int defaultvalue;
     int selectedleagueId;
     bool loading;
+    string activeKey { get; set; } = "1";
+    LeagueDto selectedLeague { get; set; } = new();
+    int activeButton = 1;
+    private Standings standingsss;
+    private MatchesByRound matchesByRound;
 
     protected async override Task OnParametersSetAsync()
     {
-        loading = true;
+        // loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
 
-        selectedleagueId = leagues.FirstOrDefault().Id;
+
+        // selectedleagueId = leagues.FirstOrDefault().Id;
+        selectedLeague = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? leagues.FirstOrDefault(x => x.IsOverallLeague) : leagues.FirstOrDefault();
         defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? leagues.FirstOrDefault(x => x.IsOverallLeague).Id : leagues.FirstOrDefault().Id;
 
-        stats = await Server.Matches.GetCommonStanding();
-        SetOrderId(stats);
+
+
+        // stats = await Server.Matches.GetCommonStanding();
+        // SetOrderId(stats);
+        // StateHasChanged();
+        // loading = false;
+    }
+
+
+    private void ChangeActiveButton()
+    {
+        activeButton = 1;
         StateHasChanged();
-        loading = false;
+    }
+
+    private void ChangeActiveButton2()
+    {
+        activeButton = 2;
+        StateHasChanged();
     }
 
     private async Task OnSelectedLeague(LeagueDto league)
@@ -67,20 +81,28 @@
 
         loading = true;
         selectedleagueId = league.Id;
-        if (league.IsOverallLeague)
-            stats = await Server.Matches.GetCommonStanding();
-        else
-            stats = await Server.Matches.GetStandingsByLeague(league.Id);
+        selectedLeague = league;
+        //standingsss.League = league;
+        //standingsss.Test();
+        await standingsss.ReloadData(league);
+        await matchesByRound.ReloadData(league);
+        // await matchesByRound.ReloadData25(league);
+        //standingsss.standingsTable.ReloadData();
+        // if (league.IsOverallLeague)
+        //     stats = await Server.Matches.GetCommonStanding();
+        // else
+        //     stats = await Server.Matches.GetStandingsByLeague(league.Id);
 
-        SetOrderId(stats);
-        StateHasChanged();
+        // SetOrderId(stats);
+        // StateHasChanged();
         loading = false;
+        //StateHasChanged();
     }
 
-    private void SetOrderId(List<TeamStatsDto> teamStats)
-    {
-        int orderId = 1;
-        stats.ForEach(x => { x.OrderId = orderId; orderId++; });
-        StateHasChanged();
-    }
+    // private void SetOrderId(List<TeamStatsDto> teamStats)
+    // {
+    //     int orderId = 1;
+    //     stats.ForEach(x => { x.OrderId = orderId; orderId++; });
+    //     StateHasChanged();
+    // }
 }

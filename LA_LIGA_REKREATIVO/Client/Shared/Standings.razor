@@ -2,28 +2,61 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @inject Server Server;
 
-<Table TItem="TeamStatsDto"
+<Table @ref="standingsTable"
+       TItem="TeamStatsDto"
        DataSource="@stats"
        Size="TableSize.Small"
        HidePagination>
+    <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
     <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
     <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
     <PropertyColumn Title="G" Property="c=>c.Goals">
         @context.Goals:@context.GoalsConceded
     </PropertyColumn>
-    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+    @if (League.IsOverallLeague)
+    {
+        <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
+    }
+    else
+    {
+        <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+    }
+
 </Table>
 
-
 @code {
-    [Parameter] public int LeagueId { get; set; }
+    [Parameter] public LeagueDto League { get; set; }
     TeamStatsDto teamStats = new();
     List<TeamStatsDto> stats = new();
-
+    bool loading;
+    public Table<TeamStatsDto> standingsTable = null!;
 
     protected async override Task OnInitializedAsync()
     {
-        stats = await Server.Matches.GetStandingsByLeague(LeagueId);
+        stats = League.IsOverallLeague ?
+           await Server.Matches.GetCommonStanding() :
+           await Server.Matches.GetStandingsByLeague(League.Id);
+
+        SetOrderId(stats);
         base.OnInitialized();
+    }
+
+    public async Task ReloadData(LeagueDto league)
+    {
+        League = league;
+        await OnInitializedAsync();
+        // loading = true;
+        // stats = league.IsOverallLeague ?
+        //   await Server.Matches.GetCommonStanding() :
+        //   await Server.Matches.GetStandingsByLeague(league.Id);
+        // SetOrderId(stats);
+        StateHasChanged();
+    }
+
+    private void SetOrderId(List<TeamStatsDto> teamStats)
+    {
+        int orderId = 1;
+        stats.ForEach(x => { x.OrderId = orderId; orderId++; });
+        StateHasChanged();
     }
 }

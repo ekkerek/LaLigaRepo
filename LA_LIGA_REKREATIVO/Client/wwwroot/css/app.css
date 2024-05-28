@@ -112,6 +112,10 @@ a, .btn-link {
     border-bottom: 1px solid lightgray !important;
 }
 
+    .ant-list-split .ant-list-item:last-child {
+        border-bottom: 0px solid lightgray !important;
+    }
+
 .rz-calendar .rz-inputtext {
     background-color: transparent !important;
 }
@@ -123,4 +127,8 @@ a, .btn-link {
     .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
         margin-right: 4px !important
     }
+
+.ant-tabs-top > .ant-tabs-nav {
+    margin: 0 0 4px 0 !important
+}
 /*Code I added - End*/

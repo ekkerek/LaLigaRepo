@@ -1,0 +1,109 @@
+﻿@using LA_LIGA_REKREATIVO.Shared
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@using System.Net.Http.Headers
+@inject Server Server;
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<div style="padding: 1rem!important; display: flex; justify-content: space-between; align-items:center;" class="rz-p-12 rz-text-align-center">
+    <Button Style="background-color:transparent;" OnClick="@OnPrev" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Left" />
+    <DatePicker TValue="DateTime" Picker="@DatePickerType.Date" OnChange="OnChangeDate" @bind-Value=@currentDate />
+    <Button Style="background-color:transparent;" OnClick="@OnNext" Shape="@ButtonShape.Circle" Icon="@IconType.Outline.Right" />
+</div>
+
+<AntList DataSource="@matches" TItem="MatchDto">
+    <ListItem OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItemMeta>
+            <TitleTemplate>
+                @if (context.GameTime > DateTime.Now || (context.HomeTeam.Players.Count() == 0 && context.AwayTeam.Players.Count() == 0))
+                {
+                    <GridRow>
+                        <GridCol Span="22">
+                            <GridCol Style="font-weight:500" Span="24">
+                                <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                                <span style="padding-left:5px;">
+                                    @context.HomeTeam.Name
+                                </span>
+                            </GridCol>
+                            <GridCol Style="font-weight:500" Span="24">
+                                <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                                <span style="padding-left:5px;">
+                                    @context.AwayTeam.Name
+                                </span>
+                            </GridCol>
+                        </GridCol>
+                        <GridCol Style="display: flex;" Span="2">
+                            <span style="display: flex; align-items: center;">@context.GameTime.ToString("HH:mm")</span>
+                        </GridCol>
+                    </GridRow>
+                }
+                else
+                {
+                    <GridRow>
+                        <GridCol Style="font-weight:500" Span="22">
+                            <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                            <span style="padding-left:5px;">
+                                @context.HomeTeam.Name
+                            </span>
+                        </GridCol>
+                        <GridCol Style="font-weight:500" Span="2">
+                            @context.HomeTeamGoals
+                        </GridCol>
+                        <GridCol Style="font-weight:500" Span="22">
+                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            <span style="padding-left:5px;">
+                                @context.AwayTeam.Name
+                            </span>
+                        </GridCol>
+                        <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
+                    </GridRow>
+                }
+            </TitleTemplate>
+        </ListItemMeta>
+    </ListItem>
+</AntList>
+
+@code {
+    List<MatchDto> matches = new List<MatchDto>();
+    bool allowVirtualization = true;
+    DateTime currentDate = DateTime.Now;
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Server.Matches.GetByDate(DateTime.Now);
+        matches = result.ToList();
+    }
+
+    async Task OnNext()
+    {
+        currentDate = currentDate.AddDays(1);
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
+    }
+
+    async Task OnPrev()
+    {
+        currentDate = currentDate.AddDays(-1);
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
+    }
+
+    async Task OnChangeDate()
+    {
+        var result = await Server.Matches.GetByDate(currentDate);
+        matches = result.ToList();
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
+    }
+}
+

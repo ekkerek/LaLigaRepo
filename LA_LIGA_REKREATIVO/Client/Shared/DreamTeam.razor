@@ -77,11 +77,13 @@
         List<PlayerStatsDto> resStats = new();
         if (league.IsOverallLeague)
         {
-            resStats = await Server.Players.GetDreamTeamOverall();
+            var res = await Server.Players.GetDreamTeamOverall();
+            resStats = res.ToList();
         }
         else
         {
-            resStats = await Server.Players.GetDreamTeamByLeague(league.Id);
+            var res = await Server.Players.GetDreamTeamByLeague(league.Id);
+            resStats = res.ToList();
         }
 
         stats = resStats.ToList();

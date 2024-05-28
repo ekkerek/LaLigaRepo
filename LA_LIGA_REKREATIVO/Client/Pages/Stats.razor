@@ -125,7 +125,7 @@
             stattt = value;
             //var resStats = await Server.Players.GetDreamTeamByLeague(5);
             var i = 1;
-            stats = stats.OrderByDescending(x => x.Goals).ToList();
+            stats = stats.Where(x => x.Goals > 0).OrderByDescending(x => x.Goals).ToList();
             SetOrderId(stats);
         }
         else if (value == "TotalAssists")
@@ -209,11 +209,13 @@
         List<PlayerStatsDto> resStats = new();
         if (league.IsOverallLeague)
         {
-            resStats = await Server.Players.GetPlayersStatsOverall();
+            var result = await Server.Players.GetPlayersStatsOverall();
+            resStats = result.ToList();
         }
         else
         {
-            resStats = await Server.Players.GetPlayersStats(league.Id);
+            var res = await Server.Players.GetPlayersStats(league.Id);
+            resStats = res.ToList();
         }
 
         SelectStatType("Total Goals");

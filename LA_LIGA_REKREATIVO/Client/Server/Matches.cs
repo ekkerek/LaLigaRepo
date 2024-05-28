@@ -84,6 +84,32 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return Enumerable.Empty<MatchDto>();
         }
 
+        public async Task<IEnumerable<MatchesByRoundDto>> GetByRound(int leagueId)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, "api/match/getByRound");
+            message.Content = new StringContent(JsonConvert.SerializeObject(leagueId));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByRoundDto>>(json);
+            }
+            return Enumerable.Empty<MatchesByRoundDto>();
+        }
+
+        public async Task<IEnumerable<MatchesByRoundDto>> GetByRoundOverall()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getByRoundOverall");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByRoundDto>>(json);
+            }
+            return new List<MatchesByRoundDto>();
+        }
+
         public async Task<bool> Add(MatchDto match)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");
