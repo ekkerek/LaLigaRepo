@@ -354,7 +354,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             _memoryCache.Remove("getByRoundOverall");
             _memoryCache.Remove("getDreamTeamOverall");
-            _memoryCache.Remove("getplayersstatsoverall");
+            _memoryCache.Remove("getplayersstatsoverall"); //playerstatsbyleague
+            var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);
+            foreach (var leagueId in leagueIds)
+            {
+                //
+                _memoryCache.Remove($"playerstatsbyleague-{leagueId}");//
+                _memoryCache.Remove($"getDreamTeam-{leagueId}");
+            }
         }
     }
 }
