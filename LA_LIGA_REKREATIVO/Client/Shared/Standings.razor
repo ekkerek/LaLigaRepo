@@ -30,6 +30,8 @@
     List<TeamStatsDto> stats = new();
     bool loading;
     public Table<TeamStatsDto> standingsTable = null!;
+    [Parameter]
+    public EventCallback<bool> IsLoading { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -38,18 +40,19 @@
            await Server.Matches.GetStandingsByLeague(League.Id);
 
         SetOrderId(stats);
-        base.OnInitialized();
+        //base.OnInitialized();
     }
 
     public async Task ReloadData(LeagueDto league)
     {
         League = league;
-        await OnInitializedAsync();
+        //await OnInitializedAsync();
         // loading = true;
-        // stats = league.IsOverallLeague ?
-        //   await Server.Matches.GetCommonStanding() :
-        //   await Server.Matches.GetStandingsByLeague(league.Id);
-        // SetOrderId(stats);
+        stats = league.IsOverallLeague ?
+          await Server.Matches.GetCommonStanding() :
+          await Server.Matches.GetStandingsByLeague(league.Id);
+        SetOrderId(stats);
+        await IsLoading.InvokeAsync(true);
         StateHasChanged();
     }
 
