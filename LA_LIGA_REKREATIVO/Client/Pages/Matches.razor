@@ -10,7 +10,7 @@
 @inject HttpClient Http
 
 
-<div style="display:flex; margin-bottom:1px;">
+<div style="display:flex; margin-bottom:12px;">
     <Button Style="width: 50%;" OnClick="handleIsydate">By date</Button>
     <Button Style="width: 50%;" OnClick="handleIsByRound">By round</Button>
 </div>
@@ -33,7 +33,6 @@ else
 
     void handleIsydate()
     {
-
         isByDate = true;
     }
 
@@ -78,4 +77,5 @@ else
     {
         return BUCKET_PATH + imageName;
     }
+
 }

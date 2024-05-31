@@ -78,6 +78,10 @@ namespace LA_LIGA_REKREATIVO.Client.Services
 
         public string GetImagePath(string imageName)
         {
+            if (string.IsNullOrEmpty(imageName))
+            {
+                return "./silueta.png";
+            }
             return BUCKET_PATH + imageName;
         }
 

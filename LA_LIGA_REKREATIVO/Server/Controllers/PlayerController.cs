@@ -139,6 +139,23 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //return _playerStatsService.GetDreamTeamByLeague(leagueId);
         }
 
+        [HttpGet("get2ndDreamTeam/{leagueId}")]
+        public IEnumerable<PlayerStatsDto> Get2ndDreamTeam(int leagueId)
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>($"get2ndDreamTeam-{leagueId}");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = _playerStatsService.Get2ndDreamTeamByLeague(leagueId); //await _dbContext.Products.ToListAsync();
+            _memoryCache.Set($"get2ndDreamTeam-{leagueId}", cacheData, expirationTime);
+            return cacheData;
+
+            //return _playerStatsService.GetDreamTeamByLeague(leagueId);
+        }
+
         [HttpGet("getDreamTeamOverall")]
         public IEnumerable<PlayerStatsDto> GetDreamTeamOverall()
         {
@@ -151,6 +168,23 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var expirationTime = DateTimeOffset.Now.AddDays(7);
             cacheData = _playerStatsService.GetDreamTeamOverall(); //await _dbContext.Products.ToListAsync();
             _memoryCache.Set("getDreamTeamOverall", cacheData, expirationTime);
+            return cacheData;
+
+            //return _playerStatsService.GetDreamTeamOverall();
+        }
+
+        [HttpGet("get2ndDreamTeamOverall")]
+        public IEnumerable<PlayerStatsDto> Get2ndDreamTeamOverall()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>("get2ndDreamTeamOverall");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = _playerStatsService.Get2ndDreamTeamOverall(); //await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("get2ndDreamTeamOverall", cacheData, expirationTime);
             return cacheData;
 
             //return _playerStatsService.GetDreamTeamOverall();

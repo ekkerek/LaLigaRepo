@@ -7,27 +7,29 @@
 @inject FileService _fileService;
 
 <Spin Spinning=loading>
-    <Select TItem="LeagueDto"
-            TItemValue="int?"
-            DataSource="@leagues"
-            DefaultValue="@defaultLeagueId"
-            LabelName="@nameof(LeagueDto.Name)"
-            ValueName="@nameof(PlayerDto.Id)"
-            Style="width: 200px"
-            Placeholder="Select a league"
-            IgnoreItemChanges="false"
-            OnSelectedItemChanged="OnSelectedLeague"
-            AllowClear>
-    </Select>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+        <Select TItem="LeagueDto"
+                TItemValue="int?"
+                DataSource="@leagues"
+                DefaultValue="@defaultLeagueId"
+                LabelName="@nameof(LeagueDto.Name)"
+                ValueName="@nameof(PlayerDto.Id)"
+                Style="width: 60%"
+                Placeholder="Select a league"
+                IgnoreItemChanges="false"
+                OnSelectedItemChanged="OnSelectedLeague"
+                AllowClear>
+        </Select>
 
-    <SimpleSelect Style="width:120px;" Value="@stattt" DefaultValue="Total Goals" OnSelectedItemChanged="SelectStatType">
-        <SelectOptions>
-            @foreach (var stat in statsType)
-            {
-                <SimpleSelectOption Value="@stat" Label="@stat"></SimpleSelectOption>
-            }
-        </SelectOptions>
-    </SimpleSelect>
+        <SimpleSelect Style="width:40%;" Value="@stattt" DefaultValue="Total Goals" OnSelectedItemChanged="SelectStatType">
+            <SelectOptions>
+                @foreach (var stat in statsType)
+                {
+                    <SimpleSelectOption Value="@stat" Label="@stat"></SimpleSelectOption>
+                }
+            </SelectOptions>
+        </SimpleSelect>
+    </div>
 
     <Table TItem="PlayerStatsDto"
            DataSource="@stats"
