@@ -31,15 +31,45 @@ namespace LA_LIGA_REKREATIVO.Server.Services
 
         public List<PlayerStatsDto> GetDreamTeamByLeague(int leagueId)
         {
-            var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.TotalPoints).Take(6).ToList();
+            var playersStats = GetPlayersStatsByLeague(leagueId).Where(x => !x.Player.IsGk).OrderByDescending(x => x.TotalPoints).Take(4).ToList();
+            playersStats.Add(GetBestGkByLeague(leagueId));
             SetOrderId(playersStats);
             return playersStats;
         }
 
         public List<PlayerStatsDto> GetDreamTeamOverall()
         {
-            var playersStats = GetPlayersStatsOverall().OrderByDescending(x => x.TotalPoints).Take(6).ToList();
+            var playersStats = GetPlayersStatsOverall().Where(x => !x.Player.IsGk).OrderByDescending(x => x.TotalPoints).Take(4).ToList();
+            playersStats.Add(GetBestGkOverall());
+            //var bestGk = GetBestGkOverall();
             SetOrderId(playersStats);
+            return playersStats;
+        }
+
+        public List<PlayerStatsDto> Get2ndDreamTeamByLeague(int leagueId)
+        {
+            var playersStats = GetPlayersStatsByLeague(leagueId)
+                                .Where(x => !x.Player.IsGk)
+                                .OrderByDescending(x => x.TotalPoints)
+                                .Skip(4)
+                                .Take(4)
+                                .ToList();
+            playersStats.Add(Get2ndBestGkByLeague(leagueId));
+            //SetOrderId(playersStats);
+            return playersStats;
+        }
+
+        public List<PlayerStatsDto> Get2ndDreamTeamOverall()
+        {
+            var playersStats = GetPlayersStatsOverall()
+                                    .Where(x => !x.Player.IsGk)
+                                    .OrderByDescending(x => x.TotalPoints)
+                                    .Skip(4)
+                                    .Take(4)
+                                    .ToList();
+            playersStats.Add(Get2ndBestGkOverall());
+            //var bestGk = GetBestGkOverall();
+            //SetOrderId(playersStats);
             return playersStats;
         }
 
@@ -82,6 +112,36 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 playersStats.Add(returnPlayer);
             }
             return playersStats.ToList();
+        }
+
+        private PlayerStatsDto GetBestGkByLeague(int leagueId)
+        {
+            return GetPlayersStatsByLeague(leagueId).Where(x => x.Player.IsGk)
+                                          .OrderByDescending(x => x.TotalPoints)
+                                          .FirstOrDefault();
+        }
+
+        private PlayerStatsDto GetBestGkOverall()
+        {
+            return GetPlayersStatsOverall().Where(x => x.Player.IsGk)
+                                           .OrderByDescending(x => x.TotalPoints)
+                                           .FirstOrDefault();
+        }
+
+        private PlayerStatsDto Get2ndBestGkByLeague(int leagueId)
+        {
+            return GetPlayersStatsByLeague(leagueId).Where(x => x.Player.IsGk)
+                                          .OrderByDescending(x => x.TotalPoints)
+                                          .Skip(1)
+                                          .FirstOrDefault();
+        }
+
+        private PlayerStatsDto Get2ndBestGkOverall()
+        {
+            return GetPlayersStatsOverall().Where(x => x.Player.IsGk)
+                                           .OrderByDescending(x => x.TotalPoints)
+                                           .Skip(1)
+                                           .FirstOrDefault();
         }
 
         public PlayerStatsDto GetPlayerStats(int id)
