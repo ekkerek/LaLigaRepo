@@ -1,0 +1,152 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Services;
+@using LA_LIGA_REKREATIVO.Client.Server;
+
+@inject Server Server
+@inject NavigationManager Navigation
+
+<Spin Spinning=loading>
+    <Select TItem="LeagueDto"
+            TItemValue="int?"
+            DataSource="@leagues"
+            DefaultValue="@defaultvalue"
+            LabelName="@nameof(LeagueDto.Name)"
+            ValueName="@nameof(LeagueDto.Id)"
+            Style="width: 100%"
+            Placeholder="Select a league"
+            IgnoreItemChanges="false"
+            OnSelectedItemChanged="OnSelectedLeague"
+            AllowClear>
+    </Select>
+
+    @foreach (var matchesByRound in matches)
+    {
+        <span style="display: flex; justify-content: center; font-size: large;font-weight: 600; margin-top: 1vh; background-color: lightgray ; position: relative; bottom: 6px;"> @matchesByRound.GameTime.ToString("dd/MM/yyyy")</span>
+        <AntList DataSource="@matchesByRound.Matches" TItem="MatchDto">
+            <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+                <ListItemMeta>
+                    <TitleTemplate>
+                        @if (context.GameTime > DateTime.Now || (context.HomeTeam.Players.Count() == 0 && context.AwayTeam.Players.Count() == 0))
+                        {
+                            <GridRow>
+                                <GridCol Span="22">
+                                    <GridCol Style="font-weight:500" Span="24">
+                                        <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                                        <span style="padding-left:5px;">
+                                            @context.HomeTeam.Name
+                                        </span>
+                                    </GridCol>
+                                    <GridCol Style="font-weight:500" Span="24">
+                                        <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                                        <span style="padding-left:5px;">
+                                            @context.AwayTeam.Name
+                                        </span>
+                                    </GridCol>
+                                </GridCol>
+                                <GridCol Style="display: flex;" Span="2">
+                                    <span style="display: flex; align-items: center;">@context.GameTime.ToString("HH:mm")</span>
+                                </GridCol>
+                            </GridRow>
+                        }
+                        else
+                        {
+                            <GridRow>
+                                <GridCol Style="font-weight:500" Span="22">
+                                    <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                                    <span style="padding-left:5px;">
+                                        @context.HomeTeam.Name
+                                    </span>
+                                </GridCol>
+                                <GridCol Style="font-weight:500" Span="2">
+                                    @context.HomeTeamGoals
+                                </GridCol>
+                                <GridCol Style="font-weight:500" Span="22">
+                                    <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                                    <span style="padding-left:5px;">
+                                        @context.AwayTeam.Name
+                                    </span>
+                                </GridCol>
+                                <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
+                            </GridRow>
+                        }
+                    </TitleTemplate>
+                </ListItemMeta>
+            </ListItem>
+        </AntList>
+    }
+</Spin>
+
+@code {
+    public LeagueDto selectedLeague { get; set; }
+    List<MatchesByGameTimeDto> matches = new List<MatchesByGameTimeDto>();
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+    //[Parameter] public EventCallback<bool> IsLoading { get; set; }
+    private List<LeagueDto> leagues = new();
+    List<TeamStatsDto> stats = new();
+    int defaultvalue;
+    int selectedleagueId;
+    bool loading;
+
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        loading = true;
+        var leagueResult = await Server.Leagues.Get();
+        leagues = leagueResult.ToList();
+
+        selectedleagueId = leagues.FirstOrDefault().Id;
+        selectedLeague = leagues.FirstOrDefault();
+
+        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                                leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                                leagues.FirstOrDefault().Id;
+
+
+        var matchesResults = selectedLeague.IsOverallLeague ?
+                        await Server.Matches.GetByGameTimeOverall() :
+                        await Server.Matches.GetByGameTime(selectedLeague.Id);
+
+        matches = matchesResults.ToList();
+        loading = false;
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
+    }
+
+    private async Task OnSelectedLeague(LeagueDto league)
+    {
+        if (league is null) return;
+
+        loading = true;
+        var result = league.IsOverallLeague ?
+                  await Server.Matches.GetByGameTimeOverall() :
+                  await Server.Matches.GetByGameTime(league.Id);
+
+        matches = result.ToList();
+        loading = false;
+        StateHasChanged();
+    }
+
+    private void SetOrderId(List<TeamStatsDto> teamStats)
+    {
+        int orderId = 1;
+        stats.ForEach(x => { x.OrderId = orderId; orderId++; });
+        StateHasChanged();
+    }
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
+}

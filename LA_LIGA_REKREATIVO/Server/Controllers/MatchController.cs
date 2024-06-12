@@ -131,6 +131,139 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //return result;
         }
 
+        [HttpPost("getByGameTime")]
+        public IEnumerable<MatchesByGameTimeDto> GetByGameTime([FromBody] int leagueId)
+        {
+            List<MatchesByGameTimeDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && x.GameTime < DateTime.UtcNow).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByGameTimeDto matchesByRoundDto = new();
+                matchesByRoundDto.GameTime = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByRoundDto.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByRoundDto);
+            }
+            return result.OrderByDescending(x => x.GameTime);
+        }
+
+
+        [HttpGet("getByGameTimeOverall")]
+        public IEnumerable<MatchesByGameTimeDto> GetByGameTimeOverall()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<MatchesByGameTimeDto>>("getByGameTimeOverall");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            List<MatchesByGameTimeDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime < DateTime.UtcNow).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByGameTimeDto matchesByGameTime = new();
+                matchesByGameTime.GameTime = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByGameTime.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByGameTime);
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = result.OrderByDescending(x => x.GameTime);//await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("getByGameTimeOverall", cacheData, expirationTime);
+            return cacheData;
+
+            //return result;
+        }
+
+        [HttpPost("getFixturesByLeague")]
+        public IEnumerable<MatchesByGameTimeDto> GetFixturesByLeague([FromBody] int leagueId)
+        {
+            List<MatchesByGameTimeDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == leagueId && x.GameTime > DateTime.UtcNow).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByGameTimeDto matchesByRoundDto = new();
+                matchesByRoundDto.GameTime = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByRoundDto.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByRoundDto);
+            }
+            return result.OrderByDescending(x => x.GameTime);
+        }
+
+        [HttpGet("getFixturesOverall")]
+        public IEnumerable<MatchesByGameTimeDto> GetFixturesOverall()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<MatchesByGameTimeDto>>("getFixturesOverall");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            List<MatchesByGameTimeDto> result = new();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime > DateTime.UtcNow).ToList();
+            var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
+
+            foreach (var match in matchesDto)
+            {
+                MatchesByGameTimeDto matchesByGameTime = new();
+                matchesByGameTime.GameTime = match.Key;
+                var groupKey = match.Key;
+                foreach (var groupedMatch in match)
+                {
+                    var homeTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).HomeTeamId;
+                    var awayTeamId = matches.FirstOrDefault(x => x.Id == groupedMatch.Id).AwayTeamId;
+                    var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                    var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                    groupedMatch.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                    groupedMatch.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                    matchesByGameTime.Matches.Add(groupedMatch);
+                }
+                result.Add(matchesByGameTime);
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = result.OrderByDescending(x => x.GameTime);//await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("getFixturesOverall", cacheData, expirationTime);
+            return cacheData;
+
+            //return result;
+        }
+
         // GET api/<MatchController>/5
         [HttpGet("{id}")]
         public MatchDto Get(int id)
@@ -356,6 +489,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _memoryCache.Remove("getDreamTeamOverall");
             _memoryCache.Remove("getplayersstatsoverall"); //playerstatsbyleague
             _memoryCache.Remove("get2ndDreamTeamOverall");
+            _memoryCache.Remove("getByGameTimeOverall");
+            _memoryCache.Remove("getFixturesOverall");
 
             var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);
             foreach (var leagueId in leagueIds)

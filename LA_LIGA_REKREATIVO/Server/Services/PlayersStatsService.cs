@@ -204,6 +204,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             returnPlayer.WinPerMatch = returnPlayer.Wins == 0 ? 0 :
                 (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
             returnPlayer.Player = _mapper.Map<PlayerDto>(player);
+            returnPlayer.Team = _mapper.Map<TeamDto>(player.Team);
             return returnPlayer;
         }
     }

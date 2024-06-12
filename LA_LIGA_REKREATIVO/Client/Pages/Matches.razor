@@ -1,6 +1,6 @@
 ﻿@page "/matches"
-@using LA_LIGA_REKREATIVO.Client.Shared.Matches
-@using LA_LIGA_REKREATIVO.Shared
+@using LA_LIGA_REKREATIVO.Client.Shared.Matches;
+@using LA_LIGA_REKREATIVO.Shared;
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @using System.Net.Http.Headers;
@@ -11,71 +11,73 @@
 
 
 <div style="display:flex; margin-bottom:12px;">
-    <Button Style="width: 50%;" OnClick="handleIsydate">By date</Button>
-    <Button Style="width: 50%;" OnClick="handleIsByRound">By round</Button>
+    <Button Style="width: 50%;" OnClick="handleIsydate">Results</Button>
+    <Button Style="width: 50%;" OnClick="handleIsByRound">Fixtures</Button>
 </div>
 
 @if (isByDate)
 {
-    <MatchesByDate></MatchesByDate>
+    <MatchesByGameTime></MatchesByGameTime>
 }
 else
 {
-    <MatchesByRound></MatchesByRound>
+    <Fixtures></Fixtures>
 }
 
 @code {
-    List<MatchDto> matches = new List<MatchDto>();
-    bool allowVirtualization = true;
-    DateTime currentDate = DateTime.Now;
-    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+    //List<MatchDto> matches = new List<MatchDto>();
+    //bool allowVirtualization = true;
+    //DateTime currentDate = DateTime.Now;
+    //private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
     private bool isByDate = true;
 
     void handleIsydate()
     {
         isByDate = true;
+        StateHasChanged();
     }
 
     void handleIsByRound()
     {
         isByDate = false;
+        StateHasChanged();
     }
 
 
-    public void SelectMatchDetails(int id)
-    {
-        Navigation.NavigateTo($"/matchDetails/{id}");
-    }
+    // public void SelectMatchDetails(int id)
+    // {
+    //     Navigation.NavigateTo($"/matchDetails/{id}");
+    // }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await Server.Matches.GetByDate(DateTime.Now);
-        matches = result.ToList();
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var result = await Server.Matches.GetByDate(DateTime.Now);
+    //     matches = result.ToList();
+    // }
 
-    async Task OnNext()
-    {
-        currentDate = currentDate.AddDays(1);
-        var result = await Server.Matches.GetByDate(currentDate);
-        matches = result.ToList();
-    }
+    // async Task OnNext()
+    // {
+    //     currentDate = currentDate.AddDays(1);
+    //     var result = await Server.Matches.GetByDate(currentDate);
+    //     matches = result.ToList();
+    // }
 
-    async Task OnPrev()
-    {
-        currentDate = currentDate.AddDays(-1);
-        var result = await Server.Matches.GetByDate(currentDate);
-        matches = result.ToList();
-    }
+    // async Task OnPrev()
+    // {
+    //     currentDate = currentDate.AddDays(-1);
+    //     var result = await Server.Matches.GetByDate(currentDate);
+    //     matches = result.ToList();
+    // }
 
-    async Task OnChangeDate()
-    {
-        var result = await Server.Matches.GetByDate(currentDate);
-        matches = result.ToList();
-    }
+    // async Task OnChangeDate()
+    // {
+    //     var result = await Server.Matches.GetByDate(currentDate);
+    //     matches = result.ToList();
+    // }
 
-    private string GetImagePath(string imageName)
-    {
-        return BUCKET_PATH + imageName;
-    }
+    // private string GetImagePath(string imageName)
+    // {
+    //     return BUCKET_PATH + imageName;
+    // }
 
 }

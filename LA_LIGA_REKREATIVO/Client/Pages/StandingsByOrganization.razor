@@ -1,7 +1,10 @@
 ﻿@page "/standings"
 @using LA_LIGA_REKREATIVO.Client.Server;
-@using LA_LIGA_REKREATIVO.Shared.Dto
-@inject Server Server;
+@using LA_LIGA_REKREATIVO.Client.Services;
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+
+@inject Server Server
+@inject FileService _fileService;
 
 <Spin Spinning=loading>
     <Select TItem="LeagueDto"
@@ -22,7 +25,10 @@
            Size="TableSize.Small"
            HidePagination>
         <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
-        <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
+        <PropertyColumn Title="Name" Property="c=>c.Team.Name">
+            <img style="height:24px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" />
+            <span>@context.Team.Name</span>
+        </PropertyColumn>
         <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
         <PropertyColumn Title="G" Property="c=>c.Goals">
             @context.Goals:@context.GoalsConceded

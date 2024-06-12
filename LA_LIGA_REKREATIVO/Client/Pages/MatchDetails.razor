@@ -12,7 +12,7 @@
         <Divider>@title</Divider>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetImagePath(Match.HomeTeam.LogoSrc)" /> </div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.HomeTeam.LogoSrc)" /> </div>
                 <div style="display: flex; justify-content: center;">@Match.HomeTeam.Name</div>
             </div>
         </GridCol>
@@ -29,7 +29,7 @@
         </GridCol>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetImagePath(Match.AwayTeam.LogoSrc)" /> </div>
+                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.AwayTeam.LogoSrc)" /> </div>
                 <div style="display: flex; justify-content: center;">@Match.AwayTeam.Name</div>
             </div>
         </GridCol>

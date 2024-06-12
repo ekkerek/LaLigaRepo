@@ -85,6 +85,11 @@ namespace LA_LIGA_REKREATIVO.Client.Services
             return BUCKET_PATH + imageName;
         }
 
+        public string GetTeamImagePath(string imageName)
+        {
+            return BUCKET_PATH + imageName;
+        }
+
         public string GetImgSrc(SummaryType type)
         {
             var result = type switch

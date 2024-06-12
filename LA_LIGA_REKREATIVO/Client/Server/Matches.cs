@@ -110,6 +110,58 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new List<MatchesByRoundDto>();
         }
 
+        public async Task<IEnumerable<MatchesByGameTimeDto>> GetByGameTime(int leagueId)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, "api/match/getByGameTime");
+            message.Content = new StringContent(JsonConvert.SerializeObject(leagueId));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByGameTimeDto>>(json);
+            }
+            return Enumerable.Empty<MatchesByGameTimeDto>();
+        }
+
+        public async Task<IEnumerable<MatchesByGameTimeDto>> GetByGameTimeOverall()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getByGameTimeOverall");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByGameTimeDto>>(json);
+            }
+            return new List<MatchesByGameTimeDto>();
+        }
+
+        public async Task<IEnumerable<MatchesByGameTimeDto>> GetFixturesByLeague(int leagueId)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, "api/match/getFixturesByLeague");
+            message.Content = new StringContent(JsonConvert.SerializeObject(leagueId));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByGameTimeDto>>(json);
+            }
+            return Enumerable.Empty<MatchesByGameTimeDto>();
+        }
+
+        public async Task<IEnumerable<MatchesByGameTimeDto>> GetFixturesOverall()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getFixturesOverall");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchesByGameTimeDto>>(json);
+            }
+            return new List<MatchesByGameTimeDto>();
+        }
+
         public async Task<bool> Add(MatchDto match)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");
