@@ -26,21 +26,17 @@
            HidePagination>
         <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
         <PropertyColumn Title="Name" Property="c=>c.Team.Name">
-            <img style="height:24px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" />
-            <span>@context.Team.Name</span>
+            <GridRow>
+                <GridCol Span="6"><img style="height:24px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
+                <GridCol Span="18">@context.Team.Name</GridCol>
+            </GridRow>
         </PropertyColumn>
         <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
         <PropertyColumn Title="G" Property="c=>c.Goals">
             @context.Goals:@context.GoalsConceded
         </PropertyColumn>
-        @if (selectedleagueId == defaultvalue)
-        {
-            <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
-        }
-        else
-        {
-            <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
-        }
+        <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+        <PropertyColumn Title="CP" Property="c=>c.PointsByCoefficient" />
     </Table>
 
 </Spin>

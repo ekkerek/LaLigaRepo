@@ -22,6 +22,8 @@ namespace LA_LIGA_REKREATIVO.Shared.Dto
         public int AwayTeamGoals { get; set; }
         public TeamDto HomeTeam { get; set; }
         public TeamDto AwayTeam { get; set; }
+        public int HomeTeamId { get; set; }
+        public int AwayTeamId { get; set; }
         public bool IsDeleted { get; set; }
         public List<SummaryDto> Summaries { get; set; }
         public List<PlayerDto> Players { get; set; }

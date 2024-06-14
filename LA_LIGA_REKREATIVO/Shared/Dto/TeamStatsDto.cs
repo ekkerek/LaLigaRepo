@@ -10,9 +10,11 @@
         public int Draws { get; set; }
         public int Goals { get; set; }
         public int GoalsConceded { get; set; }
+        public int GoalDifference { get; set; }
         public int TotalPoints { get; set; }
         public decimal PointsByCoefficient { get; set; }
         public TeamDto Team { get; set; }
         public int OrderId { get; set; }
+        public List<MatchDto> Matches { get; set; }
     }
 }

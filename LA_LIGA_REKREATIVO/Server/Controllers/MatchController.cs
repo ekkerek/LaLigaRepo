@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
+using LA_LIGA_REKREATIVO.Server.Helpers;
 using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -134,6 +135,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("getByGameTime")]
         public IEnumerable<MatchesByGameTimeDto> GetByGameTime([FromBody] int leagueId)
         {
+            var cacheData = _memoryCache.Get<IEnumerable<MatchesByGameTimeDto>>($"getByGameTime-{leagueId}");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
             List<MatchesByGameTimeDto> result = new();
             var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && x.GameTime < DateTime.UtcNow).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
@@ -155,7 +162,11 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 }
                 result.Add(matchesByRoundDto);
             }
-            return result.OrderByDescending(x => x.GameTime);
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = result.OrderByDescending(x => x.GameTime);
+            _memoryCache.Set($"getByGameTime-{leagueId}", cacheData, expirationTime);
+            return cacheData;
         }
 
 
@@ -377,13 +388,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getStandingsByLeague/{id}")]
         public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
         {
-            var matches = _context.Matches.Where(x => x.League.Id == id);
+            var matches = _context.Matches.Where(x => x.League.Id == id && x.GameTime < DateTime.UtcNow && x.Players.Count() > 0);
             var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id).Teams;
             var teamStatsList = new List<TeamStatsDto>();
             foreach (var team in teams)
             {
                 var teamStatsDto = new TeamStatsDto();
                 teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+                teamStatsDto.Matches = _mapper.Map<List<MatchDto>>(matches.Where(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id));
                 teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id);
                 teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum() +
                                      matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum();
@@ -396,12 +408,19 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
                                     matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals);
                 teamStatsDto.TotalPoints = teamStatsDto.Wins * 3 + teamStatsDto.Draws;
+                teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
 
                 teamStatsList.Add(teamStatsDto);
             }
-            return teamStatsList.OrderByDescending(x => x.TotalPoints).ToList();
+            //return teamStatsList.OrderByDescending(x => x.TotalPoints).ToList();
+            return teamStatsList.OrderByDescending(x => x.TotalPoints)
+                                .ThenBy(x => x, new StandingsComparer())
+                                .ThenByDescending(x => x.GoalDifference)
+                                .ThenByDescending(x => x.Goals)
+                                .ToList();
         }
 
+        // SHOULD BE DELETED
         [HttpGet("getStandings")]
         public async Task<List<LeagueStatsDto>> GetStandings()
         {
@@ -443,18 +462,21 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getCommonStanding")]
         public async Task<List<TeamStatsDto>> GetCommonStanding()
         {
-            var matches = _context.Matches.ToList();
+            var matches = _context.Matches.Where(x => x.GameTime < DateTime.UtcNow && x.Players.Count() > 0).ToList();
             var teams = _context.Teams.Include(x => x.Leagues);
             var teamStatsList = new List<TeamStatsDto>();
             foreach (var team in teams)
             {
                 var teamStatsDto = new TeamStatsDto();
                 teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+                //var teamMatches =
+                teamStatsDto.Matches = _mapper.Map<List<MatchDto>>(matches.Where(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id));
                 teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == team.Id || x.AwayTeamId == team.Id);
                 teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum() +
                                      matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum();
                 teamStatsDto.GoalsConceded = matches.Where(x => x.HomeTeamId == team.Id).Select(x => x.AwayTeamGoals).Sum() +
                                      matches.Where(x => x.AwayTeamId == team.Id).Select(x => x.HomeTeamGoals).Sum();
+                teamStatsDto.GoalDifference = teamStatsDto.Goals - teamStatsDto.GoalsConceded;
                 teamStatsDto.Wins = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
                                     matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals);
                 teamStatsDto.Losts = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
@@ -466,7 +488,11 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
                 teamStatsList.Add(teamStatsDto);
             }
-            return teamStatsList.OrderByDescending(x => x.PointsByCoefficient).ToList();
+            return teamStatsList.OrderByDescending(x => x.PointsByCoefficient)
+                                .ThenBy(x => x, new StandingsComparer())
+                                .ThenByDescending(x => x.GoalDifference)
+                                .ThenByDescending(x => x.Goals)
+                                .ToList();
         }
 
         [HttpPost("delete")]
@@ -498,7 +524,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 //
                 _memoryCache.Remove($"playerstatsbyleague-{leagueId}");//
                 _memoryCache.Remove($"getDreamTeam-{leagueId}");
-                _memoryCache.Remove($"get2ndDreamTeam-{leagueId}");
+                _memoryCache.Remove($"get2ndDreamTeam-{leagueId}"); //getByGameTime-{leagueId}
+                _memoryCache.Remove($"getByGameTime-{leagueId}");
             }
         }
     }
