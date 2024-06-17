@@ -189,5 +189,22 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
             //return _playerStatsService.GetDreamTeamOverall();
         }
+
+        [HttpGet("getTeamPlayers/{teamId}")]
+        public IEnumerable<PlayerStatsDto> GetTeamPlayers(int teamId)
+        {
+            //var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>($"getTeamPlayers-{teamId}");
+            //if (cacheData != null)
+            //{
+            //    return cacheData;
+            //}
+            //var expirationTime = DateTimeOffset.Now.AddDays(5);
+            //cacheData = _playerStatsService.GetPlayersStats23(leagueId); ;//await _dbContext.Products.ToListAsync();
+            //_memoryCache.Set($"playerstatsbyleague-{leagueId}", cacheData, expirationTime);
+            //return cacheData;
+            return _playerStatsService.GetTeamPlayers(teamId);
+
+            // return _playerStatsService.GetPlayersStats23(leagueId);
+        }
     }
 }

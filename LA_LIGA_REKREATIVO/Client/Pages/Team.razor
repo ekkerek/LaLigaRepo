@@ -1,0 +1,22 @@
+﻿@page "/team/{TeamId:int}"
+@using LA_LIGA_REKREATIVO.Client.Shared.Team
+
+
+
+<Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated>
+    <TabPane Tab="Overview" Key="1">
+        <TeamOverview TeamId="TeamId"></TeamOverview>
+    </TabPane>
+    <TabPane Tab="Players" Key="2">
+        <TeamPlayers TeamId="TeamId"></TeamPlayers>
+    </TabPane>
+    <TabPane Tab="Results" Key="3">
+        <TeamMatcheass TeamId="TeamId"></TeamMatcheass>
+    </TabPane>
+</Tabs>
+
+@code {
+    [Parameter] public int TeamId { get; set; }
+
+    string activeKey { get; set; } = "1";
+}

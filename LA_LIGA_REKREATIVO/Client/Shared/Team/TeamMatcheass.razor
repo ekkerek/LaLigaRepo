@@ -1,0 +1,60 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+
+@inject Server Server
+@inject NavigationManager Navigation
+
+<AntList DataSource="@matches" TItem="MatchDto">
+    <ListItem OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItemMeta>
+            <TitleTemplate>
+                <GridRow>
+                    <GridCol Style="font-weight:500" Span="22">
+                        <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                        <span style="padding-left:5px;">
+                            @context.HomeTeam.Name
+                        </span>
+                    </GridCol>
+                    <GridCol Style="font-weight:500" Span="2">
+                        @context.HomeTeamGoals
+                    </GridCol>
+                    <GridCol Style="font-weight:500" Span="22">
+                        <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                        <span style="padding-left:5px;">
+                            @context.AwayTeam.Name
+                        </span>
+                    </GridCol>
+                    <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
+                </GridRow>
+            </TitleTemplate>
+        </ListItemMeta>
+    </ListItem>
+</AntList>
+
+
+@code {
+    [Parameter] public int TeamId { get; set; }
+    List<MatchDto> matches = new List<MatchDto>();
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var result = await Server.Matches.GetByTeam(TeamId);
+        matches = result.ToList();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
+    }
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
+}

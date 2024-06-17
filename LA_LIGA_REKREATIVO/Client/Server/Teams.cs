@@ -75,5 +75,16 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return new List<TeamDto>();
         }
+
+        public async Task<TeamStatsDto> GetTeamStats(int teamId)
+        {
+            var result = await _httpClient.GetAsync($"api/team/getTeamStats/{teamId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<TeamStatsDto>(json);
+            }
+            return new TeamStatsDto();
+        }
     }
 }

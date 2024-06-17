@@ -95,5 +95,37 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             var teamsDto = _mapper.Map<List<TeamDto>>(teams);
             return teamsDto;
         }
+
+        // GET api/<TeamController>/5
+        [HttpGet("getTeamStats/{teamId}")]
+        public TeamStatsDto GetTeamStats(int teamId)
+        {
+            //var team = _context.Teams.Include(x => x.Leagues).Where(x => x.Id == teamId);
+            //var matches = _context.Matches.Include(x=> x.Summaries).Where(x => x.HomeTeamId == teamId || x.AwayTeamId == teamId).ToList();
+            //var teamStats = matches.Select(x => x.Summaries);
+            var matches = _context.Matches.Include(x => x.Summaries).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && x.Players.Count() > 0).ToList();
+            //var team = _context.Teams.Include(x => x.Leagues).Where(x => x.Id == teamId);
+
+            var team = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == teamId);
+
+            var teamStatsDto = new TeamStatsDto();
+            teamStatsDto.Team = _mapper.Map<TeamDto>(team);
+            teamStatsDto.Matches = _mapper.Map<List<MatchDto>>(matches.Where(x => x.HomeTeamId == teamId || x.AwayTeamId == teamId));
+            teamStatsDto.GamePlayed = matches.Count(x => x.HomeTeamId == teamId || x.AwayTeamId == teamId);
+            teamStatsDto.Goals = matches.Where(x => x.HomeTeamId == teamId).Select(x => x.HomeTeamGoals).Sum() +
+                                 matches.Where(x => x.AwayTeamId == teamId).Select(x => x.AwayTeamGoals).Sum();
+            teamStatsDto.GoalsConceded = matches.Where(x => x.HomeTeamId == teamId).Select(x => x.AwayTeamGoals).Sum() +
+                                 matches.Where(x => x.AwayTeamId == teamId).Select(x => x.HomeTeamGoals).Sum();
+            teamStatsDto.Wins = matches.Count(x => x.HomeTeamId == teamId && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                matches.Count(x => x.AwayTeamId == teamId && x.HomeTeamGoals < x.AwayTeamGoals);
+            teamStatsDto.Losts = matches.Count(x => x.HomeTeamId == teamId && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                matches.Count(x => x.AwayTeamId == teamId && x.HomeTeamGoals > x.AwayTeamGoals);
+            teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == teamId && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                matches.Count(x => x.AwayTeamId == teamId && x.HomeTeamGoals == x.AwayTeamGoals);
+            teamStatsDto.TotalPoints = teamStatsDto.Wins * 3 + teamStatsDto.Draws;
+            teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
+
+            return teamStatsDto;
+        }
     }
 }

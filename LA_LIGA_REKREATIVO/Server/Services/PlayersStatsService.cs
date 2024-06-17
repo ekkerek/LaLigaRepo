@@ -144,6 +144,21 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                                            .FirstOrDefault();
         }
 
+        public List<PlayerStatsDto> GetTeamPlayers(int teamId)
+        {
+            var players = _context.Players.Include(x => x.Team).AsNoTracking();
+            var playerIdsByLeague = players.Where(x => x.Team.Id == teamId).Select(x => x.Id).ToList();
+
+            List<PlayerStatsDto> playersStats = new();
+            foreach (var playerId in playerIdsByLeague)
+            {
+                PlayerStatsDto returnPlayer = new();
+                returnPlayer = GetPlayerStats(playerId);
+                playersStats.Add(returnPlayer);
+            }
+            return playersStats.ToList();
+        }
+
         public PlayerStatsDto GetPlayerStats(int id)
         {
             var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);

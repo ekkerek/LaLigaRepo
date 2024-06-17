@@ -162,6 +162,21 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new List<MatchesByGameTimeDto>();
         }
 
+        public async Task<IEnumerable<MatchDto>> GetByTeam(int teamId)
+        {
+            var message = new HttpRequestMessage(HttpMethod.Post, $"api/match/getByTeam/{teamId}");
+            message.Content = new StringContent(JsonConvert.SerializeObject(teamId));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchDto>>(json);
+            }
+            return Enumerable.Empty<MatchDto>();
+        }
+
         public async Task<bool> Add(MatchDto match)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");

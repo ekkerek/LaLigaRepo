@@ -27,16 +27,16 @@
         <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
         <PropertyColumn Title="Name" Property="c=>c.Team.Name">
             <GridRow>
-                <GridCol Span="6"><img style="height:24px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
-                <GridCol Span="18">@context.Team.Name</GridCol>
+                <GridCol Style="display: flex; align-items: center; justify-content: left" Span="5"><img style="height:18px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
+                <GridCol Span="19">@context.Team.Name</GridCol>
             </GridRow>
         </PropertyColumn>
-        <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
-        <PropertyColumn Title="G" Property="c=>c.Goals">
+        <PropertyColumn Align="ColumnAlign.Center" Title="MP" Property="c=>c.GamePlayed" />
+        <PropertyColumn Align="ColumnAlign.Center" Title="G" Property="c=>c.Goals">
             @context.Goals:@context.GoalsConceded
         </PropertyColumn>
-        <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
-        <PropertyColumn Title="CP" Property="c=>c.PointsByCoefficient" />
+        <PropertyColumn Align="ColumnAlign.Center" Title="PTS" Property="c=>c.TotalPoints" />
+        <PropertyColumn Align="ColumnAlign.Center" Title="CP" Property="c=>c.PointsByCoefficient" />
     </Table>
 
 </Spin>
@@ -55,7 +55,10 @@
         leagues = result.ToList();
 
         selectedleagueId = leagues.FirstOrDefault().Id;
-        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? leagues.FirstOrDefault(x => x.IsOverallLeague).Id : leagues.FirstOrDefault().Id;
+
+        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                       leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                       leagues.FirstOrDefault().Id;
 
         stats = await Server.Matches.GetCommonStanding();
         SetOrderId(stats);

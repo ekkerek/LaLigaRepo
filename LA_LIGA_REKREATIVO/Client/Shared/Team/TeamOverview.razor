@@ -1,0 +1,73 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Services;
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+
+@inject Server Server
+@inject FileService _fileService;
+
+
+<div>
+    @if (teamStats.Team is not null)
+    {
+        <div style="display: flex; justify-content: center;">
+            <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="@_fileService.GetTeamImagePath(teamStats.Team.LogoSrc)" />
+        </div>
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700; font-size: medium">Name:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.Team.Name</GridCol>
+        </GridRow>
+
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700; font-size: medium">Total Points:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.TotalPoints</GridCol>
+        </GridRow>
+
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700; font-size: medium">Points By Coefficient:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.PointsByCoefficient</GridCol>
+        </GridRow>
+
+        <Divider Style="margin: 12px;" />
+
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Total Matches:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.GamePlayed</GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Wins:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.Wins</GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Draws:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.Draws</GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Losts:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.Losts</GridCol>
+        </GridRow>
+
+        <Divider Style="margin: 12px;" />
+
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Goals:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.Goals</GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Goals Conceded:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@teamStats.GoalsConceded</GridCol>
+        </GridRow>
+    }
+</div>
+
+
+@code {
+    [Parameter] public int TeamId { get; set; }
+    private TeamDto team = new();
+    private TeamStatsDto teamStats = new();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        team = await Server.Teams.Get(TeamId);
+        teamStats = await Server.Teams.GetTeamStats(TeamId);
+    }
+}

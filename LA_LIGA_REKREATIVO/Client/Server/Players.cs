@@ -130,6 +130,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return Enumerable.Empty<PlayerStatsDto>();
         }
 
+        public async Task<IEnumerable<PlayerStatsDto>> GetTeamPlayers(int teamId)
+        {
+            var result = await _httpClient.GetAsync($"api/player/getTeamPlayers/{teamId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<PlayerStatsDto>>(json);
+            }
+            return Enumerable.Empty<PlayerStatsDto>();
+        }
+
         public async Task<bool> Update(PlayerDto player)
         {
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/player/{player.Id}");

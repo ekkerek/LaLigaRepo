@@ -12,8 +12,10 @@
         <Divider>@title</Divider>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.HomeTeam.LogoSrc)" /> </div>
-                <div style="display: flex; justify-content: center;">@Match.HomeTeam.Name</div>
+                <a @onclick="() => GoToTeamDetails(Match.HomeTeam.Id)">
+                    <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.HomeTeam.LogoSrc)" /> </div>
+                    <div style="display: flex; justify-content: center;">@Match.HomeTeam.Name</div>
+                </a>
             </div>
         </GridCol>
         <GridCol Style="font-weight:500; display: grid; justify-content: center" Span="8">
@@ -29,8 +31,10 @@
         </GridCol>
         <GridCol Style="font-weight:500; display: flex; justify-content: center" Span="8">
             <div>
-                <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.AwayTeam.LogoSrc)" /> </div>
-                <div style="display: flex; justify-content: center;">@Match.AwayTeam.Name</div>
+                <a @onclick="() => GoToTeamDetails(Match.AwayTeam.Id)">
+                    <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.AwayTeam.LogoSrc)" /> </div>
+                    <div style="display: flex; justify-content: center;">@Match.AwayTeam.Name</div>
+                </a>
             </div>
         </GridCol>
     </GridRow>
@@ -72,6 +76,12 @@
     {
         Match = await Server.Matches.Get(Id);
         title = Match.League.Name.ToString() + " - " + " round " + Match.GameRound.ToString();
+    }
+
+    private void GoToTeamDetails(int teamId)
+    {
+
+        Navigation.NavigateTo($"/team/{teamId}");
     }
 
     // private string GetImgSrc(SummaryType type)
