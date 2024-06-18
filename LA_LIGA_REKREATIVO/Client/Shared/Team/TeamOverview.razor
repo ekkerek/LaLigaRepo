@@ -10,7 +10,7 @@
     @if (teamStats.Team is not null)
     {
         <div style="display: flex; justify-content: center;">
-            <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="@_fileService.GetTeamImagePath(teamStats.Team.LogoSrc)" />
+            <img style="height: 150px;margin-bottom: 20px; margin-top: 5px;" src="@_fileService.GetTeamImagePath(teamStats.Team.LogoSrc)" />
         </div>
         <GridRow>
             <GridCol Span="16" Style="font-weight: 700; font-size: medium">Name:</GridCol>

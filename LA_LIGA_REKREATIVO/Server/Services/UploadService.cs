@@ -34,7 +34,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
 
 
             var maxAllowedFiles = 3;
-            long maxFileSize = 1024 * 1024;
+            long maxFileSize = 20024 * 1024;
             var filesProcessed = 0;
             //var resourcePath = new Uri($"{Request.Scheme}://{Request.Host}/");
             // test

@@ -37,7 +37,7 @@
            HidePagination>
         <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
         <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
-            <span><img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
+            <span><img style="height:40px; border-radius: 5%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
             <span>@context.Player.FirstName @context.Player.LastName</span>
         </PropertyColumn>
 

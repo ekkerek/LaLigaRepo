@@ -23,7 +23,7 @@ namespace LA_LIGA_REKREATIVO.Client.Services
         public async Task<List<UploadResult>> UploadFile(InputFileChangeEventArgs e)
         {
             shouldRender = false;
-            long maxFileSize = 1024 * 1024;
+            long maxFileSize = 1024 * 1024 * 20;
             var upload = false;
 
             using var content = new MultipartFormDataContent();

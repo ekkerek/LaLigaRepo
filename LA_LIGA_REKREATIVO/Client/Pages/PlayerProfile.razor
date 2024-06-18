@@ -9,8 +9,8 @@
 <div>
     @if (playerStats.Player is not null)
     {
-        <div style="display: flex; justify-content: center;">
-            <img style="width: 150px;height: 150px;border-radius: 50%;margin-bottom: 20px;" src="@_fileService.GetImagePath(player.Picture)" />
+        <div class="klasa" style="display: flex; justify-content: center;">
+            <img style="height: 35vh;margin-bottom: 20px; position: relative;" src="@_fileService.GetImagePath(player.Picture)" />
         </div>
         <GridRow>
             <GridCol Span="16" Style="font-weight: 700; font-size: medium">First name:</GridCol>
@@ -119,6 +119,27 @@
     }
 </div>
 
+<style>
+    .klasa {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .klasa::before {
+            content: "";
+            background-image: url("./358511247_150359871398221_6497914246200068198_n.jpg");
+            background-size: cover;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            left: 0px;
+            opacity: 0.25;
+        }
+</style>
 
 @code {
     [Parameter] public int Id { get; set; }
