@@ -17,6 +17,10 @@
         public int HomeTeamId { get; set; }
         public int AwayTeamId { get; set; }
         public bool IsDeleted { get; set; }
+        public bool IsOfficialResult { get; set; }
+        public bool IsMatchSuspended { get; set; }
+        public int? HomeTeamNegativePoints { get; set; }
+        public int? AwayTeamNegativePoints { get; set; }
         public ICollection<Summary> Summaries { get; set; }
         public ICollection<Player> Players { get; set; }
         public League League { get; set; }

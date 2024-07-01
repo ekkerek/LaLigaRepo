@@ -116,6 +116,23 @@
                     <FormItem Label="Game Place">
                         <Input @bind-Value="context.GamePlace" />
                     </FormItem>
+
+                    <FormItem Label="Is Official Result">
+                        <Switch @bind-Checked="@context.IsOfficialResult" />
+                    </FormItem>
+                    <FormItem Label="Is Match Suspended">
+                        <Switch @bind-Checked="@context.IsMatchSuspended" />
+                    </FormItem>
+                    @if (context.IsMatchSuspended)
+                    {
+                        <FormItem Label="Home Team Negative Points">
+                            <Input Type="number" @bind-Value="context.HomeTeamNegativePoints" />
+                        </FormItem>
+                        <FormItem Label="Away Team Negative Points">
+                            <Input Type="number" @bind-Value="context.AwayTeamNegativePoints" />
+                        </FormItem>
+                    }
+
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
                     </FormItem>

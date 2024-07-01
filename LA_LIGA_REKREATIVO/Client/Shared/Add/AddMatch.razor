@@ -112,10 +112,28 @@
                     <FormItem Label="Game Place">
                         <Input @bind-Value="context.GamePlace" />
                     </FormItem>
+
+
+                    <FormItem Label="Is Official Result">
+                        <Switch @bind-Checked="@context.IsOfficialResult" />
+                    </FormItem>
+                    <FormItem Label="Is Match Suspended">
+                        <Switch @bind-Checked="@context.IsMatchSuspended" />
+                    </FormItem>
+                    @if (context.IsMatchSuspended)
+                    {
+                        <FormItem Label="Home Team Negative Points">
+                            <Input Type="number" @bind-Value="context.HomeTeamNegativePoints" />
+                        </FormItem>
+                        <FormItem Label="Away Team Negative Points">
+                            <Input Type="number" @bind-Value="context.AwayTeamNegativePoints" />
+                        </FormItem>
+                    }
+
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
                     </FormItem>
-                   @*  <Button OnClick="GetPlayerSummaries"></Button> *@
+                    @*  <Button OnClick="GetPlayerSummaries"></Button> *@
                 </Form>
             </GridCol>
             <GridCol Span="11" Offset="1">
@@ -130,22 +148,22 @@
                     <ActionColumn Title="Edit">
                         <Space>
                             <SpaceItem><Button Danger OnClick="()=>OpenEditSummaryModal(context)">Edit</Button></SpaceItem>
-                         </Space>
-                     </ActionColumn>
-                     <ActionColumn Title="Delete">
-                         <Space>
-                             <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
-                         </Space>
-                     </ActionColumn>
-                 </Table>
-             </GridCol>
-         </GridRow>
-     </div>
+                        </Space>
+                    </ActionColumn>
+                    <ActionColumn Title="Delete">
+                        <Space>
+                            <SpaceItem><Button Danger OnClick="()=>Delete(context.Id)">Delete</Button></SpaceItem>
+                        </Space>
+                    </ActionColumn>
+                </Table>
+            </GridCol>
+        </GridRow>
+    </div>
 
 
- </Modal>
+</Modal>
 
- @code {
+@code {
 
     [Parameter] public EventCallback CloseModal { get; set; }
     private Form<MatchDto> addMatchForm = null!;
@@ -284,6 +302,7 @@
         if (team is null) return;
 
         match.HomeTeam = teams.FirstOrDefault(x => x.Id == team.Id);
+        match.HomeTeamId = match.HomeTeam.Id;
         await Task.Delay(10); // state has changed not worked withoud this delay.
         homeTeamPlayers = allPlayers.Where(x => x.TeamId == match.HomeTeam.Id).ToHashSet();
         StateHasChanged();
@@ -295,6 +314,7 @@
         if (team is null) return;
 
         match.AwayTeam = teams.FirstOrDefault(x => x.Id == team.Id);
+        match.AwayTeamId = match.AwayTeam.Id;
         await Task.Delay(10); // state has changed not worked withoud this delay.
         awayTeamPlayers = allPlayers.Where(x => x.TeamId == match?.AwayTeam?.Id).ToHashSet();
         StateHasChanged();

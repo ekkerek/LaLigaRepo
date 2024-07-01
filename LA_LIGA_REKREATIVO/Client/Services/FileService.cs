@@ -80,7 +80,7 @@ namespace LA_LIGA_REKREATIVO.Client.Services
         {
             if (string.IsNullOrEmpty(imageName))
             {
-                return "./silueta.png";
+                return "./silueta-removebg-preview.png";
             }
             return BUCKET_PATH + imageName;
         }

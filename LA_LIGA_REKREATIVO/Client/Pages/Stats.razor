@@ -2,6 +2,7 @@
 @using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
+
 @inject Server Server
 @inject NavigationManager Navigation
 @inject FileService _fileService;
@@ -37,8 +38,12 @@
            HidePagination>
         <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
         <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
-            <span><img style="height:34px;width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(context.Player.Picture)" /></span>
-            <span>@context.Player.FirstName @context.Player.LastName</span>
+            <span>
+                <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
+            </span>
+            <span>
+                <a @onclick="() => GoToProfilePage(context.Player.Id)">@context.Player.FullName</a>
+            </span>
         </PropertyColumn>
 
         @if (stattt == "Total Goals")

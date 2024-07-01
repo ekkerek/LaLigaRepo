@@ -142,7 +142,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && x.GameTime < DateTime.UtcNow && x.Players.Count() > 0).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -180,7 +180,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime < DateTime.UtcNow && x.Players.Count() > 0).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -213,7 +213,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public IEnumerable<MatchesByGameTimeDto> GetFixturesByLeague([FromBody] int leagueId)
         {
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == leagueId && (x.GameTime > DateTime.UtcNow || x.Players.Count() == 0)).ToList();
+            var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == leagueId && (x.GameTime > DateTime.UtcNow || (x.Players.Count() == 0) && !x.IsOfficialResult)).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -246,7 +246,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime > DateTime.UtcNow || x.Players.Count() == 0).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime > DateTime.UtcNow || (x.Players.Count() == 0) && !x.IsOfficialResult).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -334,6 +334,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             matchToBeUpdate.GamePlace = match.GamePlace;
             matchToBeUpdate.GameRound = match.GameRound;
             matchToBeUpdate.GameTime = match.GameTime;
+            matchToBeUpdate.IsMatchSuspended = match.IsMatchSuspended;
+            matchToBeUpdate.IsOfficialResult = match.IsOfficialResult;
+            matchToBeUpdate.HomeTeamNegativePoints = match.HomeTeamNegativePoints;
+            matchToBeUpdate.AwayTeamNegativePoints = match.AwayTeamNegativePoints;
 
             //league
             matchToBeUpdate.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
@@ -388,7 +392,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getStandingsByLeague/{id}")]
         public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
         {
-            var matches = _context.Matches.Where(x => x.League.Id == id && x.GameTime < DateTime.UtcNow && x.Players.Count() > 0);
+            var matches = _context.Matches.Where(x => x.League.Id == id && x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult));
             var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id).Teams;
             var teamStatsList = new List<TeamStatsDto>();
             foreach (var team in teams)
@@ -408,7 +412,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 teamStatsDto.Draws = matches.Count(x => x.HomeTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
                                     matches.Count(x => x.AwayTeamId == team.Id && x.HomeTeamGoals == x.AwayTeamGoals);
                 teamStatsDto.TotalPoints = teamStatsDto.Wins * 3 + teamStatsDto.Draws;
+
+                var negativePoints = matches.Where(x => x.HomeTeamId == team.Id && x.IsMatchSuspended && x.HomeTeamNegativePoints.HasValue).Sum(x => x.HomeTeamNegativePoints) +
+                                     matches.Where(x => x.AwayTeamId == team.Id && x.IsMatchSuspended && x.AwayTeamNegativePoints.HasValue).Sum(x => x.AwayTeamNegativePoints);
+
                 teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
+
+                teamStatsDto.TotalPoints -= negativePoints ?? 0;
+                teamStatsDto.PointsByCoefficient -= negativePoints * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient ?? 0;
 
                 teamStatsList.Add(teamStatsDto);
             }
@@ -462,7 +473,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getCommonStanding")]
         public async Task<List<TeamStatsDto>> GetCommonStanding()
         {
-            var matches = _context.Matches.Where(x => x.GameTime < DateTime.UtcNow && x.Players.Count() > 0).ToList();
+            var matches = _context.Matches.Where(x => x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+            var suspenedMatch = matches.Where(x => x.IsOfficialResult).ToList();
             var teams = _context.Teams.Include(x => x.Leagues);
             var teamStatsList = new List<TeamStatsDto>();
             foreach (var team in teams)
@@ -486,6 +498,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 teamStatsDto.TotalPoints = (teamStatsDto.Wins * 3 + teamStatsDto.Draws);
                 teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
 
+                var negativePoints = matches.Where(x => x.HomeTeamId == team.Id && x.IsMatchSuspended && x.HomeTeamNegativePoints.HasValue).Sum(x => x.HomeTeamNegativePoints) +
+                                    matches.Where(x => x.AwayTeamId == team.Id && x.IsMatchSuspended && x.AwayTeamNegativePoints.HasValue).Sum(x => x.AwayTeamNegativePoints);
+
+                teamStatsDto.TotalPoints -= negativePoints ?? 0;
+                teamStatsDto.PointsByCoefficient -= negativePoints * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient ?? 0;
+
                 teamStatsList.Add(teamStatsDto);
             }
             return teamStatsList.OrderByDescending(x => x.PointsByCoefficient)
@@ -498,7 +516,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("getByTeam/{teamId}")]
         public IEnumerable<MatchDto> GetByTeam([FromBody] int teamId)
         {
-            var matches = _context.Matches.Include(x => x.Players).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && x.Players.Count() > 0).ToList();
+            var matches = _context.Matches.Include(x => x.Players).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches);
             foreach (var match in matchesDto)
             {

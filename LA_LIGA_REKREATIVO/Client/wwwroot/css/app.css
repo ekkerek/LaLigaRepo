@@ -131,4 +131,42 @@ a, .btn-link {
 .ant-tabs-top > .ant-tabs-nav {
     margin: 0 0 4px 0 !important
 }
+
+.dream-team-img {
+    height: 50px;
+    position: relative;
+    bottom: 1px;
+    border-radius: 50%;
+}
+
+.player-img {
+    height: 50px;
+    position: relative;
+    bottom: 1px;
+}
+
+.dream-team-div {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    solid;
+    border: solid;
+    border-color: white;
+    border-width: 1px;
+    background-color: darkgreen;
+    display: flex;
+    justify-content: center;
+}
+
+.dream-team-containter {
+    display: flex;
+    justify-content: center;
+}
+
+.dream-team-info {
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
 /*Code I added - End*/
