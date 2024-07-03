@@ -16,5 +16,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         List<PlayerStatsDto> GetPlayersStats23(int leagueId);
         List<PlayerStatsDto> GetPlayersStatsOverall();
         List<PlayerStatsDto> GetTeamPlayers(int teamId);
+        decimal RecalculatePlayerPointsForOverallDreamTeam(int id);
     }
 }

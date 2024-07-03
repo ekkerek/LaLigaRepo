@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
+using LA_LIGA_REKREATIVO.Server.Services;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
     {
         private readonly LaLigaContext _context;
         private readonly IMapper _mapper;
-        public TeamController(LaLigaContext context, IMapper mapper)
+        private readonly ITeamStatsService _teamStatsService;
+        public TeamController(LaLigaContext context, IMapper mapper, ITeamStatsService teamStatsService)
         {
             _context = context;
             _mapper = mapper;
+            _teamStatsService = teamStatsService;
         }
 
         // GET: api/<TeamController>
@@ -100,11 +103,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getTeamStats/{teamId}")]
         public TeamStatsDto GetTeamStats(int teamId)
         {
-            //var team = _context.Teams.Include(x => x.Leagues).Where(x => x.Id == teamId);
-            //var matches = _context.Matches.Include(x=> x.Summaries).Where(x => x.HomeTeamId == teamId || x.AwayTeamId == teamId).ToList();
-            //var teamStats = matches.Select(x => x.Summaries);
             var matches = _context.Matches.Include(x => x.Summaries).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && x.Players.Count() > 0).ToList();
-            //var team = _context.Teams.Include(x => x.Leagues).Where(x => x.Id == teamId);
 
             var team = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == teamId);
 
@@ -126,6 +125,18 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             teamStatsDto.PointsByCoefficient = (teamStatsDto.Wins * 3 + teamStatsDto.Draws) * teamStatsDto.Team.Leagues.FirstOrDefault().Coefficient;
 
             return teamStatsDto;
+        }
+
+        [HttpGet("getCommonStanding")]
+        public async Task<List<TeamStatsDto>> GetCommonStanding()
+        {
+            return _teamStatsService.GetCommonStanding();
+        }
+
+        [HttpGet("getStandingsByLeague/{id}")]
+        public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
+        {
+            return _teamStatsService.GetStandingsByLeague(id);
         }
     }
 }

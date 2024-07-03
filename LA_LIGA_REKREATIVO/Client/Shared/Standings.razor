@@ -36,8 +36,8 @@
     protected async override Task OnInitializedAsync()
     {
         stats = League.IsOverallLeague ?
-           await Server.Matches.GetCommonStanding() :
-           await Server.Matches.GetStandingsByLeague(League.Id);
+           await Server.Teams.GetCommonStanding() :
+           await Server.Teams.GetStandingsByLeague(League.Id);
 
         SetOrderId(stats);
         //base.OnInitialized();
@@ -49,8 +49,8 @@
         //await OnInitializedAsync();
         // loading = true;
         stats = league.IsOverallLeague ?
-          await Server.Matches.GetCommonStanding() :
-          await Server.Matches.GetStandingsByLeague(league.Id);
+          await Server.Teams.GetCommonStanding() :
+          await Server.Teams.GetStandingsByLeague(league.Id);
         SetOrderId(stats);
         await IsLoading.InvokeAsync(true);
         StateHasChanged();

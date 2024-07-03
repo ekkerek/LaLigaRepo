@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LA_LIGA_REKREATIVO.Server.Data;
+using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +42,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         {
             var playersStats = GetPlayersStatsOverall().Where(x => !x.Player.IsGk).OrderByDescending(x => x.TotalPoints).Take(4).ToList();
             playersStats.Add(GetBestGkOverall());
-            //var bestGk = GetBestGkOverall();
             SetOrderId(playersStats);
             return playersStats;
         }
@@ -55,7 +55,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                                 .Take(4)
                                 .ToList();
             playersStats.Add(Get2ndBestGkByLeague(leagueId));
-            //SetOrderId(playersStats);
             return playersStats;
         }
 
@@ -68,8 +67,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                                     .Take(4)
                                     .ToList();
             playersStats.Add(Get2ndBestGkOverall());
-            //var bestGk = GetBestGkOverall();
-            //SetOrderId(playersStats);
             return playersStats;
         }
 
@@ -94,6 +91,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             {
                 PlayerStatsDto returnPlayer = new();
                 returnPlayer = GetPlayerStats(playerId);
+                returnPlayer.TotalPoints = (double)RecalculatePlayerPointsForOverallDreamTeam(playerId);
                 playersStats.Add(returnPlayer);
             }
             return playersStats.ToList();
@@ -159,20 +157,20 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return playersStats.ToList();
         }
 
-        public PlayerStatsDto GetPlayerStats(int id)
+        public PlayerStatsDto GetPlayerStatsForOverallDreamTeam(int id)
         {
             var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
             var playerStats = player.Matches.Select(x => x.Summaries);
             PlayerStatsDto returnPlayer = new PlayerStatsDto();
             returnPlayer.TotalMatches = player.Matches.Count();
-            returnPlayer.Wins = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
-                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
+            returnPlayer.Wins = CalculatePlayerWins(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                                            //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
 
-            returnPlayer.Draws = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
-                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals == x.HomeTeamGoals);
+            returnPlayer.Draws = CalculatePlayerDraws(player); //player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                                               //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals == x.HomeTeamGoals);
 
-            returnPlayer.Losts = player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
-                                player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals < x.HomeTeamGoals);
+            returnPlayer.Losts = CalculatePlayerLosts(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                                              //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals < x.HomeTeamGoals);
 
             foreach (var stats in playerStats)
             {
@@ -212,8 +210,8 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                     }
                 }
             }
+
             returnPlayer.TotalPoints += returnPlayer.TotalMatches * 2; // match attened
-            //returnPlayer.TotalPoints += returnPlayer.Wins * 2; // team win
             returnPlayer.GoalsPerMatch = returnPlayer.Goals == 0 ? 0 :
                 (double)returnPlayer.Goals / (double)returnPlayer.TotalMatches;
             returnPlayer.WinPerMatch = returnPlayer.Wins == 0 ? 0 :
@@ -221,6 +219,120 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             returnPlayer.Player = _mapper.Map<PlayerDto>(player);
             returnPlayer.Team = _mapper.Map<TeamDto>(player.Team);
             return returnPlayer;
+        }
+
+        public PlayerStatsDto GetPlayerStats(int id)
+        {
+            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
+            var playerStats = player.Matches.Select(x => x.Summaries);
+            PlayerStatsDto returnPlayer = new PlayerStatsDto();
+            returnPlayer.TotalMatches = player.Matches.Count();
+            returnPlayer.Wins = CalculatePlayerWins(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                                                            //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
+
+            returnPlayer.Draws = CalculatePlayerDraws(player); //player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                                                               //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals == x.HomeTeamGoals);
+
+            returnPlayer.Losts = CalculatePlayerLosts(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                                                              //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals < x.HomeTeamGoals);
+
+            foreach (var stats in playerStats)
+            {
+                foreach (var stat in stats)
+                {
+                    if (stat.Player.Id == id)
+                    {
+                        var aa = stat.Type switch
+                        {
+                            SummaryType.Goal => returnPlayer.Goals += 1,
+                            SummaryType.Assist => returnPlayer.Assists += 1,
+                            SummaryType.OwnGoal => returnPlayer.OwnGoals += 1,
+                            SummaryType.YellowCards => returnPlayer.YellowCards += 1,
+                            SummaryType.RedCards => returnPlayer.RedCards += 1,
+                            SummaryType.MissedPenalty => returnPlayer.MissedPenalty += 1,
+                            SummaryType.Missed10meter => returnPlayer.Missed10meter += 1,
+                            SummaryType.CleanSheetGK => returnPlayer.CleanSheetGK += 1,
+                            SummaryType.FourSavesGK => returnPlayer.FourSavesGK += 1,
+                            SummaryType.SavedFromPenaltyGK => returnPlayer.SavedFromPenaltyGK += 1,
+                            SummaryType.SavedFrom10meterGK => returnPlayer.SavedFrom10meterGK += 1
+                        };
+
+                        var bb = stat.Type switch
+                        {
+                            SummaryType.Goal => returnPlayer.TotalPoints += 5,
+                            SummaryType.Assist => returnPlayer.TotalPoints += 2,
+                            SummaryType.OwnGoal => returnPlayer.TotalPoints -= 3,
+                            SummaryType.YellowCards => returnPlayer.TotalPoints -= 2,
+                            SummaryType.RedCards => returnPlayer.TotalPoints -= 7,
+                            SummaryType.MissedPenalty => returnPlayer.TotalPoints -= 3,
+                            SummaryType.Missed10meter => returnPlayer.TotalPoints -= 2,
+                            SummaryType.CleanSheetGK => returnPlayer.TotalPoints += 5,
+                            SummaryType.FourSavesGK => returnPlayer.TotalPoints += 1,
+                            SummaryType.SavedFromPenaltyGK => returnPlayer.TotalPoints += 3,
+                            SummaryType.SavedFrom10meterGK => returnPlayer.TotalPoints += 2
+                        };
+                    }
+                }
+            }
+
+            returnPlayer.TotalPoints += returnPlayer.TotalMatches * 2; // match attened
+            returnPlayer.GoalsPerMatch = returnPlayer.Goals == 0 ? 0 :
+                (double)returnPlayer.Goals / (double)returnPlayer.TotalMatches;
+            returnPlayer.WinPerMatch = returnPlayer.Wins == 0 ? 0 :
+                (double)returnPlayer.Wins / (double)returnPlayer.TotalMatches * 100.0;
+            returnPlayer.Player = _mapper.Map<PlayerDto>(player);
+            returnPlayer.Team = _mapper.Map<TeamDto>(player.Team);
+            return returnPlayer;
+        }
+
+        public decimal RecalculatePlayerPointsForOverallDreamTeam(int id)
+        {
+            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).Include(x => x.Matches).ThenInclude(x => x.League).FirstOrDefault(x => x.Id == id);
+            decimal totalPointsMulitlieToCoefficinet = 0;
+
+            foreach (var match in player.Matches)
+            {
+                foreach (var summary in match.Summaries)
+                {
+                    if (summary.Player.Id == id)
+                    {
+                        var bb = summary.Type switch
+                        {
+                            SummaryType.Goal => totalPointsMulitlieToCoefficinet += 5 * match.League.Coefficient,
+                            SummaryType.Assist => totalPointsMulitlieToCoefficinet += 2 * match.League.Coefficient,
+                            SummaryType.OwnGoal => totalPointsMulitlieToCoefficinet -= 3 * match.League.Coefficient,
+                            SummaryType.YellowCards => totalPointsMulitlieToCoefficinet -= 2 * match.League.Coefficient,
+                            SummaryType.RedCards => totalPointsMulitlieToCoefficinet -= 7 * match.League.Coefficient,
+                            SummaryType.MissedPenalty => totalPointsMulitlieToCoefficinet -= 3 * match.League.Coefficient,
+                            SummaryType.Missed10meter => totalPointsMulitlieToCoefficinet -= 2 * match.League.Coefficient,
+                            SummaryType.CleanSheetGK => totalPointsMulitlieToCoefficinet += 5 * match.League.Coefficient,
+                            SummaryType.FourSavesGK => totalPointsMulitlieToCoefficinet += 1 * match.League.Coefficient,
+                            SummaryType.SavedFromPenaltyGK => totalPointsMulitlieToCoefficinet += 3 * match.League.Coefficient,
+                            SummaryType.SavedFrom10meterGK => totalPointsMulitlieToCoefficinet += 2 * match.League.Coefficient
+                        };
+                    }
+                }
+                totalPointsMulitlieToCoefficinet += 2 * match.League.Coefficient;
+            }
+            return totalPointsMulitlieToCoefficinet;
+        }
+
+        private int CalculatePlayerWins(Player player)
+        {
+            return player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
+                   player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
+        }
+
+        private int CalculatePlayerLosts(Player player)
+        {
+            return player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals < x.AwayTeamGoals) +
+                   player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals < x.HomeTeamGoals);
+        }
+
+        private int CalculatePlayerDraws(Player player)
+        {
+            return player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals == x.AwayTeamGoals) +
+                   player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals == x.HomeTeamGoals);
         }
     }
 }

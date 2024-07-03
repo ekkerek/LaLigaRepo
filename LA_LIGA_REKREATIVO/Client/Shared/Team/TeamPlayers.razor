@@ -12,18 +12,16 @@
             <ListItemMeta>
                 <TitleTemplate>
                     <span>
-                        <img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(item.Player.Picture)" />
+                        <img class="player-img" src="@_fileService.GetImagePath(item.Player.Picture)" />
                     </span>
                     <span>
-                        <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a>
-
+                        <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FullName</a>
                         @if (item.Player.IsGk)
                         {
                             <span>
                                 (GK)
                             </span>
                         }
-
                     </span>
                 </TitleTemplate>
             </ListItemMeta>

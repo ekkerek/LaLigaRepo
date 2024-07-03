@@ -17,6 +17,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IPlayerStatsService, PlayersStatsService>();
+builder.Services.AddScoped<ITeamStatsService, TeamStatsService>();
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddMemoryCache();

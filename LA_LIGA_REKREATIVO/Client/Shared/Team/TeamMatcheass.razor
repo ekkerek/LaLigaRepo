@@ -9,22 +9,33 @@
         <ListItemMeta>
             <TitleTemplate>
                 <GridRow>
-                    <GridCol Style="font-weight:500" Span="22">
-                        <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                        <span style="padding-left:5px;">
-                            @context.HomeTeam.Name
-                        </span>
+                    <GridCol Span="4" Style="display: flex; justify-content: center; align-items: center">
+                        @context.GameTime.ToString("dd.MM")
                     </GridCol>
-                    <GridCol Style="font-weight:500" Span="2">
-                        @context.HomeTeamGoals
+
+                    <GridCol Span="18">
+                        <GridRow>
+                            <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                            <span style="padding-left:5px;">
+                                @context.HomeTeam.Name
+                            </span>
+                        </GridRow>
+                        <GridRow>
+                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            <span style="padding-left:5px;">
+                                @context.AwayTeam.Name
+                            </span>
+                        </GridRow>
                     </GridCol>
-                    <GridCol Style="font-weight:500" Span="22">
-                        <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
-                        <span style="padding-left:5px;">
-                            @context.AwayTeam.Name
-                        </span>
+
+                    <GridCol Span="2">
+                        <GridRow>
+                            @context.HomeTeamGoals
+                        </GridRow>
+                        <GridRow>
+                            @context.AwayTeamGoals
+                        </GridRow>
                     </GridCol>
-                    <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
                 </GridRow>
             </TitleTemplate>
         </ListItemMeta>
