@@ -169,4 +169,10 @@ a, .btn-link {
     color: white;
     font-weight: 600;
 }
+
+.content-centar {
+    display: flex !important;
+    justify-content: center;
+    font-size: medium;
+}
 /*Code I added - End*/
