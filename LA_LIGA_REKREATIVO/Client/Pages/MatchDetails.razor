@@ -22,9 +22,6 @@
             <div style="display:flex; justify-content: center;align-items: flex-start; font-size: x-small;position: relative; bottom: 5px;">
                 @Match.GameTime.ToShortDateString() @Match.GameTime.ToShortTimeString()
             </div>
-            @*             <div style="display:flex; justify-content: center;font-size: 12px;">
-
-            </div> *@
             <div style="display:flex; justify-content: center; font-size:xx-large; position: relative; bottom: 10px;">
                 @Match.HomeTeamGoals - @Match.AwayTeamGoals
             </div>
@@ -70,7 +67,6 @@
     public int Id { get; set; }
     public MatchDto Match = new();
     private string title;
-    //private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
 
     protected async override Task OnParametersSetAsync()
     {
@@ -80,47 +76,6 @@
 
     private void GoToTeamDetails(int teamId)
     {
-
         Navigation.NavigateTo($"/team/{teamId}");
     }
-
-    // private string GetImgSrc(SummaryType type)
-    // {
-    //     if (type == SummaryType.Goal)
-    //     {
-    //         return "./goal.png";
-    //     }
-    //     if (type == SummaryType.OwnGoal)
-    //     {
-    //         return "./own_goal.png";
-    //     }
-    //     else if (type == SummaryType.Assist)
-    //     {
-    //         return "./assist.png";
-    //     }
-    //     else if (type == SummaryType.SavedFrom10meterGK)
-    //     {
-    //         return "./10_m.png";
-    //     }
-    //     else if (type == SummaryType.SavedFromPenaltyGK)
-    //     {
-    //         return "./penalty.png";
-    //     }
-    //     else if (type == SummaryType.RedCards)
-    //     {
-    //         return "./red_card.png";
-    //     }
-    //     else if (type == SummaryType.YellowCards)
-    //     {
-    //         return "./yellow_card.png";
-    //     }
-    //     else
-    //     {
-    //         return string.Empty;
-    //     }
-    // }
-    // private string GetImagePath(string imageName)
-    // {
-    //     return BUCKET_PATH + imageName;
-    // }
 }

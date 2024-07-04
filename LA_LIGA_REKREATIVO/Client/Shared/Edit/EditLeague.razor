@@ -20,6 +20,9 @@
         <FormItem Label="Year">
             <Input @bind-Value="context.Year" />
         </FormItem>
+        <FormItem Label="Is Active">
+            <Switch @bind-Checked="@context.IsActive" />
+        </FormItem>
         <FormItem Label="Coefficient">
             <Input @bind-Value="context.Coefficient" />
         </FormItem>

@@ -42,7 +42,10 @@
                 <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
             </span>
             <span>
-                <a @onclick="() => GoToProfilePage(context.Player.Id)">@context.Player.FullName</a>
+                <a style="display: inline-grid" @onclick="() => GoToProfilePage(context.Player.Id)">
+                    <span>@context.Player.FullName</span>
+                    <span style="font-size: smaller"> @context.Team.Name </span>
+                </a>
             </span>
         </PropertyColumn>
 

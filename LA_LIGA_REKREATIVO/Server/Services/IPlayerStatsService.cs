@@ -13,7 +13,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         List<PlayerStatsDto> Get2ndDreamTeamByLeague(int leagueId);
         List<PlayerStatsDto> Get2ndDreamTeamOverall();
         PlayerStatsDto GetPlayerStats(int id);
-        List<PlayerStatsDto> GetPlayersStats23(int leagueId);
+        List<PlayerStatsDto> GetPlayersStats(int leagueId);
         List<PlayerStatsDto> GetPlayersStatsOverall();
         List<PlayerStatsDto> GetTeamPlayers(int teamId);
         decimal RecalculatePlayerPointsForOverallDreamTeam(int id);

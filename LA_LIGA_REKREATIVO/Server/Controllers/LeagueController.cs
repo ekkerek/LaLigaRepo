@@ -55,6 +55,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             updatedLeague.Year = league.Year;
             updatedLeague.Coefficient = league.Coefficient;
             updatedLeague.IsOverallLeague = league.IsOverallLeague;
+            updatedLeague.IsActive = league.IsActive;
             _context.Leagues.Update(updatedLeague);
             _context.SaveChanges();
         }

@@ -70,7 +70,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return playersStats;
         }
 
-        public List<PlayerStatsDto> GetPlayersStats23(int leagueId)
+        public List<PlayerStatsDto> GetPlayersStats(int leagueId)
         {
             var playersStats = GetPlayersStatsByLeague(leagueId).OrderByDescending(x => x.TotalPoints).ToList();
             SetOrderId(playersStats);

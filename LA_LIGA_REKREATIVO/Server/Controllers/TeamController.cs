@@ -54,7 +54,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 team.Leagues.Add(league);
             }
             var entry = _context.Teams.Add(team);
-            //var pp = teamDto.Leagues.FirstOrDefault(x => x.Id)
 
             if (entry != null)
             {

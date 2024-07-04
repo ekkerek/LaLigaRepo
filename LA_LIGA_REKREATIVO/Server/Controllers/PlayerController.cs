@@ -98,11 +98,9 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 return cacheData;
             }
             var expirationTime = DateTimeOffset.Now.AddDays(5);
-            cacheData = _playerStatsService.GetPlayersStats23(leagueId); ;//await _dbContext.Products.ToListAsync();
+            cacheData = _playerStatsService.GetPlayersStats(leagueId);
             _memoryCache.Set($"playerstatsbyleague-{leagueId}", cacheData, expirationTime);
             return cacheData;
-
-            // return _playerStatsService.GetPlayersStats23(leagueId);
         }
 
         [HttpGet("getplayersstatsoverall")]
@@ -118,8 +116,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             cacheData = _playerStatsService.GetPlayersStatsOverall(); ;//await _dbContext.Products.ToListAsync();
             _memoryCache.Set("getplayersstatsoverall", cacheData, expirationTime);
             return cacheData;
-
-            //return _playerStatsService.GetPlayersStatsOverall();
         }
 
         [HttpGet("getDreamTeam/{leagueId}")]
@@ -135,8 +131,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             cacheData = _playerStatsService.GetDreamTeamByLeague(leagueId); //await _dbContext.Products.ToListAsync();
             _memoryCache.Set($"getDreamTeam-{leagueId}", cacheData, expirationTime);
             return cacheData;
-
-            //return _playerStatsService.GetDreamTeamByLeague(leagueId);
         }
 
         [HttpGet("get2ndDreamTeam/{leagueId}")]
@@ -152,8 +146,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             cacheData = _playerStatsService.Get2ndDreamTeamByLeague(leagueId); //await _dbContext.Products.ToListAsync();
             _memoryCache.Set($"get2ndDreamTeam-{leagueId}", cacheData, expirationTime);
             return cacheData;
-
-            //return _playerStatsService.GetDreamTeamByLeague(leagueId);
         }
 
         [HttpGet("getDreamTeamOverall")]
@@ -166,11 +158,9 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             var expirationTime = DateTimeOffset.Now.AddDays(7);
-            cacheData = _playerStatsService.GetDreamTeamOverall(); //await _dbContext.Products.ToListAsync();
+            cacheData = _playerStatsService.GetDreamTeamOverall();
             _memoryCache.Set("getDreamTeamOverall", cacheData, expirationTime);
             return cacheData;
-
-            //return _playerStatsService.GetDreamTeamOverall();
         }
 
         [HttpGet("get2ndDreamTeamOverall")]
@@ -183,28 +173,15 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             var expirationTime = DateTimeOffset.Now.AddDays(7);
-            cacheData = _playerStatsService.Get2ndDreamTeamOverall(); //await _dbContext.Products.ToListAsync();
+            cacheData = _playerStatsService.Get2ndDreamTeamOverall();
             _memoryCache.Set("get2ndDreamTeamOverall", cacheData, expirationTime);
             return cacheData;
-
-            //return _playerStatsService.GetDreamTeamOverall();
         }
 
         [HttpGet("getTeamPlayers/{teamId}")]
         public IEnumerable<PlayerStatsDto> GetTeamPlayers(int teamId)
         {
-            //var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>($"getTeamPlayers-{teamId}");
-            //if (cacheData != null)
-            //{
-            //    return cacheData;
-            //}
-            //var expirationTime = DateTimeOffset.Now.AddDays(5);
-            //cacheData = _playerStatsService.GetPlayersStats23(leagueId); ;//await _dbContext.Products.ToListAsync();
-            //_memoryCache.Set($"playerstatsbyleague-{leagueId}", cacheData, expirationTime);
-            //return cacheData;
             return _playerStatsService.GetTeamPlayers(teamId);
-
-            // return _playerStatsService.GetPlayersStats23(leagueId);
         }
     }
 }

@@ -26,7 +26,10 @@
         <FormItem Label="Year">
             <Input @bind-Value="context.Year" />
         </FormItem>
-                <FormItem Label="Coefficient">
+        <FormItem Label="Is Active">
+            <Switch @bind-Checked="@context.IsActive" />
+        </FormItem>
+        <FormItem Label="Coefficient">
             <Input @bind-Value="context.Coefficient" />
         </FormItem>
         <FormItem Label="Is Overall League">
@@ -37,7 +40,6 @@
         </FormItem>
     </Form>
 </Modal>
-
 
 @code {
     [Parameter] public EventCallback CloseModal { get; set; }

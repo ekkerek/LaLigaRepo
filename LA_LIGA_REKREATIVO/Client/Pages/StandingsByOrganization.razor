@@ -4,7 +4,8 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 
 @inject Server Server
-@inject FileService _fileService;
+@inject FileService _fileService
+@inject NavigationManager Navigation
 
 <Spin Spinning=loading>
     <Select TItem="LeagueDto"
@@ -28,7 +29,11 @@
         <PropertyColumn Title="Name" Property="c=>c.Team.Name">
             <GridRow>
                 <GridCol Style="display: flex; align-items: center; justify-content: left" Span="5"><img style="height:18px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
-                <GridCol Span="19">@context.Team.Name</GridCol>
+                <GridCol Span="19">
+                    <a @onclick="() => GoToTeamDetails(context.Team.Id)">
+                        @context.Team.Name
+                    </a>
+                </GridCol>
             </GridRow>
         </PropertyColumn>
         <PropertyColumn Align="ColumnAlign.Center" Title="MP" Property="c=>c.GamePlayed" />
@@ -87,5 +92,10 @@
         int orderId = 1;
         stats.ForEach(x => { x.OrderId = orderId; orderId++; });
         StateHasChanged();
+    }
+
+    private void GoToTeamDetails(int teamId)
+    {
+        Navigation.NavigateTo($"/team/{teamId}");
     }
 }

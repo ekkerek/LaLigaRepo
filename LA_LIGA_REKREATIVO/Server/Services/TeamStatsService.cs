@@ -19,7 +19,7 @@ public class TeamStatsService : ITeamStatsService
 
     public List<TeamStatsDto> GetCommonStanding()
     {
-        var matches = _context.Matches.Where(x => x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+        var matches = _context.Matches.Include(x => x.League).Where(x => x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
         var teams = _context.Teams.Include(x => x.Leagues);
         var leagueCoefficients = _context.Leagues.Select(x => x.Coefficient).Distinct().ToList();
         var teamStatsList = new List<TeamStatsDto>();
@@ -50,7 +50,7 @@ public class TeamStatsService : ITeamStatsService
 
     public List<TeamStatsDto> GetStandingsByLeague(int id)
     {
-        var matches = _context.Matches.Where(x => x.League.Id == id && x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+        var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == id && x.GameTime < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
         var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id).Teams;
         var teamStatsList = new List<TeamStatsDto>();
         foreach (var team in teams)
@@ -61,6 +61,7 @@ public class TeamStatsService : ITeamStatsService
             teamStatsDto.GamePlayed = CalculateTeamGamePlayed(team.Id, matches);
             teamStatsDto.Goals = CalculateTeamGoals(team.Id, matches);
             teamStatsDto.GoalsConceded = CalculateTeamGoalsConceded(team.Id, matches);
+            teamStatsDto.GoalDifference = teamStatsDto.Goals - teamStatsDto.GoalsConceded;
             teamStatsDto.Wins = CalculateTeamWins(team.Id, matches);
             teamStatsDto.Losts = CalculateTeamLosts(team.Id, matches);
             teamStatsDto.Draws = CalculateTeamLosts(team.Id, matches);
@@ -71,8 +72,7 @@ public class TeamStatsService : ITeamStatsService
 
             teamStatsList.Add(teamStatsDto);
         }
-        return teamStatsList.OrderByDescending(x => x.TotalPoints)
-                            .ThenBy(x => x, new StandingsComparer())
+        return teamStatsList.OrderByDescending(x => x.PointsByCoefficient)
                             .ThenByDescending(x => x.GoalDifference)
                             .ThenByDescending(x => x.Goals)
                             .ToList();

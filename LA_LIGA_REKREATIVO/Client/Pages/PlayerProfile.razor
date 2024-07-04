@@ -12,107 +12,129 @@
         <div class="klasa" style="display: flex; justify-content: center;">
             <img style="height: 35vh;margin-bottom: 20px; position: relative;" src="@_fileService.GetImagePath(player.Picture)" />
         </div>
+
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
+
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700; font-size: medium">First name:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.Player.FirstName</GridCol>
+            <span style="font-size: x-large">@playerStats.Player.FullName</span>
         </GridRow>
 
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Last name:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.Player.LastName</GridCol>
+            <span style="font-size: small">@playerStats.Team.Name</span>
         </GridRow>
 
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
+
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Team:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.Team.Name</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Fantasy points:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">
-                @playerStats.TotalPoints
+            <GridCol Span="8">
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: smaller">
+                        Fantasy points
+                    </span>
+                </GridRow>
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: x-large">
+                        @playerStats.TotalPoints
+                    </span>
+                </GridRow>
             </GridCol>
-
+            <GridCol Span="8">
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: smaller">
+                        Goals
+                    </span>
+                </GridRow>
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: x-large">
+                        @playerStats.Goals
+                    </span>
+                </GridRow>
+            </GridCol>
+            <GridCol Span="8">
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: smaller">
+                        Assists
+                    </span>
+                </GridRow>
+                <GridRow Style="display: flex; justify-content: center;">
+                    <span style="font-size: x-large">
+                        @playerStats.Assists
+                    </span>
+                </GridRow>
+            </GridCol>
         </GridRow>
 
-        <Divider Style="margin: 12px;" />
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Total Matches:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Total Matches:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.TotalMatches</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Wins:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Wins:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.Wins</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Draws:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Draws:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.Draws</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Losts:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Losts:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.Losts</GridCol>
         </GridRow>
 
-        <Divider Style="margin: 12px;" />
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Goals:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.Goals</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Assists:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.Assists</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Own goals:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@playerStats.OwnGoals</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Goals Per Match:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Goals Per Match:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.GoalsPerMatch.ToString("F1")</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">WinPerMatch:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">WinPerMatch:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.WinPerMatch.ToString("F1") %</GridCol>
         </GridRow>
 
-        <Divider Style="margin: 12px;" />
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Yellow Cards:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Yellow Cards:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.YellowCards</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Red Cards:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Red Cards:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.RedCards</GridCol>
         </GridRow>
 
-        <Divider Style="margin: 12px;" />
+        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Missed Penalty:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Own goals:</GridCol>
+            <GridCol Span="8" Style="font-size: medium">@playerStats.OwnGoals</GridCol>
+        </GridRow>
+        <GridRow>
+            <GridCol Span="16" Style="font-size: medium">Missed Penalty:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.MissedPenalty</GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="16" Style="font-weight: 700;font-size: medium">Missed From 10m:</GridCol>
+            <GridCol Span="16" Style="font-size: medium">Missed From 10m:</GridCol>
             <GridCol Span="8" Style="font-size: medium">@playerStats.Missed10meter</GridCol>
         </GridRow>
 
         @if (playerStats.Player.IsGk)
         {
-            <Divider Style="margin: 12px;" />
+            <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
             <GridRow>
-                <GridCol Span="16" Style="font-weight: 700;font-size: medium">Clean Sheets:</GridCol>
+                <GridCol Span="16" Style="font-size: medium">Clean Sheets:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.CleanSheetGK</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Style="font-weight: 700;font-size: medium">Saved Penalties:</GridCol>
+                <GridCol Span="16" Style="font-size: medium">Saved Penalties:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.SavedFromPenaltyGK</GridCol>
             </GridRow>
 
             <GridRow>
-                <GridCol Span="16" Style="font-weight: 700;font-size: medium">Saved From 10 meter:</GridCol>
+                <GridCol Span="16" Style="font-size: medium">Saved From 10 meter:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.SavedFrom10meterGK</GridCol>
             </GridRow>
         }
@@ -144,23 +166,11 @@
 @code {
     [Parameter] public int Id { get; set; }
     private PlayerDto player = new();
-    //private List<TeamDto> teams = new();
     private PlayerStatsDto playerStats = new();
 
     protected async override Task OnParametersSetAsync()
     {
         player = await Server.Players.Get(Id);
-        //var teamsResult = await Server.Teams.Get();
-        //teams = teamsResult.ToList();
         playerStats = await Server.Players.GetPlayerStats(Id);
     }
-
-    // protected async override Task OnInitializedAsync()
-    // {
-    //     player = await Server.Players.Get(Id);
-    //     var teamsResult = await Server.Teams.Get();
-    //     teams = teamsResult.ToList();
-    //     playerStats = await Server.Players.GetPlayerStats(Id);
-    //     base.OnInitialized();
-    // }
 }
