@@ -183,5 +183,35 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             return _playerStatsService.GetTeamPlayers(teamId);
         }
+
+        [HttpGet("getTopGoalscorer")]
+        public IEnumerable<PlayerStatsDto> GetTopGoalscorer()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>("getTopGoalscorer");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(5);
+            cacheData = _playerStatsService.GetTopGoalscorer();
+            _memoryCache.Set("getTopGoalscorer", cacheData, expirationTime);
+            return cacheData;
+        }
+
+        [HttpGet("getTopAssitent")]
+        public IEnumerable<PlayerStatsDto> GetTopAssitent()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>("getTopAssitent");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(10);
+            cacheData = _playerStatsService.GetTopAssitent();
+            _memoryCache.Set("getTopAssitent", cacheData, expirationTime);
+            return cacheData;
+        }
     }
 }

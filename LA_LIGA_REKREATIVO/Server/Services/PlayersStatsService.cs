@@ -285,6 +285,32 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return returnPlayer;
         }
 
+        public IEnumerable<PlayerStatsDto> GetTopGoalscorer()
+        {
+            var playerIds = _context.Players.AsNoTracking().Select(x => x.Id).ToList();
+            List<PlayerStatsDto> playersStats = new();
+            foreach (var playerId in playerIds)
+            {
+                PlayerStatsDto returnPlayer = new();
+                returnPlayer = GetPlayerStats(playerId);
+                playersStats.Add(returnPlayer);
+            }
+            return playersStats.OrderByDescending(x => x.Goals).Take(5).ToList();
+        }
+
+        public IEnumerable<PlayerStatsDto> GetTopAssitent()
+        {
+            var playerIds = _context.Players.AsNoTracking().Select(x => x.Id).ToList();
+            List<PlayerStatsDto> playersStats = new();
+            foreach (var playerId in playerIds)
+            {
+                PlayerStatsDto returnPlayer = new();
+                returnPlayer = GetPlayerStats(playerId);
+                playersStats.Add(returnPlayer);
+            }
+            return playersStats.OrderByDescending(x => x.Assists).Take(5).ToList();
+        }
+
         public decimal RecalculatePlayerPointsForOverallDreamTeam(int id)
         {
             var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).Include(x => x.Matches).ThenInclude(x => x.League).FirstOrDefault(x => x.Id == id);

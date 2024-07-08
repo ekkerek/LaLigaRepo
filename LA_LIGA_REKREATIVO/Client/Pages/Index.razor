@@ -1,55 +1,89 @@
 ﻿@page "/"
 @using LA_LIGA_REKREATIVO.Client.Server;
-@using LA_LIGA_REKREATIVO.Shared.Dto
-@inject Server Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Services;
 
-<h2 style="display: flex; justify-content: center;">Fantasy pravila</h2>
+@inject Server Server
+@inject FileService _fileService
+@inject NavigationManager Navigation
+
+@* <h2 style="display: flex; justify-content: center;">Fantasy pravila</h2>
 
 <AntList Class="demo-loadmore-list" DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
     <ChildContent Context="item">
         <ListItem>
             <ListItemMeta>
                 <TitleTemplate>
-                   <span>@item.Key.ToString()</span>
+                    <span>@item.Key.ToString()</span>
                 </TitleTemplate>
             </ListItemMeta>
             <div>@item.Value.ToString()</div>
         </ListItem>
     </ChildContent>
-    @*     <LoadMore>
-    @if (!InitLoading && !Loading)
-    {
-    <div class="demo-loadmore-btn-content ">
-    <Button OnClick="OnLoadMore">loading more</Button>
-    </div>
-    }
-    </LoadMore> *@
-</AntList>
 
-@* <Table TItem="TeamStatsDto"
-       DataSource="@stats"
-       Size="TableSize.Small"
-       HidePagination>
-    <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
-    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
-    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
-    <PropertyColumn Title="G" Property="c=>c.Goals">
-        @context.Goals:@context.GoalsConceded
-    </PropertyColumn>
-    <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
-    <PropertyColumn Title="P" Property="c=>c.PointsByCoefficient" />
-</Table> *@
+</AntList> *@
+
+<Spin Spinning=loading>
+    <Card Size="small" Title="Top Goalscorer" Style="margin-bottom: 16px;">
+        <Body>
+            <Table TItem="PlayerStatsDto"
+                   DataSource="@stats"
+                   HidePagination>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
+                    <span>
+                        <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
+                    </span>
+                    <span>
+                        <a style="display: inline-grid" @onclick="() => GoToProfilePage(context.Player.Id)">
+                            <span>@context.Player.FullName</span>
+                            <span style="font-size: smaller"> @context.Team.Name </span>
+                        </a>
+                    </span>
+                </PropertyColumn>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="Goals" HeaderStyle="display: none;" Property="c=>c.Goals" />
+            </Table>
+        </Body>
+    </Card>
+
+    <Card Size="small" Title="Top Assistents">
+        <Body>
+            <Table TItem="PlayerStatsDto"
+                   DataSource="@topAssistents"
+                   HidePagination>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
+                    <span>
+                        <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
+                    </span>
+                    <span>
+                        <a style="display: inline-grid" @onclick="() => GoToProfilePage(context.Player.Id)">
+                            <span>@context.Player.FullName</span>
+                            <span style="font-size: smaller"> @context.Team.Name </span>
+                        </a>
+                    </span>
+                </PropertyColumn>
+                <PropertyColumn Style="padding: 4px 4px; !important" Title="Assists" HeaderStyle="display: none;" Property="c=>c.Assists" />
+            </Table>
+        </Body>
+    </Card>
+
+</Spin>
 
 
 @code {
     // private List<LeagueDto> leagues = new();
-    // List<TeamStatsDto> stats = new();
+    private List<PlayerStatsDto> stats = new();
+    private List<PlayerStatsDto> topAssistents = new();
+    //private List<TeamStatsDto> stats = new();
     // int defaultvalue = 1;
     Dictionary<string, int> fantasyRules = new();
     public bool InitLoading { get; set; } = true;
+    private bool loading;
 
     protected async override Task OnParametersSetAsync()
     {
+        loading = true;
         fantasyRules.Add("Gol", 5);
         fantasyRules.Add("Asistencija", 2);
         fantasyRules.Add("Ucestovanje na mecu", 2);
@@ -66,9 +100,16 @@
         // var result = await Server.Leagues.Get();
         // leagues = result.ToList();
 
-        // stats = await Server.Matches.GetCommonStanding();// GetStandingsByLeague(leagues.FirstOrDefault().Id);
-        // SetOrderId(stats);
-        // StateHasChanged();
+        var topGoalscorersResult = await Server.Players.GetTopGoalscorer();// GetStandingsByLeague(leagues.FirstOrDefault().Id);
+                                                                           // SetOrderId(stats);
+                                                                           // StateHasChanged();
+        var topAssistentsResult = await Server.Players.GetTopAssitent();
+        stats = topGoalscorersResult.ToList();
+        SetOrderId(stats);
+        topAssistents = topAssistentsResult.ToList();
+        SetOrderId(topAssistents);
+        loading = false;
+        StateHasChanged();
     }
 
     // private void SetOrderId(List<TeamStatsDto> teamStats)
@@ -77,4 +118,16 @@
     //     stats.ForEach(x => { x.OrderId = orderId; orderId++; });
     //     StateHasChanged();
     // }
+
+    private void GoToProfilePage(int id)
+    {
+        Navigation.NavigateTo($"/playerProfile/{id}");
+    }
+
+    private void SetOrderId(List<PlayerStatsDto> playerStats)
+    {
+        int orderId = 1;
+        playerStats.ForEach(x => { x.OrderId = orderId; orderId++; });
+        StateHasChanged();
+    }
 }

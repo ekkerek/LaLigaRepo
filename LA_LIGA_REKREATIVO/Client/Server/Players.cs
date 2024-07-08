@@ -149,5 +149,27 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             var result = await _httpClient.SendAsync(message);
             return result.IsSuccessStatusCode;
         }
+
+        public async Task<IEnumerable<PlayerStatsDto>> GetTopGoalscorer()
+        {
+            var result = await _httpClient.GetAsync($"api/player/getTopGoalscorer");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<PlayerStatsDto>>(json);
+            }
+            return Enumerable.Empty<PlayerStatsDto>();
+        }
+
+        public async Task<IEnumerable<PlayerStatsDto>> GetTopAssitent()
+        {
+            var result = await _httpClient.GetAsync($"api/player/getTopAssitent");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<PlayerStatsDto>>(json);
+            }
+            return Enumerable.Empty<PlayerStatsDto>();
+        }
     }
 }
