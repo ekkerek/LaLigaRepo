@@ -175,4 +175,8 @@ a, .btn-link {
     justify-content: center;
     font-size: medium;
 }
+
+.ant-page-header-heading-left {
+    display: grid !important;
+}
 /*Code I added - End*/

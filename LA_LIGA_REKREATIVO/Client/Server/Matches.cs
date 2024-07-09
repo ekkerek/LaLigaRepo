@@ -155,6 +155,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return Enumerable.Empty<MatchDto>();
         }
 
+        public async Task<LeagueStatisticDto> GetLeagueStatistic()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getLeagueStatistic");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<LeagueStatisticDto>(json);
+            }
+            return new LeagueStatisticDto();
+        }
+
         public async Task<bool> Add(MatchDto match)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");

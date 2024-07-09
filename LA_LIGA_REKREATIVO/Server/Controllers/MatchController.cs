@@ -404,6 +404,34 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
 
+        [HttpGet("getLeagueStatistic")]
+        public LeagueStatisticDto GetLeagueStatistic()
+        {
+            var cacheData = _memoryCache.Get<LeagueStatisticDto>("getLeagueStatistic");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            LeagueStatisticDto leagueStatisticDto = new();
+            var matches = _context.Matches.Include(x => x.Summaries).Include(x => x.Players).Where(x => x.GameTime < DateTime.UtcNow && x.Players.Count() > 0 && !x.IsOfficialResult).ToList();
+            leagueStatisticDto.NumberOfPlayers = _context.Players.Count();
+
+            leagueStatisticDto.TotalGoals = matches.Sum(x => x.Summaries.Count(x => x.Type == SummaryType.Goal));
+            leagueStatisticDto.TotalAssists = matches.Sum(x => x.Summaries.Count(x => x.Type == SummaryType.Assist));
+
+            leagueStatisticDto.TotalMatches = matches.Count();
+
+            leagueStatisticDto.GoalsPerMatch = (decimal)leagueStatisticDto.TotalGoals / leagueStatisticDto.TotalMatches;
+            leagueStatisticDto.AssistsPerMatch = (decimal)leagueStatisticDto.TotalAssists / leagueStatisticDto.TotalMatches;
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = leagueStatisticDto;//await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("getLeagueStatistic", cacheData, expirationTime);
+            return cacheData;
+        }
+
+
         [HttpPost("delete")]
         public void Delete([FromBody] int matchId)
         {
@@ -427,7 +455,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _memoryCache.Remove("getByGameTimeOverall");
             _memoryCache.Remove("getFixturesOverall"); //
             _memoryCache.Remove("getTopGoalscorer");
-            _memoryCache.Remove("getTopAssitent");
+            _memoryCache.Remove("getTopAssitent"); //
+            _memoryCache.Remove("getLeagueStatistic");
             var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);
             foreach (var leagueId in leagueIds)
             {
