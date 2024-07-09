@@ -28,8 +28,8 @@
         <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
         <PropertyColumn Title="Name" Property="c=>c.Team.Name">
             <GridRow>
-                <GridCol Style="display: flex; align-items: center; justify-content: left" Span="5"><img style="height:18px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
-                <GridCol Span="19">
+                <GridCol Style="display: flex; align-items: center; justify-content: left" Span="6"><img style="height:18px;" src="@_fileService.GetTeamImagePath(context.Team.LogoSrc)" /></GridCol>
+                <GridCol Span="18">
                     <a @onclick="() => GoToTeamDetails(context.Team.Id)">
                         @context.Team.Name
                     </a>
@@ -43,7 +43,6 @@
         <PropertyColumn Align="ColumnAlign.Center" Title="PTS" Property="c=>c.TotalPoints" />
         <PropertyColumn Align="ColumnAlign.Center" Title="CP" Property="c=>c.PointsByCoefficient" />
     </Table>
-
 </Spin>
 
 @code {

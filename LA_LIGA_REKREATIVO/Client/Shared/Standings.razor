@@ -9,17 +9,17 @@
        HidePagination>
     <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
     <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
-    <PropertyColumn Title="MP" Property="c=>c.GamePlayed" />
-    <PropertyColumn Title="G" Property="c=>c.Goals">
+    <PropertyColumn Align="ColumnAlign.Center" Title="MP" Property="c=>c.GamePlayed" />
+    <PropertyColumn Align="ColumnAlign.Center" Title="G" Property="c=>c.Goals">
         @context.Goals:@context.GoalsConceded
     </PropertyColumn>
     @if (League.IsOverallLeague)
     {
-        <PropertyColumn Title="PTS" Property="c=>c.PointsByCoefficient" />
+        <PropertyColumn Align="ColumnAlign.Center" Title="CP" Property="c=>c.PointsByCoefficient" />
     }
     else
     {
-        <PropertyColumn Title="PTS" Property="c=>c.TotalPoints" />
+        <PropertyColumn Align="ColumnAlign.Center" Title="PTS" Property="c=>c.TotalPoints" />
     }
 
 </Table>
