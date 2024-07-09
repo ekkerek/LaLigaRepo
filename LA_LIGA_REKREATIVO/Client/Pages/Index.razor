@@ -7,62 +7,44 @@
 @inject FileService _fileService
 @inject NavigationManager Navigation
 
-@* <h2 style="display: flex; justify-content: center;">Fantasy pravila</h2>
-
-<AntList Class="demo-loadmore-list" DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
-    <ChildContent Context="item">
-        <ListItem>
-            <ListItemMeta>
-                <TitleTemplate>
-                    <span>@item.Key.ToString()</span>
-                </TitleTemplate>
-            </ListItemMeta>
-            <div>@item.Value.ToString()</div>
-        </ListItem>
-    </ChildContent>
-
-</AntList> *@
-
-@* <h1 style="display: flex; justify-content: center">La Liga rekreativo</h1>
-<h3 style="display: flex; justify-content: center">Sezona 4</h3> *@
-
-<PageHeader Class="site-page-header" Title="La liga rekreativo" Subtitle="Sezona 4" Style="margin-bottom: 12px;" />
-
-<div class="site-statistic-demo-card" style="margin-bottom: 12px;">
-    <Row Gutter="12">
-        <Col Span="12">
-        <Card>
-            <Statistic Title="Total matches" Value="@leagueStatistic.TotalMatches" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
-            </Statistic>
-        </Card>
-        </Col>
-        <Col Span="12">
-        <Card>
-            <Statistic Title="Players number" Value="@leagueStatistic.NumberOfPlayers" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
-            </Statistic>
-        </Card>
-        </Col>
-    </Row>
-</div>
-
-<div class="site-statistic-demo-card" style="margin-bottom: 12px;">
-    <Row Gutter="12">
-        <Col Span="12">
-        <Card>
-            <Statistic Title="Goals per match" Value="@leagueStatistic.GoalsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
-            </Statistic>
-        </Card>
-        </Col>
-        <Col Span="12">
-        <Card>
-            <Statistic Title="Assists per match" Value="@leagueStatistic.AssistsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
-            </Statistic>
-        </Card>
-        </Col>
-    </Row>
-</div>
 
 <Spin Spinning=loading>
+    <PageHeader Class="site-page-header" Title="La liga rekreativo" Subtitle="Sezona 4" Style="margin-bottom: 12px;" />
+
+    <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
+        <Row Gutter="12">
+            <Col Span="12">
+            <Card>
+                <Statistic Title="Total matches" Value="@leagueStatistic.TotalMatches" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
+                </Statistic>
+            </Card>
+            </Col>
+            <Col Span="12">
+            <Card>
+                <Statistic Title="Players number" Value="@leagueStatistic.NumberOfPlayers" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
+                </Statistic>
+            </Card>
+            </Col>
+        </Row>
+    </div>
+
+    <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
+        <Row Gutter="12">
+            <Col Span="12">
+            <Card>
+                <Statistic Title="Goals per match" Value="@leagueStatistic.GoalsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
+                </Statistic>
+            </Card>
+            </Col>
+            <Col Span="12">
+            <Card>
+                <Statistic Title="Assists per match" Value="@leagueStatistic.AssistsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
+                </Statistic>
+            </Card>
+            </Col>
+        </Row>
+    </div>
+
     <Card Size="small" Title="Top Goalscorer" Style="margin-bottom: 16px;">
         <Body>
             <Table TItem="PlayerStatsDto"
