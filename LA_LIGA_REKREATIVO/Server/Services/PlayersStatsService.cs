@@ -224,18 +224,20 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         public PlayerStatsDto GetPlayerStats(int id, int leagueId = 0)
         {
             var playerStats = Enumerable.Empty<ICollection<Summary>>();
-            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).Include(x=> x.Matches).ThenInclude(x=> x.League).FirstOrDefault(x => x.Id == id);
+            var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).Include(x => x.Matches).ThenInclude(x => x.League).FirstOrDefault(x => x.Id == id);
+            PlayerStatsDto returnPlayer = new PlayerStatsDto();
             if (leagueId != 0)
             {
                 playerStats = player.Matches.Where(x => x.League.Id == leagueId).Select(x => x.Summaries);
+                returnPlayer.TotalMatches = player.Matches.Where(x => x.League.Id == leagueId).Count();
             }
             else
             {
                 playerStats = player.Matches.Select(x => x.Summaries);
+                returnPlayer.TotalMatches = player.Matches.Count();
             }
 
-            PlayerStatsDto returnPlayer = new PlayerStatsDto();
-            returnPlayer.TotalMatches = player.Matches.Count();
+
             returnPlayer.Wins = CalculatePlayerWins(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
                                                             //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
 
