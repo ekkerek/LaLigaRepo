@@ -237,6 +237,12 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 returnPlayer.TotalMatches = player.Matches.Count();
             }
 
+            if (returnPlayer.TotalMatches == 0)
+            {   var testNewPlayerStats = new PlayerStatsDto();
+                testNewPlayerStats.Player = _mapper.Map<PlayerDto>(player);
+                testNewPlayerStats.Team = _mapper.Map<TeamDto>(player.Team);
+                return testNewPlayerStats;
+            }
 
             returnPlayer.Wins = CalculatePlayerWins(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
                                                             //player.Matches.Count(x => x.AwayTeamId == player.Team.Id && x.AwayTeamGoals > x.HomeTeamGoals);
