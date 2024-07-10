@@ -8,9 +8,9 @@ namespace LA_LIGA_REKREATIVO.Server.Helpers
     {
         public int Compare(TeamStatsDto team1, TeamStatsDto team2)
         {
-            if (team1.Team.Leagues.FirstOrDefault().Coefficient > team2.Team.Leagues.FirstOrDefault(x => x.IsActive).Coefficient)
+            if (team1.Team.Leagues.FirstOrDefault().Coefficient > team2.Team.Leagues.FirstOrDefault().Coefficient)
                 return -1;
-            else if (team1.Team.Leagues.FirstOrDefault().Coefficient < team2.Team.Leagues.FirstOrDefault(x => x.IsActive).Coefficient)
+            else if (team1.Team.Leagues.FirstOrDefault().Coefficient < team2.Team.Leagues.FirstOrDefault().Coefficient)
                 return 1;
             else return 0;
 
