@@ -79,8 +79,8 @@
         {
             team.LogoSrc = uploadResults.FirstOrDefault()?.StoredFileName;
         }
-        // team.Leagues.Clear();
-        // team.Leagues.AddRange(selectedLeagues);
+        team.Leagues.Clear();
+        team.Leagues.AddRange(selectedLeagues);
         var result = await Server.Teams.Update(team);
         if (result)
             _ = MessageService.Success($"{team} is edited.");
