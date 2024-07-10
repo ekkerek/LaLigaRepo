@@ -113,7 +113,10 @@
         leagues = result.ToList();
         var resStats = await Server.Players.GetPlayersStatsOverall();
         stats = resStats.OrderByDescending(x => x.Goals).ToList();
-        defaultLeagueId = leagues.FirstOrDefault().Id;
+        defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                       leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                       leagues.FirstOrDefault().Id;
+        //leagues.FirstOrDefault(x=> x.IsOverallLeague).Id;
         SetOrderId(stats);
         StateHasChanged();
         loading = false;

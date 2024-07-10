@@ -189,7 +189,9 @@
         stats = resStats.ToList();
         var resStatsSub = await Server.Players.Get2ndDreamTeamOverall();
         statsSub = resStatsSub.ToList();
-        defaultLeagueId = leagues.FirstOrDefault().Id;
+        defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                       leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                       leagues.FirstOrDefault().Id;//leagues.FirstOrDefault().Id;
         InitLoading = false;
         loading = false;
     }

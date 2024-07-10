@@ -27,7 +27,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public IEnumerable<LeagueDto> Get()
         {
             var leagues = _context.Leagues.Include(x => x.Teams);
-            return _mapper.Map<List<LeagueDto>>(leagues).OrderByDescending(x => x.Id);
+            return _mapper.Map<List<LeagueDto>>(leagues).OrderByDescending(x => x?.IsOverallLeague);
         }
 
         // GET api/<LeagueController>/5
