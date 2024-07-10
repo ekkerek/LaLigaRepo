@@ -106,7 +106,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             foreach (var playerId in playerIdsByLeague)
             {
                 PlayerStatsDto returnPlayer = new();
-                returnPlayer = GetPlayerStats(playerId);
+                returnPlayer = GetPlayerStats(playerId, leagueId);
                 playersStats.Add(returnPlayer);
             }
             return playersStats.ToList();
@@ -221,10 +221,19 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return returnPlayer;
         }
 
-        public PlayerStatsDto GetPlayerStats(int id)
+        public PlayerStatsDto GetPlayerStats(int id, int leagueId = 0)
         {
+            var playerStats = Enumerable.Empty<ICollection<Summary>>();
             var player = _context.Players.Include(x => x.Team).Include(x => x.Matches).ThenInclude(x => x.Summaries).ThenInclude(x => x.Player).FirstOrDefault(x => x.Id == id);
-            var playerStats = player.Matches.Select(x => x.Summaries);
+            if (leagueId != 0)
+            {
+                playerStats = player.Matches.Where(x => x.League.Id == leagueId).Select(x => x.Summaries);
+            }
+            else
+            {
+                playerStats = player.Matches.Select(x => x.Summaries);
+            }
+
             PlayerStatsDto returnPlayer = new PlayerStatsDto();
             returnPlayer.TotalMatches = player.Matches.Count();
             returnPlayer.Wins = CalculatePlayerWins(player);//player.Matches.Count(x => x.HomeTeamId == player.Team.Id && x.HomeTeamGoals > x.AwayTeamGoals) +
