@@ -26,13 +26,12 @@
             <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
                 <ListItemMeta>
                     <TitleTemplate>
-
                         <GridRow>
                             <GridCol Span="3" Style="display: grid">
                                 <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
                                 <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
                             </GridCol>
-                            <GridCol Span="18" Style="display: grid">
+                            <GridCol Span="19" Style="display: grid">
                                 <span style="margin-bottom: 5px;">
                                     @context.HomeTeam.Name
                                 </span>
@@ -40,7 +39,7 @@
                                     @context.AwayTeam.Name
                                 </span>
                             </GridCol>
-                            <GridCol Span="3" Style="display: grid">
+                            <GridCol Span="2" Style="display: grid">
                                 <span style="margin-bottom: 5px;">
                                     @context.HomeTeamGoals
                                 </span>
@@ -49,24 +48,6 @@
                                 </span>
                             </GridCol>
                         </GridRow>
-                        @*  <GridRow>
-                    <GridCol Style="font-weight:500" Span="22">
-                    <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                    <span style="padding-left:5px;">
-                    @context.HomeTeam.Name
-                    </span>
-                    </GridCol>
-                    <GridCol Style="font-weight:500" Span="2">
-                    @context.HomeTeamGoals
-                    </GridCol>
-                    <GridCol Style="font-weight:500" Span="22">
-                    <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
-                    <span style="padding-left:5px;">
-                    @context.AwayTeam.Name
-                    </span>
-                    </GridCol>
-                    <GridCol Style="font-weight:500" Span="2">@context.AwayTeamGoals</GridCol>
-                    </GridRow> *@
                     </TitleTemplate>
                 </ListItemMeta>
             </ListItem>
@@ -78,7 +59,6 @@
     public LeagueDto selectedLeague { get; set; }
     List<MatchesByGameTimeDto> matches = new List<MatchesByGameTimeDto>();
     private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
-    //[Parameter] public EventCallback<bool> IsLoading { get; set; }
     private List<LeagueDto> leagues = new();
     List<TeamStatsDto> stats = new();
     int defaultvalue;

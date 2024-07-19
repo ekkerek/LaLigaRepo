@@ -22,24 +22,6 @@
     </Select>
 
 
-    @*     <AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
-    <ChildContent Context="item">
-    <ListItem>
-    <ListItemMeta>
-    <TitleTemplate>
-    <span>
-    <img style="height:34px; width:34px; border-radius: 50%;" src="@_fileService.GetImagePath(item.Player.Picture)" />
-    </span>
-    <span>
-    <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FirstName @item.Player.LastName</a>
-    </span>
-    </TitleTemplate>
-    </ListItemMeta>
-    <div>@item?.TotalPoints</div>
-    </ListItem>
-    </ChildContent>
-    </AntList> *@
-
     @if (stats.Count() > 0)
     {
         <span style="display: flex; justify-content: center; font-size: large;font-weight: 600; margin-top: 1vh; background-color: lightgray ; position: relative; bottom: 6px;">Dream team</span>
