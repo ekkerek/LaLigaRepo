@@ -19,7 +19,7 @@ public class TeamStatsService : ITeamStatsService
 
     public List<TeamStatsDto> GetCommonStanding()
     {
-        var matches = _context.Matches.Include(x => x.League).Where(x => x.GameTime.ToUniversalTime() < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+        var matches = _context.Matches.Include(x => x.League).Where(x => x.Players.Count() > 0 || x.IsOfficialResult).ToList();
         var teams = _context.Teams.Include(x => x.Leagues);
         var leagueCoefficients = _context.Leagues.Select(x => x.Coefficient).Distinct().ToList();
         var teamStatsList = new List<TeamStatsDto>();
@@ -50,7 +50,7 @@ public class TeamStatsService : ITeamStatsService
 
     public List<TeamStatsDto> GetStandingsByLeague(int id)
     {
-        var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == id && x.GameTime.ToUniversalTime() < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+        var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == id && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
         var teams = _context.Leagues.Include(x => x.Teams).FirstOrDefault(x => x.Id == id).Teams;
         var teamStatsList = new List<TeamStatsDto>();
         foreach (var team in teams)

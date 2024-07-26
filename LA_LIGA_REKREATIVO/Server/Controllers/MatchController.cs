@@ -141,7 +141,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && x.GameTime.ToUniversalTime() < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.League.Id == leagueId && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -179,7 +179,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime.ToUniversalTime() < DateTime.UtcNow && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.Players.Count() > 0 || x.IsOfficialResult).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -212,7 +212,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public IEnumerable<MatchesByGameTimeDto> GetFixturesByLeague([FromBody] int leagueId)
         {
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == leagueId && (x.GameTime.ToUniversalTime() > DateTime.UtcNow || (x.Players.Count() == 0) && !x.IsOfficialResult)).ToList();
+            var matches = _context.Matches.Include(x => x.League).Where(x => x.League.Id == leagueId && x.Players.Count() == 0 && !x.IsOfficialResult).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -245,7 +245,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             List<MatchesByGameTimeDto> result = new();
-            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.GameTime.ToUniversalTime() > DateTime.UtcNow || (x.Players.Count() == 0) && !x.IsOfficialResult).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Players).Where(x => x.Players.Count() == 0 && !x.IsOfficialResult).ToList();
             var matchesDto = _mapper.Map<List<MatchDto>>(matches).GroupBy(x => new DateTime(x.GameTime.Year, x.GameTime.Month, x.GameTime.Day));
 
             foreach (var match in matchesDto)
@@ -414,7 +414,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             }
 
             LeagueStatisticDto leagueStatisticDto = new();
-            var matches = _context.Matches.Include(x => x.Summaries).Include(x => x.Players).Where(x => x.GameTime.ToUniversalTime() < DateTime.UtcNow && x.Players.Count() > 0 && !x.IsOfficialResult).ToList();
+            var matches = _context.Matches.Include(x => x.Summaries).Include(x => x.Players).Where(x => x.Players.Count() > 0 && !x.IsOfficialResult).ToList();
             leagueStatisticDto.NumberOfPlayers = _context.Players.Count();
 
             leagueStatisticDto.TotalGoals = matches.Sum(x => x.Summaries.Count(x => x.Type == SummaryType.Goal));
