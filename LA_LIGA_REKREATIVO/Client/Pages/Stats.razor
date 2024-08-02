@@ -63,7 +63,9 @@
         }
         else if (stattt == "GoalsPerMatch")
         {
-            <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch" />
+            <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch">
+                @context.GoalsPerMatch.ToString("F1")
+            </PropertyColumn>
         }
         else if (stattt == "YellowCards")
         {

@@ -154,7 +154,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 returnPlayer = GetPlayerStats(playerId);
                 playersStats.Add(returnPlayer);
             }
-            return playersStats.ToList();
+            return playersStats.OrderByDescending(x=> x.TotalPoints).ToList();
         }
 
         public PlayerStatsDto GetPlayerStatsForOverallDreamTeam(int id)
