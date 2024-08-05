@@ -8,9 +8,9 @@
             @foreach (var item in Match.Summaries.OrderBy(x => x.Time))
             {
                 if (item.Type == SummaryType.CleanSheetGK ||
-                    item.Type == SummaryType.FourSavesGK ||
-                    item.Type == SummaryType.SavedFrom10meterGK ||
-                    item.Type == SummaryType.SavedFromPenaltyGK)
+                item.Type == SummaryType.FourSavesGK ||
+                item.Type == SummaryType.SavedFrom10meterGK ||
+                item.Type == SummaryType.SavedFromPenaltyGK)
                 {
                     continue;
                 }
@@ -35,8 +35,25 @@
                     </GridRow>
                 }
             }
-        </ChildContent>
+            @if (Match.IsOfficialResult)
+            {
+                <div><span style="color: red;">*</span> <span style="font-style: italic;"> Meč je registrovan službenim rezultatom @Match.HomeTeamGoals : @Match.AwayTeamGoals</span></div>
+            }
+            @if (Match.IsMatchSuspended)
+            {
+                <div><span style="color: red;">*</span><span style="font-style: italic;"> Negativni bodovi:</span>  </div>
 
+                @if (Match.HomeTeamNegativePoints is not null && Match.HomeTeamNegativePoints != 0)
+                {
+                    <div style="position: relative; left: 25px;">@Match.HomeTeam.Name  - @Match.HomeTeamNegativePoints</div>
+                }
+
+                @if (Match.AwayTeamNegativePoints is not null && Match.AwayTeamNegativePoints != 0)
+                {
+                    <div style="position: relative; left: 25px;">@Match.AwayTeam.Name - @Match.AwayTeamNegativePoints</div>
+                }
+            }
+        </ChildContent>
     </GridCol>
 </GridRow>
 @code {

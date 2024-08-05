@@ -21,7 +21,6 @@
             AllowClear>
     </Select>
 
-
     @if (stats.Count() > 0)
     {
         <span style="display: flex; justify-content: center; font-size: large;font-weight: 600; margin-top: 1vh; background-color: lightgray ; position: relative; bottom: 6px;">Dream team</span>
@@ -137,6 +136,11 @@
         </AntList>
     }
 
+    @if (isOverallLeague)
+    {
+        <Divider Style="margin-top: 0px;margin-bottom: 12px;" />
+        <span style="color:red;">*</span> <span style="font-style: italic; font-size: small"> Fantazi bodovi u zajedničkoj ligi se množe sa koeficijnom lige u kojoj su bodovi ostvarni</span>
+    }
 
 
 </Spin>
@@ -160,6 +164,7 @@
     public int multiple = 1;
     int defaultLeagueId;
     private bool loading;
+    private bool isOverallLeague = true;
 
 
     protected override async Task OnParametersSetAsync()
@@ -174,6 +179,7 @@
         defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
                        leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
                        leagues.FirstOrDefault().Id;//leagues.FirstOrDefault().Id;
+        isOverallLeague = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? true : false;
         InitLoading = false;
         loading = false;
     }
@@ -203,6 +209,7 @@
             stats = res.ToList();
             var resSub = await Server.Players.Get2ndDreamTeamOverall();
             statsSub = resSub.ToList();
+            isOverallLeague = true;
         }
         else
         {
@@ -210,6 +217,7 @@
             stats = res.ToList();
             var resSub = await Server.Players.Get2ndDreamTeamByLeague(league.Id);
             statsSub = resSub.ToList();
+            isOverallLeague = false;
         }
 
         //stats = resStats.ToList();
