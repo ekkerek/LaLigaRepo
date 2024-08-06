@@ -102,7 +102,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getTeamStats/{teamId}")]
         public TeamStatsDto GetTeamStats(int teamId)
         {
-            var matches = _context.Matches.Include(x => x.Summaries).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && x.Players.Count() > 0).ToList();
+            var matches = _context.Matches.Include(x => x.Summaries).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0) || x.IsOfficialResult).ToList();
 
             var team = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == teamId);
 

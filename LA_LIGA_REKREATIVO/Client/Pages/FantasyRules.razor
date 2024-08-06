@@ -1,0 +1,48 @@
+﻿@page "/fantasy-rules"
+
+@using AntDesign
+
+<h2 style="display: flex; justify-content: center;">Fantasy rules</h2>
+
+<AntList DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
+    <ChildContent Context="item">
+        <ListItem>
+            <ListItemMeta>
+                <TitleTemplate>
+                    <span>@item.Key</span>
+                </TitleTemplate>
+            </ListItemMeta>
+            <div>@item.Value.ToString()</div>
+        </ListItem>
+    </ChildContent>
+</AntList>
+
+@code {
+    Dictionary<string, int> fantasyRules = new();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        fantasyRules.Add("Gol", 5);
+        fantasyRules.Add("Asistencija", 2);
+        fantasyRules.Add("Učestovanje na meču", 2);
+        fantasyRules.Add("Auto gol", -3);
+        fantasyRules.Add("Žuti karton", -2);
+        fantasyRules.Add("Crveni karton", -7);
+        fantasyRules.Add("Promašen penal", -3);
+        fantasyRules.Add("Promašen udarac sa 10 m", -2);
+        fantasyRules.Add("Clean sheet golman", 5);
+        fantasyRules.Add("Svake 4 odbrane golman", 1);
+        fantasyRules.Add("Odbranjen penal golman", 3);
+        fantasyRules.Add("Odbranjen udarac sa 10 m golman", 2);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}
