@@ -66,16 +66,16 @@ else if (IsTeamResult)
                         <GridCol Style="display: flex;align-items: center;" Span="2">
                             @if (context.ResultType == ResultType.Win)
                             {
-                                <Tag Style="height:24px; width: 28px;" Color="green-inverse">W</Tag>
+                                <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="green-inverse">W</Tag>
                             }
                             else if (context.ResultType == ResultType.Lost)
                             {
-                                <Tag Style="height:24px; width: 28px;" Color="red-inverse">L</Tag>
+                                <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="red-inverse">L</Tag>
 
                             }
                             else
                             {
-                                <Tag Style="height:24px; width: 28px;" Color="orange-inverse">D</Tag>
+                                <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="orange-inverse">D</Tag>
                             }
                         </GridCol>
                     </GridRow>
