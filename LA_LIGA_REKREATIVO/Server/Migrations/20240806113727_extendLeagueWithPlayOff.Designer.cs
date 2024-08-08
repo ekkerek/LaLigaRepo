@@ -3,6 +3,7 @@ using System;
 using LA_LIGA_REKREATIVO.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LA_LIGA_REKREATIVO.Server.Migrations
 {
     [DbContext(typeof(LaLigaContext))]
-    partial class LaLigaContextModelSnapshot : ModelSnapshot
+    [Migration("20240806113727_extendLeagueWithPlayOff")]
+    partial class extendLeagueWithPlayOff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,9 +121,6 @@ namespace LA_LIGA_REKREATIVO.Server.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsOfficialResult")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsPlayOff")
                         .HasColumnType("boolean");
 
                     b.Property<int>("LeagueId")

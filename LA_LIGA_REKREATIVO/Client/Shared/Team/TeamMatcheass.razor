@@ -1,76 +1,16 @@
-﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿@using LA_LIGA_REKREATIVO.Client.Shared.Matches
+@using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 
 @inject Server Server
 @inject NavigationManager Navigation
 
-<AntList DataSource="@matches" TItem="MatchDto">
-    <ListItem Style="padding: 2px 0 !important; " OnClick="()=>SelectMatchDetails(context.Id)">
-        <ListItemMeta>
-            <TitleTemplate>
-                <GridRow>
-                    <GridCol Span="4" Style="display: flex;align-items: center;">
-                        @context.GameTime.ToString("dd.MM")
-                    </GridCol>
-                    <GridCol Span="3" Style="display: grid">
-                        <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                        <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
-                    </GridCol>
-                    <GridCol Span="15" Style="display: grid">
-                        <span style="margin-bottom: 5px;">
-                            @context.HomeTeam.Name
-                        </span>
-                        <span>
-                            @context.AwayTeam.Name
-                        </span>
-                    </GridCol>
-                    <GridCol Span="2" Style="display: grid">
-                        <span style="margin-bottom: 5px;">
-                            @context.HomeTeamGoals
-                        </span>
-                        <span>
-                            @context.AwayTeamGoals
-                        </span>
-                    </GridCol>
-                </GridRow>
-                @* <GridRow>
-                <GridCol Span="4" Style="display: flex; justify-content: center; align-items: center">
-                @context.GameTime.ToString("dd.MM")
-                </GridCol>
-
-                <GridCol Span="18">
-                <GridRow>
-                <span><img style="height:22px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                <span style="padding-left:5px;">
-                @context.HomeTeam.Name
-                </span>
-                </GridRow>
-                <GridRow>
-                <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
-                <span style="padding-left:5px;">
-                @context.AwayTeam.Name
-                </span>
-                </GridRow>
-                </GridCol>
-
-                <GridCol Span="2">
-                <GridRow>
-                @context.HomeTeamGoals
-                </GridRow>
-                <GridRow>
-                @context.AwayTeamGoals
-                </GridRow>
-                </GridCol>
-                </GridRow> *@
-            </TitleTemplate>
-        </ListItemMeta>
-    </ListItem>
-</AntList>
+<MatchesBase MatchByTeamDtos="@matches" IsTeamResult="true"></MatchesBase>
 
 
 @code {
     [Parameter] public int TeamId { get; set; }
-    List<MatchDto> matches = new List<MatchDto>();
+    List<MatchByTeamDto> matches = new List<MatchByTeamDto>();
     private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
 
     protected async override Task OnParametersSetAsync()

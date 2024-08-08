@@ -179,4 +179,8 @@ a, .btn-link {
 .ant-page-header-heading-left {
     display: grid !important;
 }
+
+.ant-card-head .ant-tabs-top {
+    margin-bottom: -5px !important;
+}
 /*Code I added - End*/

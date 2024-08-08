@@ -132,17 +132,21 @@
                             <Input Type="number" @bind-Value="context.AwayTeamNegativePoints" />
                         </FormItem>
                     }
-
+                    <FormItem Label="Is Play off match">
+                        <Switch @bind-Checked="@context.IsPlayOff" />
+                    </FormItem>
+                    @if (context.IsPlayOff)
+                    {
+                        <EnumSelect DefaultValue="@context.PlayOffRound" TEnum="PlayOffRound?" OnSelectedItemChanged="setPlayOffRound"></EnumSelect>
+                    }
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
                     </FormItem>
-                    @*  <Button OnClick="GetPlayerSummaries"></Button> *@
                 </Form>
             </GridCol>
             <GridCol Span="11" Offset="1">
                 <Table TItem="SummaryDto" DataSource="@Match.Summaries" @ref="summaryTable">
                     <PropertyColumn Property="c=>c.Player.FirstName">
-                        @*                         <a>@context.Player.FirstName</a> *@
                     </PropertyColumn>
                     <PropertyColumn Property="c=>c.Player.LastName"></PropertyColumn>
                     <PropertyColumn Property="c=>c.Time"></PropertyColumn>
@@ -332,5 +336,9 @@
     {
         // Id = id;
         // showEditPlayerModal = true;
+    }
+    void setPlayOffRound(PlayOffRound? playOffRound)
+    {
+        Match.PlayOffRound = playOffRound;
     }
 }

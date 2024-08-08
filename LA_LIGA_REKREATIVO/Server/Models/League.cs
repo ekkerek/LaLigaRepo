@@ -14,6 +14,7 @@
         public bool IsActive { get; set; }
         public decimal Coefficient { get; set; }
         public bool IsOverallLeague { get; set; }
+        public bool IsPlayOff { get; set; }
         public ICollection<Team> Teams { get; set; }
     }
 }

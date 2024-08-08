@@ -29,6 +29,8 @@ namespace LA_LIGA_REKREATIVO.Shared.Dto
         public bool IsMatchSuspended { get; set; }
         public int? HomeTeamNegativePoints { get; set; }
         public int? AwayTeamNegativePoints { get; set; }
+        public bool IsPlayOff { get; set; }
+        public PlayOffRound? PlayOffRound { get; set; }
         public List<SummaryDto> Summaries { get; set; }
         public List<PlayerDto> Players { get; set; }
         public LeagueDto League { get; set; }

@@ -1,0 +1,75 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Shared.Dto
+
+@inject Server Server
+
+@if (Matches.Count() > 0)
+{
+    <Card Size="small" Title=@("Play off")>
+        <CardTabs>
+            <Tabs TabBarStyle="font-size: small" TabBarClass="test1" @bind-ActiveKey="@activeKey">
+                <TabPane Class="test2" Style="font-size: small" Key="1">
+                    <TabTemplate>1/8</TabTemplate>
+                    <ChildContent>
+                        <MatchesBase Matches="@Matches16"></MatchesBase>
+                    </ChildContent>
+                </TabPane>
+                <TabPane Key="2">
+                    <TabTemplate>Quarter</TabTemplate>
+                    <ChildContent>
+                        <MatchesBase Matches="@MatchesQuarter"></MatchesBase>
+                    </ChildContent>
+                </TabPane>
+                <TabPane Key="3">
+                    <TabTemplate>Semi</TabTemplate>
+                    <ChildContent>
+                        <MatchesBase Matches="@MatchesSemi"></MatchesBase>
+                    </ChildContent>
+                </TabPane>
+                <TabPane Key="4">
+                    <TabTemplate>Final</TabTemplate>
+                    <ChildContent>
+                        <MatchesBase Matches="@MatchesFinal"></MatchesBase>
+                    </ChildContent>
+                </TabPane>
+            </Tabs>
+        </CardTabs>
+    </Card>
+}
+
+
+@code {
+    string activeKey { get; set; } = "1";
+    List<MatchDto> Matches = new();
+    List<MatchDto> Matches16 = new();
+    List<MatchDto> MatchesQuarter = new();
+    List<MatchDto> MatchesSemi = new();
+    List<MatchDto> MatchesFinal = new();
+
+    public async override Task SetParametersAsync(ParameterView parameters)
+    {
+        var es = await Server.Matches.GetPlayOffMatches();
+        Matches = es.ToList();
+        Matches16 = es.Where(x => x.PlayOffRound.Value == PlayOffRound.RoundOf16).ToList();
+        MatchesQuarter = es.Where(x => x.PlayOffRound.Value == PlayOffRound.QuarterFinals).ToList();
+        MatchesSemi = es.Where(x => x.PlayOffRound.Value == PlayOffRound.SemiFinals).ToList();
+        MatchesFinal = es.Where(x => x.PlayOffRound.Value == PlayOffRound.Final).ToList();
+        if (MatchesFinal.Count() > 0)
+        {
+            activeKey = "4";
+        }
+        else if (MatchesSemi.Count() > 0)
+        {
+            activeKey = "3";
+        }
+        else if (MatchesQuarter.Count() > 0)
+        {
+            activeKey = "2";
+        }
+        else
+        {
+            activeKey = "1";
+        }
+        StateHasChanged();
+    }
+}

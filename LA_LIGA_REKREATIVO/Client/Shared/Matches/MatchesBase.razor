@@ -1,0 +1,145 @@
+﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Services;
+@using LA_LIGA_REKREATIVO.Client.Server;
+
+@inject Server Server
+@inject NavigationManager Navigation
+
+@if (IsFixture)
+{
+    <AntList DataSource="Matches" TItem="MatchDto">
+        <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+            <ListItemMeta>
+                <TitleTemplate>
+                    <GridRow>
+                        <GridCol Span="3" Style="display: grid">
+                            <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                        </GridCol>
+                        <GridCol Span="18" Style="display: grid">
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeam.Name
+                            </span>
+                            <span>
+                                @context.AwayTeam.Name
+                            </span>
+                        </GridCol>
+                        <GridCol Span="3" Style="display: flex">
+                            <span style="display: flex; align-items: center;">@context.GameTime.ToString("HH:mm")</span>
+                        </GridCol>
+                    </GridRow>
+                </TitleTemplate>
+            </ListItemMeta>
+        </ListItem>
+    </AntList>
+}
+else if (IsTeamResult)
+{
+    <AntList DataSource="@MatchByTeamDtos" TItem="MatchByTeamDto">
+        <ListItem Style="padding: 2px 0 !important; " OnClick="()=>SelectMatchDetails(context.Id)">
+            <ListItemMeta>
+                <TitleTemplate>
+                    <GridRow>
+                        <GridCol Span="4" Style="display: flex;align-items: center;">
+                            @context.GameTime.ToString("dd.MM")
+                        </GridCol>
+                        <GridCol Span="3" Style="display: grid">
+                            <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                        </GridCol>
+                        <GridCol Span="13" Style="display: grid">
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeam.Name
+                            </span>
+                            <span>
+                                @context.AwayTeam.Name
+                            </span>
+                        </GridCol>
+                        <GridCol Span="2" Style="display: grid">
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeamGoals
+                            </span>
+                            <span>
+                                @context.AwayTeamGoals
+                            </span>
+                        </GridCol>
+                        <GridCol Style="display: flex;align-items: center;" Span="2">
+                            @if (context.ResultType == ResultType.Win)
+                            {
+                                <Tag Style="height:24px; width: 28px;" Color="green-inverse">W</Tag>
+                            }
+                            else if (context.ResultType == ResultType.Lost)
+                            {
+                                <Tag Style="height:24px; width: 28px;" Color="red-inverse">L</Tag>
+
+                            }
+                            else
+                            {
+                                <Tag Style="height:24px; width: 28px;" Color="orange-inverse">D</Tag>
+                            }
+                        </GridCol>
+                    </GridRow>
+                </TitleTemplate>
+            </ListItemMeta>
+        </ListItem>
+    </AntList>
+}
+else
+{
+    <AntList DataSource="@Matches" TItem="MatchDto">
+        <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+            <ListItemMeta>
+                <TitleTemplate>
+                    <GridRow>
+                        <GridCol Span="3" Style="display: grid">
+                            <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
+                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                        </GridCol>
+                        <GridCol Span="19" Style="display: grid">
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeam.Name
+                            </span>
+                            <span>
+                                @context.AwayTeam.Name
+                            </span>
+                        </GridCol>
+                        <GridCol Span="2" Style="display: grid">
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeamGoals
+                            </span>
+                            <span>
+                                @context.AwayTeamGoals
+                            </span>
+                        </GridCol>
+                    </GridRow>
+                </TitleTemplate>
+            </ListItemMeta>
+        </ListItem>
+    </AntList>
+}
+
+
+
+@code {
+    [Parameter] public List<MatchDto>? Matches { get; set; }
+    [Parameter] public List<MatchByTeamDto>? MatchByTeamDtos { get; set; }
+    [Parameter] public bool IsFixture { get; set; }
+    [Parameter] public bool IsTeamResult { get; set; }
+    private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
+
+    protected override Task OnInitializedAsync()
+    {
+        var kk = Matches;
+        return base.OnInitializedAsync();
+    }
+
+    public void SelectMatchDetails(int id)
+    {
+        Navigation.NavigateTo($"/matchDetails/{id}");
+    }
+
+    private string GetImagePath(string imageName)
+    {
+        return BUCKET_PATH + imageName;
+    }
+}

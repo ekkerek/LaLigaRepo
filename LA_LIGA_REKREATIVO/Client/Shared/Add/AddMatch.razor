@@ -129,6 +129,13 @@
                             <Input Type="number" @bind-Value="context.AwayTeamNegativePoints" />
                         </FormItem>
                     }
+                    <FormItem Label="Is Play off match">
+                        <Switch @bind-Checked="@context.IsPlayOff" />
+                    </FormItem>
+                    @if (context.IsPlayOff)
+                    {
+                        <EnumSelect TEnum="PlayOffRound" OnSelectedItemChanged="setPlayOffRound"></EnumSelect>
+                    }
 
                     <FormItem>
                         <Button OnClick="OpenAddSummaryModal">Add new summary</Button>
@@ -338,5 +345,10 @@
     {
         // Id = id;
         // showEditPlayerModal = true;
+    }
+
+    void setPlayOffRound(PlayOffRound playOffRound)
+    {
+        match.PlayOffRound = playOffRound;
     }
 }

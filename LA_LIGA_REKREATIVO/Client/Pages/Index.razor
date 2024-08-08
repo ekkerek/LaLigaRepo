@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Shared.Matches
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Services;
 
@@ -44,6 +45,11 @@
             </Col>
         </Row>
     </div>
+
+    <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
+        <PlayOff></PlayOff>
+    </div>
+
 
     <Card Size="small" Title="Top Goalscorer" Style="margin-bottom: 16px;">
         <Body>

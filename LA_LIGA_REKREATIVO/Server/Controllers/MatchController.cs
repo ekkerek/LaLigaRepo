@@ -208,6 +208,38 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //return result;
         }
 
+        [HttpGet("getPlayOffMatches")]
+        public IEnumerable<MatchDto> GetPlayOffMatches()
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<MatchDto>>("getPlayOffMatches");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            List<MatchesByGameTimeDto> result = new();
+            var matches = _context.Matches.Where(x => (x.IsPlayOff && x.PlayOffRound != null)).Include(x => x.League).Include(x => x.Players).Where(x => x.Players.Count() > 0 || x.IsOfficialResult).ToList();
+            List<MatchDto> matchDtos = new();
+            foreach (var match in matches)
+            {
+                MatchDto matchDto = _mapper.Map<MatchDto>(match);
+                var homeTeamId = match.HomeTeamId;
+                var awayTeamId = match.AwayTeamId;
+                var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                matchDto.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                matchDto.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                matchDtos.Add(matchDto);
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = matchDtos;//await _dbContext.Products.ToListAsync();
+            _memoryCache.Set("getPlayOffMatches", cacheData, expirationTime);
+            return cacheData;
+
+            //return result;
+        }
+
         [HttpPost("getFixturesByLeague")]
         public IEnumerable<MatchesByGameTimeDto> GetFixturesByLeague([FromBody] int leagueId)
         {
@@ -342,6 +374,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             //teams
             matchToBeUpdate.HomeTeamId = match.HomeTeam.Id;
             matchToBeUpdate.AwayTeamId = match.AwayTeam.Id;
+            matchToBeUpdate.IsPlayOff = match.IsPlayOff;
+            matchToBeUpdate.PlayOffRound = match.PlayOffRound;
 
 
             //players on match
@@ -387,10 +421,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
         [HttpPost("getByTeam/{teamId}")]
-        public IEnumerable<MatchDto> GetByTeam([FromBody] int teamId)
+        public IEnumerable<MatchByTeamDto> GetByTeam([FromBody] int teamId)
         {
             var matches = _context.Matches.Include(x => x.Players).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
-            var matchesDto = _mapper.Map<List<MatchDto>>(matches);
+            var matchesDto = _mapper.Map<List<MatchByTeamDto>>(matches);
             foreach (var match in matchesDto)
             {
                 var homeTeamId = matches.FirstOrDefault(x => x.Id == match.Id).HomeTeamId;
@@ -399,6 +433,18 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
                 match.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
                 match.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                if (homeTeamId == teamId)
+                {
+                    match.ResultType = match.HomeTeamGoals > match.AwayTeamGoals ? ResultType.Win :
+                                       match.HomeTeamGoals < match.AwayTeamGoals ? ResultType.Lost :
+                                       ResultType.Draw;
+                }
+                else
+                {
+                    match.ResultType = match.HomeTeamGoals < match.AwayTeamGoals ? ResultType.Win :
+                                       match.HomeTeamGoals > match.AwayTeamGoals ? ResultType.Lost :
+                                       ResultType.Draw;
+                }
             }
             return matchesDto.OrderByDescending(x => x.GameTime);
         }
@@ -457,6 +503,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _memoryCache.Remove("getTopGoalscorer");
             _memoryCache.Remove("getTopAssitent"); //
             _memoryCache.Remove("getLeagueStatistic");
+            _memoryCache.Remove("getPlayOffMatches");
             var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);
             foreach (var leagueId in leagueIds)
             {

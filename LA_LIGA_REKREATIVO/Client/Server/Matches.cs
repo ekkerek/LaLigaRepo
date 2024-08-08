@@ -114,6 +114,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new List<MatchesByGameTimeDto>();
         }
 
+        public async Task<IEnumerable<MatchDto>> GetPlayOffMatches()
+        {
+            var result = await _httpClient.GetAsync($"api/match/getPlayOffMatches");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<MatchDto>>(json);
+            }
+            return new List<MatchDto>();
+        }
+
         public async Task<IEnumerable<MatchesByGameTimeDto>> GetFixturesByLeague(int leagueId)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match/getFixturesByLeague");
@@ -140,7 +151,7 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new List<MatchesByGameTimeDto>();
         }
 
-        public async Task<IEnumerable<MatchDto>> GetByTeam(int teamId)
+        public async Task<IEnumerable<MatchByTeamDto>> GetByTeam(int teamId)
         {
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/match/getByTeam/{teamId}");
             message.Content = new StringContent(JsonConvert.SerializeObject(teamId));
@@ -150,9 +161,9 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             if (result.IsSuccessStatusCode)
             {
                 var json = await result.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<List<MatchDto>>(json);
+                return JsonConvert.DeserializeObject<List<MatchByTeamDto>>(json);
             }
-            return Enumerable.Empty<MatchDto>();
+            return Enumerable.Empty<MatchByTeamDto>();
         }
 
         public async Task<LeagueStatisticDto> GetLeagueStatistic()
