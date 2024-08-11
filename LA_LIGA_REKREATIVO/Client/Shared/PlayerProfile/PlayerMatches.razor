@@ -1,0 +1,76 @@
+﻿@using LA_LIGA_REKREATIVO.Client.Shared.Matches
+@using LA_LIGA_REKREATIVO.Shared.Dto;
+@using LA_LIGA_REKREATIVO.Client.Server;
+@using LA_LIGA_REKREATIVO.Client.Services
+
+@inject Server Server
+@inject NavigationManager Navigation
+@inject FileService _fileService;
+
+<Collapse DefaultActiveKey="@(new[]{"1"})" Animation>
+    @foreach (var match in matches)
+    {
+        <Panel Style="padding:4px;" Key="2">
+            <HeaderTemplate>
+                <GridRow>
+                    <GridCol Style="font-size:medium" Span="18">
+                        @match.HomeTeam.Name @match.HomeTeamGoals:@match.AwayTeamGoals @match.AwayTeam.Name
+                    </GridCol>
+                    <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="3">
+                        @if (match.ResultType == ResultType.Win)
+                        {
+                            <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="green-inverse">W</Tag>
+                        }
+                        else if (match.ResultType == ResultType.Lost)
+                        {
+                            <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="red-inverse">L</Tag>
+
+                        }
+                        else
+                        {
+                            <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="orange-inverse">D</Tag>
+                        }
+                    </GridCol>
+                    <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="3">
+                        <span style="font-size: medium">
+                            @match.TotalPoints
+                            <Icon Type="star" Theme="outline" />
+                        </span>
+                    </GridCol>
+                </GridRow>
+
+
+            </HeaderTemplate>
+            <ChildContent>
+                <div>
+                    <div>
+                        <Tooltip Title="Match attended 2 pts" Style="padding-right: 10%">
+                            <img height="24px;" src="./football-jersey.png" />
+                        </Tooltip>
+                        @foreach (var item in match.Summaries)
+                        {
+                            <Tooltip Title="@item.Type.ToString()" Style="padding-right: 10%;">
+                                <img height="24px;" src="@_fileService.GetImgSrc(item.Type)" />
+                            </Tooltip>
+                        }
+                    </div>
+                    @* <div style="display: flex; justify-content: center;padding-top: 8px;">
+                <Button Size="@AntDesign.ButtonSize.Small" Type="@AntDesign.ButtonType.Primary" OnClick="() => GoToPlayerProfile(player.Id)">Player profile</Button>
+                </div> *@
+                </div>
+            </ChildContent>
+        </Panel>
+    }
+</Collapse>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    List<MatchByPlayerDto> matches = new List<MatchByPlayerDto>();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var result = await Server.Matches.GetByPlayer(Id);
+        matches = result.ToList();
+    }
+}

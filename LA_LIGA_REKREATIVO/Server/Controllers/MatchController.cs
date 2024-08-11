@@ -423,7 +423,10 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpPost("getByTeam/{teamId}")]
         public IEnumerable<MatchByTeamDto> GetByTeam([FromBody] int teamId)
         {
-            var matches = _context.Matches.Include(x => x.Players).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0 || x.IsOfficialResult)).ToList();
+            var matches = _context.Matches.Include(x => x.Players)
+                                          .Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) &&
+                                                      (x.Players.Count() > 0 || x.IsOfficialResult))
+                                          .ToList();
             var matchesDto = _mapper.Map<List<MatchByTeamDto>>(matches);
             foreach (var match in matchesDto)
             {
@@ -445,6 +448,55 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                                        match.HomeTeamGoals > match.AwayTeamGoals ? ResultType.Lost :
                                        ResultType.Draw;
                 }
+            }
+            return matchesDto.OrderByDescending(x => x.GameTime);
+        }
+
+        [HttpPost("getByPlayer/{playerId}")]
+        public IEnumerable<MatchByPlayerDto> GetByPlayer([FromBody] int playerId)
+        {
+
+            var matches = _context.Matches.Include(x => x.Players).Include(x => x.Summaries).ThenInclude(x => x.Player).Where(x => x.Players.Select(x => x.Id).Contains(playerId)).ToList();
+            var matchesDto = _mapper.Map<List<MatchByPlayerDto>>(matches);
+            foreach (var match in matchesDto)
+            {
+                var homeTeamId = matches.FirstOrDefault(x => x.Id == match.Id).HomeTeamId;
+                var awayTeamId = matches.FirstOrDefault(x => x.Id == match.Id).AwayTeamId;
+                var homeTeam = _context.Teams.FirstOrDefault(x => x.Id == homeTeamId);
+                var awayTeam = _context.Teams.FirstOrDefault(x => x.Id == awayTeamId);
+                match.HomeTeam = _mapper.Map<TeamDto>(homeTeam);
+                match.AwayTeam = _mapper.Map<TeamDto>(awayTeam);
+                if (homeTeam.Players.Select(x => x.Id).Contains(playerId))
+                {
+                    match.ResultType = match.HomeTeamGoals > match.AwayTeamGoals ? ResultType.Win :
+                                       match.HomeTeamGoals < match.AwayTeamGoals ? ResultType.Lost :
+                                       ResultType.Draw;
+                }
+                else
+                {
+                    match.ResultType = match.HomeTeamGoals < match.AwayTeamGoals ? ResultType.Win :
+                                       match.HomeTeamGoals > match.AwayTeamGoals ? ResultType.Lost :
+                                       ResultType.Draw;
+                }
+                match.Summaries = match.Summaries.Where(x => x.Player.Id == playerId).ToList();
+                foreach (var item in match.Summaries)
+                {
+                    var bb = item.Type switch
+                    {
+                        SummaryType.Goal => match.TotalPoints += 5,
+                        SummaryType.Assist => match.TotalPoints += 2,
+                        SummaryType.OwnGoal => match.TotalPoints -= 3,
+                        SummaryType.YellowCards => match.TotalPoints -= 2,
+                        SummaryType.RedCards => match.TotalPoints -= 7,
+                        SummaryType.MissedPenalty => match.TotalPoints -= 3,
+                        SummaryType.Missed10meter => match.TotalPoints -= 2,
+                        SummaryType.CleanSheetGK => match.TotalPoints += 5,
+                        SummaryType.FourSavesGK => match.TotalPoints += 1,
+                        SummaryType.SavedFromPenaltyGK => match.TotalPoints += 3,
+                        SummaryType.SavedFrom10meterGK => match.TotalPoints += 2
+                    };
+                }
+                match.TotalPoints += 2; // match attended
             }
             return matchesDto.OrderByDescending(x => x.GameTime);
         }
