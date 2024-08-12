@@ -14,7 +14,7 @@
             <HeaderTemplate>
                 <GridRow>
                     <GridCol Style="font-size:medium" Span="17">
-                        @match.HomeTeam.Name @match.HomeTeamGoals:@match.AwayTeamGoals @match.AwayTeam.Name
+                        @match.HomeTeam.Name <strong>@match.HomeTeamGoals:@match.AwayTeamGoals </strong> @match.AwayTeam.Name
                     </GridCol>
                     <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="3">
                         @if (match.ResultType == ResultType.Win)

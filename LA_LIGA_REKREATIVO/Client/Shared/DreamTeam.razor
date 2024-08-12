@@ -118,15 +118,18 @@
                             </span>
 
                             <span>
-                                <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FullName</a>
-
-                                @if (item.Player.IsGk)
-                                {
+                                <a style="display: inline-grid" @onclick="() => GoToProfilePage(item.Player.Id)">
                                     <span>
-                                        (GK)
+                                        @item.Player.FullName
+                                        @if (item.Player.IsGk)
+                                        {
+                                            <span>
+                                                (GK)
+                                            </span>
+                                        }
                                     </span>
-                                }
-
+                                    <span style="font-size: smaller"> @item.Team.Name </span>
+                                </a>
                             </span>
                         </TitleTemplate>
                     </ListItemMeta>
