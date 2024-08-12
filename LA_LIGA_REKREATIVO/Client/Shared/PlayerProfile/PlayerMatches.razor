@@ -13,7 +13,7 @@
         <Panel Style="padding:4px;" Key="2">
             <HeaderTemplate>
                 <GridRow>
-                    <GridCol Style="font-size:medium" Span="18">
+                    <GridCol Style="font-size:medium" Span="17">
                         @match.HomeTeam.Name @match.HomeTeamGoals:@match.AwayTeamGoals @match.AwayTeam.Name
                     </GridCol>
                     <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="3">
@@ -31,8 +31,8 @@
                             <Tag Style="height:24px; width: 24px; display:flex; justify-content: center;" Color="orange-inverse">D</Tag>
                         }
                     </GridCol>
-                    <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="3">
-                        <span style="font-size: medium">
+                    <GridCol Style="display:flex; justify-content: center; align-items: center;" Span="4">
+                        <span style="font-size: medium; font-weight: 600;">
                             @match.TotalPoints
                             <Icon Type="star" Theme="outline" />
                         </span>
