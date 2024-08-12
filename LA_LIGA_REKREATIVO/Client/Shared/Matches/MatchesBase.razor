@@ -104,25 +104,12 @@ else
                             </span>
                         </GridCol>
                         <GridCol Span="2" Style="display: grid">
-                            @if (context.IsOfficialResult)
-                            {
-                                <span style="margin-bottom: 5px; color: red">
-                                    @context.HomeTeamGoals
-                                </span>
-                                <span style="color: red;">
-                                    @context.AwayTeamGoals
-                                </span>
-                            }
-                            else
-                            {
-                                <span style="margin-bottom: 5px;">
-                                    @context.HomeTeamGoals
-                                </span>
-                                <span>
-                                    @context.AwayTeamGoals
-                                </span>
-                            }
-
+                            <span style="margin-bottom: 5px;">
+                                @context.HomeTeamGoals
+                            </span>
+                            <span>
+                                @context.AwayTeamGoals
+                            </span>
                         </GridCol>
                     </GridRow>
                 </TitleTemplate>
