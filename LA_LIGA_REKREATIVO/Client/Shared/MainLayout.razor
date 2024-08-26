@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="page" style="height: 100dvh; min-height: -webkit-fill-available;">
     <div class="sidebar">
@@ -111,5 +112,32 @@
     {
         Navigation.NavigateTo($"/stats");
 
+    }
+
+    //Google analytics
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            TrackPageView();
+            Navigation.LocationChanged += OnLocationChanged;
+        }
+    }
+
+    private void TrackPageView()
+    {
+        var pagePath = Navigation.ToBaseRelativePath(Navigation.Uri);
+        JS.InvokeVoidAsync("gtag", "config", "G-KLB6LSEJFJ", new { page_path = "/" + pagePath });
+    }
+
+    private void OnLocationChanged(object sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        TrackPageView();
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }
