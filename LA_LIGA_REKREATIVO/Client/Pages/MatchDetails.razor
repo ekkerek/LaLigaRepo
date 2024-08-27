@@ -1,5 +1,6 @@
 ﻿@page "/matchDetails/{Id:int}"
 @using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Client.Shared.Matches
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @using LA_LIGA_REKREATIVO.Client.Shared;
@@ -51,9 +52,16 @@
                 </ChildContent>
             </TabPane>
             <TabPane Key="3">
-                <TabTemplate>Standings</TabTemplate>
+                <TabTemplate> @GetTabName()</TabTemplate>
                 <ChildContent>
-                    <Standings League="@Match.League"></Standings>
+                    @if (Match.IsPlayOff)
+                    {
+                        <PlayOff Match="@Match"></PlayOff>
+                    }
+                    else
+                    {
+                        <Standings League="@Match.League"></Standings>
+                    }
                 </ChildContent>
             </TabPane>
         </Tabs>
@@ -71,11 +79,16 @@
     protected async override Task OnParametersSetAsync()
     {
         Match = await Server.Matches.Get(Id);
-        title = Match.League.Name.ToString() + " - " + " round " + Match.GameRound.ToString();
+        title = Match.League.Name.ToString() + " - " + (Match.IsPlayOff ? Match.PlayOffRound.ToString() : " round " + Match.GameRound.ToString());
     }
 
     private void GoToTeamDetails(int teamId)
     {
         Navigation.NavigateTo($"/team/{teamId}");
+    }
+
+    private string GetTabName()
+    {
+        return Match.IsPlayOff ? "Draw" : "Standings";
     }
 }
