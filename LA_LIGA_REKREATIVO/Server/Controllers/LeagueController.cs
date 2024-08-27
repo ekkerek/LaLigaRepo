@@ -38,6 +38,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _mapper.Map<LeagueDto>(league);
         }
 
+        //getNonPlayoffLeague
+        [HttpGet("getNonPlayoffLeague")]
+        public IEnumerable<LeagueDto> GetNonPlayoffLeague()
+        {
+            var leagues = _context.Leagues.Include(x => x.Teams);
+            return _mapper.Map<List<LeagueDto>>(leagues).Where(x => !x.IsPlayOff).OrderByDescending(x => x?.IsOverallLeague).ThenByDescending(x => x.Id);
+        }
+
         // POST api/<LeagueController>
         [HttpPost]
         public void Post([FromBody] LeagueDto league)

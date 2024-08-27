@@ -55,7 +55,7 @@
     protected async override Task OnParametersSetAsync()
     {
         loading = true;
-        var result = await Server.Leagues.Get();
+        var result = await Server.Leagues.GetNonPlayoffLeague();
         leagues = result.ToList();
 
         selectedleagueId = leagues.FirstOrDefault().Id;
