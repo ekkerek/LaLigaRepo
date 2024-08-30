@@ -49,7 +49,11 @@
             </span>
         </PropertyColumn>
 
-        @if (stattt == "Total Goals")
+        @if (stattt == "FantasyPoints")
+        {
+            <PropertyColumn Title="Points" Property="c=>c.TotalPoints" />
+        }
+        else if (stattt == "Total Goals")
         {
             <PropertyColumn Title="Goals" Property="c=>c.Goals" />
         }
@@ -98,10 +102,10 @@
     string _selectedValue1, _selectedValue2, _selectedValue3;
     private bool loading;
     List<string> statsType = new List<string>()
-                { "Total Goals", "TotalAssists", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards", "CleanSheetGK", "FourSavesGK", "SavedFromPenaltyGK", "SavedFrom10meterGK" };
+                { "FantasyPoints","Total Goals", "TotalAssists", "OwnGoals", "GoalsPerMatch", "YellowCards", "RedCards", "CleanSheetGK", "FourSavesGK", "SavedFromPenaltyGK", "SavedFrom10meterGK" };
 
 
-    string stattt = "Total Goals";
+    string stattt = "FantasyPoints";
     private List<LeagueDto> leagues = new();
 
     private List<PlayerStatsDto> stats = new();
@@ -123,7 +127,7 @@
                            await Server.Players.GetPlayersStatsOverall() :
                            await Server.Players.GetPlayersStats(defaultLeagueId);
 
-            stats = resStats.OrderByDescending(x => x.Goals).ToList();
+            stats = resStats.OrderByDescending(x => x.TotalPoints).ToList();
 
             SetOrderId(stats);
             StateHasChanged();
@@ -142,10 +146,16 @@
         {
             return;
         }
+        else if (value == "FantasyPoints")
+        {
+            stattt = value;
+            stats = stats.OrderByDescending(x => x.TotalPoints).ToList();
+            SetOrderId(stats);
+        }
         else if (value == "Total Goals")
         {
             stattt = value;
-            stats = stats.Where(x => x.Goals > 0).OrderByDescending(x => x.Goals).ToList();
+            stats = stats.OrderByDescending(x => x.Goals).ToList();
             SetOrderId(stats);
         }
         else if (value == "TotalAssists")
@@ -228,8 +238,8 @@
             resStats = res.ToList();
         }
 
-        SelectStatType("Total Goals");
-        stats = resStats.OrderByDescending(x => x.Goals).ToList();
+        SelectStatType("FantasyPoints");
+        stats = resStats.OrderByDescending(x => x.TotalPoints).ToList();
         SetOrderId(stats);
         StateHasChanged();
         loading = false;
