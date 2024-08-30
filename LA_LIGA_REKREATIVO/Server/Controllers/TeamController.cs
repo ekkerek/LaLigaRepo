@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LA_LIGA_REKREATIVO.Server.Controllers
 {
-    [AllowAnonymous]
     [Route("api/team")]
     [ApiController]
     public class TeamController : ControllerBase
@@ -42,8 +41,8 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return teamDto;
         }
 
-        [AllowAnonymous]
         [HttpPost("addNew")]
+        [Authorize]
         public void AddNew([FromBody] TeamDto teamDto)
         {
             Team team = _mapper.Map<Team>(teamDto);
@@ -63,6 +62,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // PUT api/<TeamController>/5
         [HttpPut("{id}")]
+        [Authorize]
         public void Put(int id, [FromBody] TeamDto teamDto)
         {
             var updatedTeam = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == id);
@@ -83,6 +83,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
 
         [HttpPost("delete")]
+        [Authorize]
         public void Delete([FromBody] int teamId)
         {
             _context.Teams.FirstOrDefault(x => x.Id == teamId).IsDeleted = true;

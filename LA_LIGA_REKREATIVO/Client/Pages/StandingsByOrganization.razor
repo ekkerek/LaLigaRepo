@@ -58,15 +58,21 @@
         var result = await Server.Leagues.GetNonPlayoffLeague();
         leagues = result.ToList();
 
-        selectedleagueId = leagues.FirstOrDefault().Id;
+        if (leagues.Any())
+        {
+            selectedleagueId = leagues.FirstOrDefault().Id;
 
-        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
-                       leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
-                       leagues.FirstOrDefault().Id;
+            defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                           leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                           leagues.FirstOrDefault().Id;
 
-        stats = await Server.Teams.GetCommonStanding();
-        SetOrderId(stats);
-        StateHasChanged();
+            stats = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                    await Server.Teams.GetCommonStanding() :
+                    await Server.Teams.GetStandingsByLeague(defaultvalue);
+
+            SetOrderId(stats);
+            StateHasChanged();
+        }
         loading = false;
     }
 

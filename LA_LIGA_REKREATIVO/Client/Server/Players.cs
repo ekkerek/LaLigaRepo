@@ -1,4 +1,5 @@
-﻿using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿using LA_LIGA_REKREATIVO.Client.Services;
+using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
@@ -7,15 +8,20 @@ namespace LA_LIGA_REKREATIVO.Client.Server
     public class Players
     {
         private readonly HttpClient _httpClient;
+        JwtAuthenticationStateProvider _jwtAuthenticationStateProvider;
 
-        public Players(HttpClient httpClient)
+        public Players(HttpClient httpClient, JwtAuthenticationStateProvider jwtAuthenticationStateProvider)
         {
             _httpClient = httpClient;
+            _jwtAuthenticationStateProvider = jwtAuthenticationStateProvider;
         }
 
         public async Task<bool> Add(PlayerDto player)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/player");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(player));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -24,7 +30,22 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Delete(PlayerDto player)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/player/delete");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            message.Content = new StringContent(JsonConvert.SerializeObject(player));
+            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var result = await _httpClient.SendAsync(message);
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> Update(PlayerDto player)
+        {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
+            var message = new HttpRequestMessage(HttpMethod.Put, $"api/player/{player.Id}");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(player));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -139,15 +160,6 @@ namespace LA_LIGA_REKREATIVO.Client.Server
                 return JsonConvert.DeserializeObject<IEnumerable<PlayerStatsDto>>(json);
             }
             return Enumerable.Empty<PlayerStatsDto>();
-        }
-
-        public async Task<bool> Update(PlayerDto player)
-        {
-            var message = new HttpRequestMessage(HttpMethod.Put, $"api/player/{player.Id}");
-            message.Content = new StringContent(JsonConvert.SerializeObject(player));
-            message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var result = await _httpClient.SendAsync(message);
-            return result.IsSuccessStatusCode;
         }
 
         public async Task<IEnumerable<PlayerStatsDto>> GetTopGoalscorer()

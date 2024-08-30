@@ -2,6 +2,7 @@
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -322,6 +323,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // POST api/<MatchController>
         [HttpPost]
+        [Authorize]
         public void Post([FromBody] MatchDto match)
         {
             var mappedMatch = _mapper.Map<Match>(match);
@@ -346,6 +348,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // PUT api/<MatchController>/5
         [HttpPut("{id}")]
+        [Authorize]
         public async void Put(int id, [FromBody] MatchDto match)
         {
             //var mappedMatch = _mapper.Map<Match>(match);
@@ -520,8 +523,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
             leagueStatisticDto.TotalMatches = matches.Count();
 
-            leagueStatisticDto.GoalsPerMatch = (decimal)leagueStatisticDto.TotalGoals / leagueStatisticDto.TotalMatches;
-            leagueStatisticDto.AssistsPerMatch = (decimal)leagueStatisticDto.TotalAssists / leagueStatisticDto.TotalMatches;
+            leagueStatisticDto.GoalsPerMatch = leagueStatisticDto.TotalMatches > 0 ?
+                                               (decimal)leagueStatisticDto.TotalGoals / leagueStatisticDto.TotalMatches :
+                                               0;
+            leagueStatisticDto.AssistsPerMatch = leagueStatisticDto.TotalMatches > 0 ?
+                                                (decimal)leagueStatisticDto.TotalAssists / leagueStatisticDto.TotalMatches :
+                                                0;
 
             var expirationTime = DateTimeOffset.Now.AddDays(7);
             cacheData = leagueStatisticDto;//await _dbContext.Products.ToListAsync();
@@ -531,6 +538,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
 
         [HttpPost("delete")]
+        [Authorize]
         public void Delete([FromBody] int matchId)
         {
             _context.Matches.FirstOrDefault(x => x.Id == matchId).IsDeleted = true;
@@ -548,21 +556,21 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         {
             _memoryCache.Remove("getByRoundOverall");
             _memoryCache.Remove("getDreamTeamOverall");
-            _memoryCache.Remove("getplayersstatsoverall"); //playerstatsbyleague
+            _memoryCache.Remove("getplayersstatsoverall");
             _memoryCache.Remove("get2ndDreamTeamOverall");
             _memoryCache.Remove("getByGameTimeOverall");
-            _memoryCache.Remove("getFixturesOverall"); //
+            _memoryCache.Remove("getFixturesOverall"); 
             _memoryCache.Remove("getTopGoalscorer");
-            _memoryCache.Remove("getTopAssitent"); //
+            _memoryCache.Remove("getTopAssitent"); 
             _memoryCache.Remove("getLeagueStatistic");
             _memoryCache.Remove("getPlayOffMatches");
             var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);
             foreach (var leagueId in leagueIds)
             {
                 //
-                _memoryCache.Remove($"playerstatsbyleague-{leagueId}");//
+                _memoryCache.Remove($"playerstatsbyleague-{leagueId}");
                 _memoryCache.Remove($"getDreamTeam-{leagueId}");
-                _memoryCache.Remove($"get2ndDreamTeam-{leagueId}"); //getByGameTime-{leagueId}
+                _memoryCache.Remove($"get2ndDreamTeam-{leagueId}");
                 _memoryCache.Remove($"getByGameTime-{leagueId}");
             }
         }

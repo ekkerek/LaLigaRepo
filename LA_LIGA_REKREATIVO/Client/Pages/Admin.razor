@@ -1,4 +1,8 @@
 ﻿@page "/laligaadmin"
+@using LA_LIGA_REKREATIVO.Client.Services;
+
+@inject JwtAuthenticationStateProvider JwtAuthenticationStateProvider
+@inject NavigationManager Navigation
 
 <Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated>
     <TabPane Tab="Leagues" Key="1">
@@ -17,4 +21,15 @@
 
 @code {
     string activeKey { get; set; } = "1";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await JwtAuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
 }

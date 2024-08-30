@@ -175,24 +175,29 @@
         loading = true;
         var result = await Server.Leagues.Get();
         leagues = result.ToList();
-        var resStats = await Server.Players.GetDreamTeamOverall();
-        stats = resStats.ToList();
-        var resStatsSub = await Server.Players.Get2ndDreamTeamOverall();
-        statsSub = resStatsSub.ToList();
-        defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
-                       leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
-                       leagues.FirstOrDefault().Id;//leagues.FirstOrDefault().Id;
-        isOverallLeague = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ? true : false;
+        if (leagues.Any())
+        {
+            if (leagues.FirstOrDefault(x => x.IsOverallLeague) is not null)
+            {
+                defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague).Id;
+                isOverallLeague = true;
+                var resStats = await Server.Players.GetDreamTeamOverall();
+                stats = resStats.ToList();
+                var resStatsSub = await Server.Players.Get2ndDreamTeamOverall();
+                statsSub = resStatsSub.ToList();
+            }
+            else
+            {
+                defaultLeagueId = leagues.FirstOrDefault().Id;
+                isOverallLeague = false;
+                var resStats = await Server.Players.GetDreamTeamByLeague(defaultLeagueId);
+                stats = resStats.ToList();
+                var resStatsSub = await Server.Players.Get2ndDreamTeamByLeague(defaultLeagueId);
+                statsSub = resStatsSub.ToList();
+            }
+        }
         InitLoading = false;
         loading = false;
-    }
-
-    public async Task OnLoadMore()
-    {
-        Loading = true;
-        var resStats = await Server.Players.GetDreamTeamOverall();
-        stats.AddRange(resStats.Take(6).ToList());
-        Loading = false;
     }
 
     private void GoToProfilePage(int id)
@@ -223,7 +228,6 @@
             isOverallLeague = false;
         }
 
-        //stats = resStats.ToList();
         StateHasChanged();
         loading = false;
     }

@@ -51,20 +51,22 @@
         loading = true;
         var leagueResult = await Server.Leagues.Get();
         leagues = leagueResult.ToList();
+        if (leagues.Any())
+        {
+            selectedleagueId = leagues.FirstOrDefault().Id;
+            selectedLeague = leagues.FirstOrDefault();
 
-        selectedleagueId = leagues.FirstOrDefault().Id;
-        selectedLeague = leagues.FirstOrDefault();
-
-        defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
-                                leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
-                                leagues.FirstOrDefault().Id;
+            defaultvalue = leagues.FirstOrDefault(x => x.IsOverallLeague) is not null ?
+                                    leagues.FirstOrDefault(x => x.IsOverallLeague).Id :
+                                    leagues.FirstOrDefault().Id;
 
 
-        var matchesResults = selectedLeague.IsOverallLeague ?
-                        await Server.Matches.GetByGameTimeOverall() :
-                        await Server.Matches.GetByGameTime(selectedLeague.Id);
+            var matchesResults = selectedLeague.IsOverallLeague ?
+                            await Server.Matches.GetByGameTimeOverall() :
+                            await Server.Matches.GetByGameTime(selectedLeague.Id);
 
-        matches = matchesResults.ToList();
+            matches = matchesResults.ToList();
+        }
         loading = false;
     }
 

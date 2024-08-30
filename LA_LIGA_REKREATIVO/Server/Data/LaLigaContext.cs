@@ -12,6 +12,7 @@ namespace LA_LIGA_REKREATIVO.Server.Data
         public DbSet<Summary> Summaries { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<League> Leagues { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

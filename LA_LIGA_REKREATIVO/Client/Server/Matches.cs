@@ -1,4 +1,5 @@
-﻿using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿using LA_LIGA_REKREATIVO.Client.Services;
+using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
@@ -7,10 +8,12 @@ namespace LA_LIGA_REKREATIVO.Client.Server
     public class Matches
     {
         private readonly HttpClient _httpClient;
+        JwtAuthenticationStateProvider _jwtAuthenticationStateProvider;
 
-        public Matches(HttpClient httpClient)
+        public Matches(HttpClient httpClient, JwtAuthenticationStateProvider jwtAuthenticationStateProvider)
         {
             _httpClient = httpClient;
+            _jwtAuthenticationStateProvider = jwtAuthenticationStateProvider;
         }
 
         public async Task<IEnumerable<MatchDto>> Get()
@@ -34,18 +37,6 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return new MatchDto();
         }
-
-        public async Task<List<LeagueStatsDto>> GetStandings()
-        {
-            var result = await _httpClient.GetAsync($"api/match/getStandings");
-            if (result.IsSuccessStatusCode)
-            {
-                var json = await result.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<List<LeagueStatsDto>>(json);
-            }
-            return new List<LeagueStatsDto>();
-        }
-
 
         public async Task<IEnumerable<MatchDto>> GetByDate(DateTime dateTime)
         {
@@ -194,7 +185,10 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Add(MatchDto match)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, "api/match");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(match));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -207,7 +201,10 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Delete(int matchId)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/match/delete");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(matchId));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -216,7 +213,10 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Update(MatchDto match)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/match/{match.Id}");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(match));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);

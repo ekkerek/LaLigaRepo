@@ -1,0 +1,102 @@
+﻿@page "/login"
+@using LA_LIGA_REKREATIVO.Client.Services
+@using LA_LIGA_REKREATIVO.Shared
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using System.Security.Claims
+@inject HttpClient Http
+@inject JwtAuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject IMessageService MessageService
+
+<h3 style="display: flex;justify-content:center">Login</h3>
+
+@if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+{
+    <div style="display: flex; justify-content: space-between;">
+        <span style="font-size:x-large;">Hello, @user.Identity.Name</span>
+        <Button Type="@ButtonType.Primary" OnClick="Logout">Logout</Button>
+    </div>
+}
+else
+{
+    <Form Model="@login"
+          OnFinish="OnFinish"
+          OnFinishFailed="OnFinishFailed"
+          LabelColSpan="8"
+          WrapperColSpan="16">
+        <FormItem Label="User Name">
+            <Input @bind-Value="@context.Username" />
+        </FormItem>
+        <FormItem Label="Password">
+            <InputPassword @bind-Value="@context.Password" />
+        </FormItem>
+        <FormItem WrapperColOffset="8" WrapperColSpan="16">
+            <Button Type="@ButtonType.Primary" HtmlType="submit">
+                Submit
+            </Button>
+        </FormItem>
+    </Form>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red">@errorMessage</p>
+    }
+    <span>If you don't have account, plase register <a href="/register">here.</a></span>
+}
+
+
+@code {
+    private LoginDto login = new LoginDto();
+    private string errorMessage;
+    private ClaimsPrincipal user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+    }
+
+    private async void OnFinish(EditContext editContext)
+    {
+        errorMessage = string.Empty;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/login", login);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+                await AuthenticationStateProvider.SetJwtToken(result.Token);
+                AuthenticationStateProvider.MarkUserAsAuthenticated(result.Token);
+                _ = MessageService.Success("You're logged in.");
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Login failed. Please check your username and password.";
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        //Console.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+    }
+
+    private async Task Logout()
+    {
+        await AuthenticationStateProvider.ClearJwtToken();
+        AuthenticationStateProvider.MarkUserAsLoggedOut();
+
+        _ = MessageService.Success("You're logged out.");
+        Navigation.NavigateTo("/");
+    }
+}

@@ -2,6 +2,7 @@
 using LA_LIGA_REKREATIVO.Server.Data;
 using LA_LIGA_REKREATIVO.Server.Models;
 using LA_LIGA_REKREATIVO.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -48,6 +49,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // POST api/<LeagueController>
         [HttpPost]
+        [Authorize]
         public void Post([FromBody] LeagueDto league)
         {
             _context.Leagues.Add(_mapper.Map<League>(league));
@@ -56,6 +58,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
 
         // PUT api/<LeagueController>/5
         [HttpPut("{id}")]
+        [Authorize]
         public void Put(int id, [FromBody] LeagueDto league)
         {
             var updatedLeague = _context.Leagues.FirstOrDefault(x => x.Id == id);
@@ -69,6 +72,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
         [HttpPost("delete")]
+        [Authorize]
         public void Delete([FromBody] LeagueDto league)
         {
             _context.Leagues.FirstOrDefault(x => x.Id == league.Id).IsDeleted = true;

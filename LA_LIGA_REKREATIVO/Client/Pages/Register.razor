@@ -1,0 +1,75 @@
+﻿@page "/register"
+@using LA_LIGA_REKREATIVO.Shared.Dto
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IMessageService MessageService
+
+<h3>Register</h3>
+
+<Form Model="@registerModel"
+      OnFinish="OnFinish"
+      OnFinishFailed="OnFinishFailed"
+      LabelColSpan="8"
+      WrapperColSpan="16">
+    <FormItem Label="User Name">
+        <Input @bind-Value="@context.Username" />
+    </FormItem>
+    <FormItem Label="Email">
+        <Input @bind-Value="@context.Email" />
+    </FormItem>
+    <FormItem Label="Password">
+        <InputPassword @bind-Value="@context.Password" />
+    </FormItem>
+    <FormItem Label="ConfirmPassword">
+        <InputPassword @bind-Value="@context.ConfirmPassword" />
+    </FormItem>
+    <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            Submit
+        </Button>
+    </FormItem>
+</Form>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@code {
+    private UserDto registerModel = new UserDto();
+    private string errorMessage;
+
+    private async void OnFinish(EditContext editContext)
+    {
+        errorMessage = string.Empty;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _ = MessageService.Success("You're successful registered.");
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                var errorResponse = await response.Content.ReadAsStringAsync();
+                errorMessage = errorResponse;
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+            StateHasChanged();
+        }
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        //onsole.WriteLine($"Failed:{JsonSerializer.Serialize(model)}");
+    }
+}

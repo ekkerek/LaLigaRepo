@@ -1,4 +1,5 @@
-﻿using LA_LIGA_REKREATIVO.Shared.Dto;
+﻿using LA_LIGA_REKREATIVO.Client.Services;
+using LA_LIGA_REKREATIVO.Shared.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
@@ -7,14 +8,19 @@ namespace LA_LIGA_REKREATIVO.Client.Server
     public class Teams
     {
         private readonly HttpClient _httpClient;
+        JwtAuthenticationStateProvider _jwtAuthenticationStateProvider;
 
-        public Teams(HttpClient httpClient)
+        public Teams(HttpClient httpClient, JwtAuthenticationStateProvider jwtAuthenticationStateProvider)
         {
             _httpClient = httpClient;
+            _jwtAuthenticationStateProvider = jwtAuthenticationStateProvider;
         }
         public async Task<bool> Add(TeamDto team)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, "api/team/addNew");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(team));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -27,7 +33,10 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Delete(int teamId)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Post, $"api/team/delete");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(teamId));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);
@@ -36,7 +45,10 @@ namespace LA_LIGA_REKREATIVO.Client.Server
 
         public async Task<bool> Update(TeamDto team)
         {
+            var token = await _jwtAuthenticationStateProvider.GetJwtToken();
+
             var message = new HttpRequestMessage(HttpMethod.Put, $"api/team/{team.Id}");
+            message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             message.Content = new StringContent(JsonConvert.SerializeObject(team));
             message.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var result = await _httpClient.SendAsync(message);

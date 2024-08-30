@@ -1,5 +1,6 @@
 ﻿using LA_LIGA_REKREATIVO.Server.Services;
 using LA_LIGA_REKREATIVO.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LA_LIGA_REKREATIVO.Server.Controllers
@@ -16,6 +17,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
         [HttpPost("postFile")]
+        [Authorize]
         public async Task<ActionResult<IList<UploadResult>>> PostFile([FromForm] IEnumerable<IFormFile> files)
         {
             var uploadedFiles = await _uploadService.PostFile(files);
