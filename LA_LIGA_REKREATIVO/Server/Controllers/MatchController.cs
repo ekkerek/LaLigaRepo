@@ -370,6 +370,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             matchToBeUpdate.IsOfficialResult = match.IsOfficialResult;
             matchToBeUpdate.HomeTeamNegativePoints = match.HomeTeamNegativePoints;
             matchToBeUpdate.AwayTeamNegativePoints = match.AwayTeamNegativePoints;
+            matchToBeUpdate.HighlightUrl = match.HighlightUrl;
 
             //league
             matchToBeUpdate.League = _context.Leagues.FirstOrDefault(x => x.Id == match.League.Id);
@@ -559,9 +560,9 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             _memoryCache.Remove("getplayersstatsoverall");
             _memoryCache.Remove("get2ndDreamTeamOverall");
             _memoryCache.Remove("getByGameTimeOverall");
-            _memoryCache.Remove("getFixturesOverall"); 
+            _memoryCache.Remove("getFixturesOverall");
             _memoryCache.Remove("getTopGoalscorer");
-            _memoryCache.Remove("getTopAssitent"); 
+            _memoryCache.Remove("getTopAssitent");
             _memoryCache.Remove("getLeagueStatistic");
             _memoryCache.Remove("getPlayOffMatches");
             var leagueIds = _context.Leagues.Where(x => !x.IsOverallLeague).Select(x => x.Id);

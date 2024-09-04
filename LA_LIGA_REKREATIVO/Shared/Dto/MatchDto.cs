@@ -31,6 +31,7 @@ namespace LA_LIGA_REKREATIVO.Shared.Dto
         public int? AwayTeamNegativePoints { get; set; }
         public bool IsPlayOff { get; set; }
         public PlayOffRound? PlayOffRound { get; set; }
+        public string? HighlightUrl { get; set; }
         public List<SummaryDto> Summaries { get; set; }
         public List<PlayerDto> Players { get; set; }
         public LeagueDto League { get; set; }

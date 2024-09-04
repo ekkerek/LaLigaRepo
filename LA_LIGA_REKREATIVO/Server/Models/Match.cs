@@ -24,6 +24,7 @@ namespace LA_LIGA_REKREATIVO.Server.Models
         public int? HomeTeamNegativePoints { get; set; }
         public int? AwayTeamNegativePoints { get; set; }
         public bool IsPlayOff { get; set; }
+        public string? HighlightUrl { get; set; }
         public PlayOffRound? PlayOffRound { get; set; }
         public ICollection<Summary> Summaries { get; set; }
         public ICollection<Player> Players { get; set; }

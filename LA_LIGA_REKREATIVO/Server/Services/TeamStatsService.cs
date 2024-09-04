@@ -19,7 +19,7 @@ public class TeamStatsService : ITeamStatsService
 
     public List<TeamStatsDto> GetCommonStanding()
     {
-        var matches = _context.Matches.Include(x => x.League).Where(x => x.Players.Count() > 0 || x.IsOfficialResult).ToList();
+        var matches = _context.Matches.Include(x => x.League).Where(x => (x.Players.Count() > 0 || x.IsOfficialResult) && !x.League.IsPlayOff).ToList();
         var teams = _context.Teams.Include(x => x.Leagues);
         var leagueCoefficients = _context.Leagues.Select(x => x.Coefficient).Distinct().ToList();
         var teamStatsList = new List<TeamStatsDto>();

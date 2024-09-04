@@ -56,6 +56,34 @@
         </ChildContent>
     </GridCol>
 </GridRow>
+
+@if (!string.IsNullOrEmpty(Match.HighlightUrl))
+{
+    <Divider Text="Highlights"></Divider>
+
+    <div>
+        <iframe allow="fullscreen;" class="iframe-height"
+                src="@Match.HighlightUrl">
+        </iframe>
+    </div>
+}
+
+
+<style>
+    @@media only screen and (min-device-width : 320px) {
+        .iframe-height {
+            width: -webkit-fill-available;
+            min-height: 215px;
+        }
+    }
+
+    @@media only screen and (min-device-width : 980px) and (max-device-width : 2480px) {
+        .iframe-height {
+            width: -webkit-fill-available;
+            min-height: 715px;
+        }
+    }
+</style>
 @code {
     [Parameter] public MatchDto Match { get; set; }
 }
