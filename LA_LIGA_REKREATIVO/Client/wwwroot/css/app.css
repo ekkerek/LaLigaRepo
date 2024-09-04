@@ -133,9 +133,9 @@ a, .btn-link {
 }
 
 .dream-team-img {
-    height: 50px;
+    height: 65px;
     position: relative;
-    bottom: 1px;
+    bottom: 2px;
     border-radius: 50%;
 }
 
@@ -146,8 +146,8 @@ a, .btn-link {
 }
 
 .dream-team-div {
-    height: 50px;
-    width: 50px;
+    height: 65px;
+    width: 65px;
     border-radius: 50%;
     solid;
     border: solid;
@@ -183,4 +183,20 @@ a, .btn-link {
 .ant-card-head .ant-tabs-top {
     margin-bottom: -5px !important;
 }
+
+.first-row tr:first-child {
+    background-image: linear-gradient(to right, white, red);
+    color: white;
+    font-weight: bold;
+}
+
+    .first-row tr:first-child td:first-child {
+        color: black;
+    }
+
+    .first-row tr:first-child td:nth-child(2) span img {
+        height: 90px !important;
+        position: relative;
+        right: 15px;
+    }
 /*Code I added - End*/
