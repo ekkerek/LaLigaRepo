@@ -1,0 +1,19 @@
+FROM nginxinc/nginx-unprivileged:bookworm-perl AS final
+WORKDIR /usr/share/nginx/html
+COPY --from=publish /app/publish/wwwroot .
+COPY nginx.conf /etc/nginx/nginx.conf
+
+USER root
+
+# Install Certbot and dependencies
+RUN apt-get update && \
+    apt-get install -y certbot python3-certbot-nginx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expose ports
+EXPOSE 80
+EXPOSE 443
+
+# Entrypoint to initialize Certbot and start Nginx
+ENTRYPOINT ["sh", "-c", "certbot --nginx -n --agree-tos --email marko.milic.88@gmail.com --domains laligarekreativo.com,www.laligarekreativo.com && nginx -g 'daemon off;'"]
