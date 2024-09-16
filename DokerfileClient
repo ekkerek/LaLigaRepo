@@ -24,6 +24,10 @@ COPY --from=publish /app/publish/wwwroot .
 # Copy custom Nginx configuration if needed
 COPY nginx.conf /etc/nginx/nginx.conf
 
+RUN sudo apt update
+RUN sudo apt install certbot
+RUN sudo certbot certonly --standalone -d laligarekreativo.com -d www.laligarekreativo.com
+
 # Expose HTTP and HTTPS ports
 EXPOSE 80
 EXPOSE 443
