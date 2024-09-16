@@ -20,10 +20,9 @@ services:
     tty: true
     volumes:
       - local_images:/var/lib/images
-      - /etc/letsencrypt/live/laligarekreativo.com:/etc/letsencrypt/live/laligarekreativo.com/
+
     ports:
-      - "8080:80"   
-      - "443:443"   # Expose HTTPS for Blazor client
+      - "80:8080"   
       
   db:
     image: postgres
