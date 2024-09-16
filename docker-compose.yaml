@@ -22,7 +22,7 @@ services:
       - local_images:/var/lib/images
 
     ports:
-      - "80:8080"   
+      - "8080:80"   
       - "443:443"   # Expose HTTPS for Blazor client
       
   db:
