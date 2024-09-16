@@ -10,6 +10,7 @@ services:
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
     ports:
       - "5000:8080"
+      - "443:8443"
       
   client:
     image: file-images
@@ -23,6 +24,7 @@ services:
 
     ports:
       - "80:8080"   
+      - "443:443"   # Expose HTTPS for Blazor client
       
   db:
     image: postgres
