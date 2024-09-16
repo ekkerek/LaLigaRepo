@@ -10,8 +10,6 @@ services:
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
     ports:
       - "5000:8080"
-    networks:
-      - webnet
       
   client:
     image: file-images
@@ -25,8 +23,6 @@ services:
 
     ports:
       - "80:8080"   
-    networks:
-      - webnet
       
   db:
     image: postgres
@@ -50,24 +46,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: strong-password
     volumes:
       - pgadmin-data:/var/lib/pgadmin
-  nginx:
-    build:
-      context: .
-      dockerfile: DockerfileNginx
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt  # Mounts the SSL certificates from Let's Encrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
-    networks:
-      - webnet
 volumes:
   local_pgdata:
   pgadmin-data:
-  local_images:
-
-networks:
-  webnet:
-  
+  local_images:  
