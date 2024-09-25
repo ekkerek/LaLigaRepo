@@ -22,7 +22,7 @@ services:
       - local_images:/var/lib/images
 
     ports:
-      - "80:8080"   
+      - "8080:8080"   
       
   db:
     image: postgres
@@ -46,6 +46,12 @@ services:
       PGADMIN_DEFAULT_PASSWORD: strong-password
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+  nginx: #name of the fourth service
+    container_name: loadbalancer_nginx
+    build: loadbalancer # specify the directory of the Dockerfile
+    restart: always
+    ports:
+      - "80:80" #specify ports forewarding
 volumes:
   local_pgdata:
   pgadmin-data:
