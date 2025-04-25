@@ -15,7 +15,7 @@
             <div>
                 <a @onclick="() => GoToTeamDetails(Match.HomeTeam.Id)">
                     <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.HomeTeam.LogoSrc)" /> </div>
-                    <div style="display: flex; justify-content: center;">@Match.HomeTeam.Name</div>
+                    <div style="display: flex; justify-content: center; text-align:center">@Match.HomeTeam.Name</div>
                 </a>
             </div>
         </GridCol>
@@ -31,7 +31,7 @@
             <div>
                 <a @onclick="() => GoToTeamDetails(Match.AwayTeam.Id)">
                     <div style="display: flex; justify-content: center;"> <img style="height:48px;" src="@_fileService.GetTeamImagePath(Match.AwayTeam.LogoSrc)" /> </div>
-                    <div style="display: flex; justify-content: center;">@Match.AwayTeam.Name</div>
+                    <div style="display: flex; justify-content: center;text-align:center">@Match.AwayTeam.Name</div>
                 </a>
             </div>
         </GridCol>

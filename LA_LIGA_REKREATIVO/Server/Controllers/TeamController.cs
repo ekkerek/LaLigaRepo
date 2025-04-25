@@ -103,7 +103,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet("getTeamStats/{teamId}")]
         public TeamStatsDto GetTeamStats(int teamId)
         {
-            var matches = _context.Matches.Include(x => x.Summaries).Where(x => (x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0) || x.IsOfficialResult).ToList();
+            var matches = _context.Matches.Include(x => x.League).Include(x => x.Summaries).Where(x => x.League.IsActive && ((x.HomeTeamId == teamId || x.AwayTeamId == teamId) && (x.Players.Count() > 0) || x.IsOfficialResult)).ToList();
 
             var team = _context.Teams.Include(x => x.Leagues).FirstOrDefault(x => x.Id == teamId);
 
@@ -137,6 +137,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public async Task<List<TeamStatsDto>> GetStandingsByLeague(int id)
         {
             return _teamStatsService.GetStandingsByLeague(id);
+        }
+
+        [HttpGet("getTeamStatsForNonActiveLeagues/{id}")]
+        public List<TeamStatsHistoryDto> GetTeamStatsForNonActiveLeagues(int id)
+        {
+            return _teamStatsService.GetTeamStatsForNonActiveLeagues(id);
         }
     }
 }

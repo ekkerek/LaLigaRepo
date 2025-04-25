@@ -120,5 +120,16 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return new List<TeamStatsDto>();
         }
+
+        public async Task<List<TeamStatsHistoryDto>> GetTeamStatsForNonActiveLeagues(int id)
+        {
+            var result = await _httpClient.GetAsync($"api/team/getTeamStatsForNonActiveLeagues/{id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<TeamStatsHistoryDto>>(json);
+            }
+            return new List<TeamStatsHistoryDto>();
+        }
     }
 }

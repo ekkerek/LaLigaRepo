@@ -12,7 +12,7 @@
             DefaultValue="@defaultvalue"
             LabelName="@nameof(LeagueDto.Name)"
             ValueName="@nameof(LeagueDto.Id)"
-            Style="width: 100%"
+            Style="width: 100%; margin-bottom: 12px;"
             Placeholder="Select a league"
             IgnoreItemChanges="false"
             OnSelectedItemChanged="OnSelectedLeague"
@@ -21,8 +21,14 @@
 
     @foreach (var matchesByRound in matches)
     {
-        <span style="display: flex; justify-content: center; font-size: large;font-weight: 600; margin-top: 1vh; background-color: lightgray ; position: relative; bottom: 6px;"> @matchesByRound.GameTime.ToString("dd/MM/yyyy")</span>
-        <MatchesBase Matches="@matchesByRound.Matches"></MatchesBase>
+        <Card Size="small" Style="margin-bottom: 12px;">
+            <TitleTemplate>
+                <span style="display: flex; justify-content: center">@matchesByRound.GameTime.ToString("dd. MMMM yyyy") </span>
+            </TitleTemplate>
+            <Body>
+                <MatchesBase Matches="@matchesByRound.Matches"></MatchesBase>
+            </Body>
+        </Card>
     }
 </Spin>
 

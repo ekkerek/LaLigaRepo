@@ -165,6 +165,87 @@ public class TeamStatsService : ITeamStatsService
         return matches.Count(x => x.HomeTeamId == teamId && x.HomeTeamGoals == x.AwayTeamGoals) +
                matches.Count(x => x.AwayTeamId == teamId && x.HomeTeamGoals == x.AwayTeamGoals);
     }
+
+    public List<TeamStatsHistoryDto> GetTeamStatsForNonActiveLeagues(int teamId)
+    {
+        var team = _context.Teams.FirstOrDefault(t => t.Id == teamId);
+        if (team == null) return new List<TeamStatsHistoryDto>();
+
+        var matches = _context.Matches
+            .Include(m => m.League)
+            .Where(m => !m.League.IsActive && (m.HomeTeamId == teamId || m.AwayTeamId == teamId))
+            .ToList();
+
+        if (!matches.Any()) return new List<TeamStatsHistoryDto>();
+
+        var groupedByYear = matches.GroupBy(m => m.League.Year).Select(g =>
+        {
+            var yearMatches = g.ToList();
+
+            var wins = CalculateTeamWins(teamId, yearMatches);
+
+            var draws = CalculateTeamDraws(teamId, yearMatches);// yearMatches.Count(m => m.HomeTeamGoals == m.AwayTeamGoals);
+            var losts = CalculateTeamLosts(teamId, yearMatches);// yearMatches.Count - wins - draws;
+
+            var goals = yearMatches.Sum(m =>
+                m.HomeTeamId == teamId ? m.HomeTeamGoals : m.AwayTeamId == teamId ? m.AwayTeamGoals : 0);
+
+            var goalsConceded = yearMatches.Sum(m =>
+                m.HomeTeamId == teamId ? m.AwayTeamGoals : m.AwayTeamId == teamId ? m.HomeTeamGoals : 0);
+
+
+            var playoffMatches = yearMatches.Where(m => m.IsPlayOff).ToList();
+
+            string? playoffRoundFinished;
+
+            if (!playoffMatches.Any())
+            {
+                playoffRoundFinished = "Finished in group phase";
+            }
+            else
+            {
+                var finalMatch = playoffMatches
+                    .Where(m => m.PlayOffRound == PlayOffRound.Final)
+                    .FirstOrDefault(m => m.HomeTeamId == teamId || m.AwayTeamId == teamId);
+
+                if (finalMatch != null)
+                {
+                    var teamWon = (finalMatch.HomeTeamId == teamId && finalMatch.HomeTeamGoals > finalMatch.AwayTeamGoals) ||
+                                  (finalMatch.AwayTeamId == teamId && finalMatch.AwayTeamGoals > finalMatch.HomeTeamGoals);
+
+                    playoffRoundFinished = teamWon ? "1st place" : "2nd place";
+                }
+                else
+                {
+                    var lastMatch = playoffMatches
+                        .Where(m => m.HomeTeamId == teamId || m.AwayTeamId == teamId)
+                        .OrderByDescending(m => m.PlayOffRound)
+                        .FirstOrDefault();
+
+                    playoffRoundFinished = lastMatch != null
+                        ? $"Eliminated in {lastMatch.PlayOffRound}"
+                        : "Eliminated in early playoff round";
+                }
+            }
+
+
+            return new TeamStatsHistoryDto
+            {
+                Year = g.Key,
+                GamePlayed = yearMatches.Count,
+                Wins = wins,
+                Draws = draws,
+                Losts = losts,
+                Goals = goals,
+                GoalsConceded = goalsConceded,
+                PlayoffRoundFinished = playoffRoundFinished,
+                Team = _mapper.Map<TeamDto>(team)
+            };
+        }).ToList();
+
+        return groupedByYear;
+    }
+
 }
 
 

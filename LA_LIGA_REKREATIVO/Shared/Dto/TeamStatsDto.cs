@@ -17,4 +17,10 @@
         public int OrderId { get; set; }
         public List<MatchDto> Matches { get; set; }
     }
+
+    public class TeamStatsHistoryDto : TeamStatsDto
+    {
+        public int Year { get; set; }
+        public string? PlayoffRoundFinished { get; set; }
+    }
 }

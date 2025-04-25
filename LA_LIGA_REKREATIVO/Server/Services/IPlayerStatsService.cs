@@ -19,5 +19,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         decimal RecalculatePlayerPointsForOverallDreamTeam(int id);
         IEnumerable<PlayerStatsDto> GetTopGoalscorer();
         IEnumerable<PlayerStatsDto> GetTopAssitent();
+        List<PlayerStatsHistoryDto> GetPlayerStatsForNonActiveLeagues(int playerId);
     }
 }

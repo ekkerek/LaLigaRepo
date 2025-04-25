@@ -10,7 +10,7 @@
 
 
 <Spin Spinning=loading>
-    <PageHeader Class="site-page-header" Title="La liga rekreativo" Subtitle="Sezona 4" Style="margin-bottom: 12px;" />
+    <PageHeader Class="site-page-header" Title="La liga rekreativo" Subtitle="Sezona 5" Style="margin-bottom: 12px;" />
 
     <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
         <Row Gutter="12">
@@ -60,8 +60,8 @@
             <Table TItem="PlayerStatsDto"
                    DataSource="@stats"
                    HidePagination>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
+                <PropertyColumn ColSpan="2" Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
+                <PropertyColumn ColSpan="18" Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
                     <span>
                         <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
                     </span>
@@ -72,7 +72,7 @@
                         </a>
                     </span>
                 </PropertyColumn>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="Goals" HeaderStyle="display: none;" Property="c=>c.Goals" />
+                <PropertyColumn ColSpan="4" Style="padding: 4px 4px; !important" Title="Goals" HeaderStyle="display: none;" Property="c=>c.Goals" />
             </Table>
         </Body>
     </Card>
@@ -82,8 +82,8 @@
             <Table TItem="PlayerStatsDto"
                    DataSource="@topAssistents"
                    HidePagination>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
+                <PropertyColumn ColSpan="2" Style="padding: 4px 4px; !important" Title="#" HeaderStyle="display: none;" Property="c=> c.OrderId"></PropertyColumn>
+                <PropertyColumn ColSpan="18" Style="padding: 4px 4px; !important" Title="Name" HeaderStyle="display: none;" Property="c=>c.Player.Picture">
                     <span>
                         <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
                     </span>
@@ -94,10 +94,34 @@
                         </a>
                     </span>
                 </PropertyColumn>
-                <PropertyColumn Style="padding: 4px 4px; !important" Title="Assists" HeaderStyle="display: none;" Property="c=>c.Assists" />
+                <PropertyColumn ColSpan="4" Style="padding: 4px 4px; !important" Title="Assists" HeaderStyle="display: none;" Property="c=>c.Assists" />
             </Table>
         </Body>
     </Card>
+
+    <Footer Style="padding: 24px; margin-top: 12px; background-color:antiquewhite">
+        <div>
+            <a href="mailto: fantasy.laligarekreativo@gmail.com">
+                <Icon Style="position: relative; top: 2px;" Type="mail" Theme="outline" />
+                fantasy.laligarekreativo@gmail.com
+            </a>
+        </div>
+        <div>
+            <a href="https://www.instagram.com/laligarekreativo/">
+                <Icon Style="position: relative; top: 2px;" Type="instagram" Theme="outline" />
+                laligarekreativo
+            </a>
+
+        </div>
+        <div>
+            <a href="https://www.youtube.com/channel/UCNLXMZ6dgt1zbT50cFBbYJQ">
+                <Icon Type="youtube" Theme="outline" />
+                laligarekreativo2022
+            </a>
+
+        </div>
+
+    </Footer>
 
 </Spin>
 
@@ -133,8 +157,8 @@
         // leagues = result.ToList();
 
         var topGoalscorersResult = await Server.Players.GetTopGoalscorer();// GetStandingsByLeague(leagues.FirstOrDefault().Id);
-                                                                           // SetOrderId(stats);
-                                                                           // StateHasChanged();
+        // SetOrderId(stats);
+        // StateHasChanged();
         var topAssistentsResult = await Server.Players.GetTopAssitent();
         stats = topGoalscorersResult.ToList();
         SetOrderId(stats);

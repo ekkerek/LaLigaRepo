@@ -93,6 +93,12 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _playerStatsService.GetPlayerStats(id);
         }
 
+        [HttpGet("getPlayerStatsForNonActiveLeagues/{id}")]
+        public List<PlayerStatsHistoryDto> GetPlayerStatsForNonActiveLeagues(int id)
+        {
+            return _playerStatsService.GetPlayerStatsForNonActiveLeagues(id);
+        }
+
         [HttpGet("getplayersstats/{leagueId}")]
         public IEnumerable<PlayerStatsDto> GetPlayersStats(int leagueId)
         {

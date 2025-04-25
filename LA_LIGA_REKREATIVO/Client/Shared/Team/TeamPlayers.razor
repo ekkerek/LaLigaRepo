@@ -6,29 +6,33 @@
 @inject FileService _fileService
 @inject NavigationManager Navigation
 
-<AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
-    <ChildContent Context="item">
-        <ListItem Style="padding: 2px 0;">
-            <ListItemMeta>
-                <TitleTemplate>
-                    <span>
-                        <img class="player-img" src="@_fileService.GetImagePath(item.Player.Picture)" />
-                    </span>
-                    <span>
-                        <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FullName</a>
-                        @if (item.Player.IsGk)
-                        {
+<Card Size="small">
+    <Body>
+        <AntList Class="demo-loadmore-list" DataSource="@stats" ItemLayout="ListItemLayout.Horizontal" Loading="@InitLoading">
+            <ChildContent Context="item">
+                <ListItem Style="padding: 2px 0;">
+                    <ListItemMeta>
+                        <TitleTemplate>
                             <span>
-                                (GK)
+                                <img class="player-img" src="@_fileService.GetImagePath(item.Player.Picture)" />
                             </span>
-                        }
-                    </span>
-                </TitleTemplate>
-            </ListItemMeta>
-            <div>@item?.TotalPoints <Icon Type="star" Theme="fill" /></div>
-        </ListItem>
-    </ChildContent>
-</AntList>
+                            <span>
+                                <a @onclick="() => GoToProfilePage(item.Player.Id)">@item.Player.FullName</a>
+                                @if (item.Player.IsGk)
+                                {
+                                    <span>
+                                        (GK)
+                                    </span>
+                                }
+                            </span>
+                        </TitleTemplate>
+                    </ListItemMeta>
+                    <div>@item?.TotalPoints <Icon Type="star" Theme="fill" /></div>
+                </ListItem>
+            </ChildContent>
+        </AntList>
+    </Body>
+</Card>
 
 @code {
     [Parameter] public int TeamId { get; set; }

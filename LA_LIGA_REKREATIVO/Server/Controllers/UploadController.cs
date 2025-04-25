@@ -17,7 +17,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         }
 
         [HttpPost("postFile")]
-        [Authorize]
         public async Task<ActionResult<IList<UploadResult>>> PostFile([FromForm] IEnumerable<IFormFile> files)
         {
             var uploadedFiles = await _uploadService.PostFile(files);

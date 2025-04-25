@@ -9,56 +9,67 @@
 <div>
     @if (teamStats.Team is not null)
     {
-        <div style="display: flex; justify-content: center;">
-            <img style="height: 150px;margin-bottom: 20px; margin-top: 5px;" src="@_fileService.GetTeamImagePath(teamStats.Team.LogoSrc)" />
-        </div>
-        @*     <GridRow>
-    <GridCol Span="16" Style="font-weight: 700; font-size: medium">Name:</GridCol>
-    <GridCol Span="8" Style="font-size: medium">@teamStats.Team.Name</GridCol>
-    </GridRow>
+        <Card Size="small">
+            <TitleTemplate>
+                <div style="display: flex; justify-content: center;">
+                    <img style="height: 150px;margin-bottom: 20px; margin-top: 5px;" src="@_fileService.GetTeamImagePath(teamStats.Team.LogoSrc)" />
+                </div>
+                <span class="content-centar" style="font-size: x-large">@teamStats.Team.Name</span>
+            </TitleTemplate>
+            <Body>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Total Matches:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.GamePlayed</GridCol>
+                </GridRow>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Wins:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.Wins</GridCol>
+                </GridRow>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Draws:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.Draws</GridCol>
+                </GridRow>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Losts:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.Losts</GridCol>
+                </GridRow>
 
-    <GridRow>
-    <GridCol Span="16" Style="font-weight: 700; font-size: medium">Total Points:</GridCol>
-    <GridCol Span="8" Style="font-size: medium">@teamStats.TotalPoints</GridCol>
-    </GridRow>
+                <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
-    <GridRow>
-    <GridCol Span="16" Style="font-weight: 700; font-size: medium">Points By Coefficient:</GridCol>
-    <GridCol Span="8" Style="font-size: medium">@teamStats.PointsByCoefficient</GridCol>
-    </GridRow> *@
-        <GridRow Class="content-centar">
-            <span style="font-size: x-large">@teamStats.Team.Name</span>
-        </GridRow>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Goals:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.Goals</GridCol>
+                </GridRow>
+                <GridRow>
+                    <GridCol Span="16" Class="content-centar">Goals Conceded:</GridCol>
+                    <GridCol Span="8" Style="font-size: medium">@teamStats.GoalsConceded</GridCol>
+                </GridRow>
+            </Body>
+        </Card>
 
-        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
+        @if (teamStatsHistories.Any())
+        {
+            <div style="margin-top:12px;">
+                <Table Responsive TItem="TeamStatsHistoryDto" DataSource="@teamStatsHistories" Size=@TableSize.Small HidePagination>
+                    <TitleTemplate>
+                        <span style="font-size: large;">
+                            History
+                        </span>
+                    </TitleTemplate>
+                    <ColumnDefinitions>
+                        <PropertyColumn Title="Year" Property="x=> x.Year" />
+                        <PropertyColumn Title="Total matches" Property="x=> x.GamePlayed" />
+                        <PropertyColumn Title="Wins" Property="x=> x.Wins" />
+                        <PropertyColumn Title="Draws" Property="x=> x.Draws" />
+                        <PropertyColumn Title="Losts" Property="x=> x.Losts" />
+                        <PropertyColumn Title="Goals" Property="x=> x.Goals" />
+                        <PropertyColumn Title="Goals Conceded" Property="x=> x.GoalsConceded" />
+                        <PropertyColumn Title="Final Standing" Property="x=> x.PlayoffRoundFinished" />
 
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Total Matches:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.GamePlayed</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Wins:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.Wins</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Draws:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.Draws</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Losts:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.Losts</GridCol>
-        </GridRow>
-
-        <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
-
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Goals:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.Goals</GridCol>
-        </GridRow>
-        <GridRow>
-            <GridCol Span="16" Class="content-centar">Goals Conceded:</GridCol>
-            <GridCol Span="8" Style="font-size: medium">@teamStats.GoalsConceded</GridCol>
-        </GridRow>
+                    </ColumnDefinitions>
+                </Table>
+            </div>
+        }
     }
 </div>
 
@@ -67,10 +78,12 @@
     [Parameter] public int TeamId { get; set; }
     private TeamDto team = new();
     private TeamStatsDto teamStats = new();
+    private List<TeamStatsHistoryDto> teamStatsHistories = new();
 
     protected async override Task OnParametersSetAsync()
     {
         team = await Server.Teams.Get(TeamId);
         teamStats = await Server.Teams.GetTeamStats(TeamId);
+        teamStatsHistories = await Server.Teams.GetTeamStatsForNonActiveLeagues(TeamId);
     }
 }

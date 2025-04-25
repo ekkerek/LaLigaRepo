@@ -57,7 +57,7 @@
     protected async override Task OnParametersSetAsync()
     {
         team = await Server.Teams.Get(Id);
-        var result = await Server.Leagues.Get();
+        var result = await Server.Leagues.GetAll();
         leagues = result.ToList();
         selectedLeagues = team.Leagues.ToHashSet();
     }

@@ -1,7 +1,7 @@
 ﻿@page "/playerProfile/{Id:int}"
 @using LA_LIGA_REKREATIVO.Client.Shared.PlayerProfile
 
-<Tabs Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated>
+<Tabs TabBarStyle="background-color: white;" Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated Centered>
     <TabPane Tab="Overview" Key="1">
         <PlayerOverview Id="Id"></PlayerOverview>
     </TabPane>

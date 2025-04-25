@@ -2,20 +2,23 @@
 
 @using AntDesign
 
-<h2 style="display: flex; justify-content: center;">Fantasy rules</h2>
+<Card Title="Fantasy rules">
 
-<AntList DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
-    <ChildContent Context="item">
-        <ListItem>
-            <ListItemMeta>
-                <TitleTemplate>
-                    <span>@item.Key</span>
-                </TitleTemplate>
-            </ListItemMeta>
-            <div>@item.Value.ToString()</div>
-        </ListItem>
-    </ChildContent>
-</AntList>
+    <Body>
+        <AntList DataSource="@fantasyRules" ItemLayout="ListItemLayout.Horizontal">
+            <ChildContent Context="item">
+                <ListItem>
+                    <ListItemMeta>
+                        <TitleTemplate>
+                            <span>@item.Key</span>
+                        </TitleTemplate>
+                    </ListItemMeta>
+                    <div>@item.Value.ToString()</div>
+                </ListItem>
+            </ChildContent>
+        </AntList>
+    </Body>
+</Card>
 
 @code {
     Dictionary<string, int> fantasyRules = new();

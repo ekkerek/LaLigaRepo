@@ -85,6 +85,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return new PlayerStatsDto();
         }
 
+        public async Task<List<PlayerStatsHistoryDto>> GetPlayerStatsForNonActiveLeagues(int id)
+        {
+            var result = await _httpClient.GetAsync($"api/player/getPlayerStatsForNonActiveLeagues/{id}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<PlayerStatsHistoryDto>>(json);
+            }
+            return new List<PlayerStatsHistoryDto>();
+        }
+
         public async Task<IEnumerable<PlayerStatsDto>> GetPlayersStats(int leagueId)
         {
             var result = await _httpClient.GetAsync($"api/player/getplayersstats/{leagueId}");

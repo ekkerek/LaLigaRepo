@@ -6,5 +6,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
     {
         List<TeamStatsDto> GetStandingsByLeague(int id);
         List<TeamStatsDto> GetCommonStanding();
+        List<TeamStatsHistoryDto> GetTeamStatsForNonActiveLeagues(int teamId);
     }
 }

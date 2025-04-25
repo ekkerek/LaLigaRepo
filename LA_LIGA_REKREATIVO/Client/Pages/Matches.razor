@@ -25,10 +25,6 @@ else
 }
 
 @code {
-    //List<MatchDto> matches = new List<MatchDto>();
-    //bool allowVirtualization = true;
-    //DateTime currentDate = DateTime.Now;
-    //private const string BUCKET_PATH = "https://test-la-liga-bucket.s3.amazonaws.com/";
     private bool isByDate = true;
 
     void handleIsydate()
@@ -42,42 +38,4 @@ else
         isByDate = false;
         StateHasChanged();
     }
-
-
-    // public void SelectMatchDetails(int id)
-    // {
-    //     Navigation.NavigateTo($"/matchDetails/{id}");
-    // }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     var result = await Server.Matches.GetByDate(DateTime.Now);
-    //     matches = result.ToList();
-    // }
-
-    // async Task OnNext()
-    // {
-    //     currentDate = currentDate.AddDays(1);
-    //     var result = await Server.Matches.GetByDate(currentDate);
-    //     matches = result.ToList();
-    // }
-
-    // async Task OnPrev()
-    // {
-    //     currentDate = currentDate.AddDays(-1);
-    //     var result = await Server.Matches.GetByDate(currentDate);
-    //     matches = result.ToList();
-    // }
-
-    // async Task OnChangeDate()
-    // {
-    //     var result = await Server.Matches.GetByDate(currentDate);
-    //     matches = result.ToList();
-    // }
-
-    // private string GetImagePath(string imageName)
-    // {
-    //     return BUCKET_PATH + imageName;
-    // }
-
 }

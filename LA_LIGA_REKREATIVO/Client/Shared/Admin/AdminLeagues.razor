@@ -14,7 +14,7 @@
     <EditLeague Id=@Id CloseModal="CloseEditLeagueModal"></EditLeague>
 }
 
-<Table TItem="LeagueDto" DataSource="@leagues">
+<Table Responsive TItem="LeagueDto" DataSource="@leagues">
     <PropertyColumn Sortable Filterable Property="c=>c.Id">
         <a>@context.Id</a>
     </PropertyColumn>
@@ -30,7 +30,7 @@
     <ActionColumn Title="Delete">
         <Space>
             <SpaceItem>
-                <Popconfirm Title="Are you sure delete this league?"
+                <Popconfirm Title="Are you sure delete this match?"
                             OnConfirm="() => Delete(context)">
                     <Button Danger>Delete</Button>
                 </Popconfirm>
@@ -48,7 +48,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        leagues = await Server.Leagues.Get();
+        leagues = await Server.Leagues.GetAll();
         base.OnInitialized();
     }
 

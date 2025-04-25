@@ -2,8 +2,6 @@
 {
     public class PlayerStatsDto
     {
-        //public int Id { get; set; }
-        //public int Season { get; set; }
         //General
         public int TotalMatches { get; set; }
         public double TotalPoints { get; set; }
@@ -31,12 +29,15 @@
         public int FourSavesGK { get; set; }
         public int SavedFromPenaltyGK { get; set; }
         public int SavedFrom10meterGK { get; set; }
-        //public int MatchAttended { get; set; }
-
 
         public PlayerDto Player { get; set; }
         public TeamDto Team { get; set; }
 
         public int OrderId { get; set; }
+    }
+
+    public class PlayerStatsHistoryDto : PlayerStatsDto
+    {
+        public int Year { get; set; }
     }
 }

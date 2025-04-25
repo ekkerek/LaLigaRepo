@@ -27,8 +27,14 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         [HttpGet]
         public IEnumerable<LeagueDto> Get()
         {
-            var leagues = _context.Leagues.Include(x => x.Teams);
+            var leagues = _context.Leagues.Include(x => x.Teams).Where(x => x.IsActive);
             return _mapper.Map<List<LeagueDto>>(leagues).OrderByDescending(x => x?.IsOverallLeague).ThenByDescending(x => x.Id);
+        }
+
+        [HttpGet("getAll")]
+        public IEnumerable<LeagueDto> GetAll()
+        {
+            return _mapper.Map<List<LeagueDto>>(_context.Leagues.Include(x => x.Teams));
         }
 
         // GET api/<LeagueController>/5
@@ -44,7 +50,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
         public IEnumerable<LeagueDto> GetNonPlayoffLeague()
         {
             var leagues = _context.Leagues.Include(x => x.Teams);
-            return _mapper.Map<List<LeagueDto>>(leagues).Where(x => !x.IsPlayOff).OrderByDescending(x => x?.IsOverallLeague).ThenByDescending(x => x.Id);
+            return _mapper.Map<List<LeagueDto>>(leagues).Where(x => x.IsActive && !x.IsPlayOff).OrderByDescending(x => x?.IsOverallLeague).ThenByDescending(x => x.Id);
         }
 
         // POST api/<LeagueController>

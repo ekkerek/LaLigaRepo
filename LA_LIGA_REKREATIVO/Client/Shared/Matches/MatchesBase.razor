@@ -8,13 +8,17 @@
 @if (IsFixture)
 {
     <AntList DataSource="Matches" TItem="MatchDto">
-        <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItem Style="padding: 5px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
             <ListItemMeta>
                 <TitleTemplate>
                     <GridRow>
                         <GridCol Span="3" Style="display: grid">
-                            <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            <span style="display: flex;justify-content: center;">
+                                <img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" />
+                            </span>
+                            <span style="display: flex;justify-content: center;">
+                                <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            </span>
                         </GridCol>
                         <GridCol Span="18" Style="display: grid">
                             <span style="margin-bottom: 5px;">
@@ -36,7 +40,7 @@
 else if (IsTeamResult)
 {
     <AntList DataSource="@MatchByTeamDtos" TItem="MatchByTeamDto">
-        <ListItem Style="padding: 2px 0 !important; " OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItem Style="padding: 5px 0 !important; " OnClick="()=>SelectMatchDetails(context.Id)">
             <ListItemMeta>
                 <TitleTemplate>
                     <GridRow>
@@ -87,13 +91,18 @@ else if (IsTeamResult)
 else
 {
     <AntList DataSource="@Matches" TItem="MatchDto">
-        <ListItem Style="padding: 2px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
+        <ListItem Style="padding: 5px 0 !important" OnClick="()=>SelectMatchDetails(context.Id)">
             <ListItemMeta>
                 <TitleTemplate>
                     <GridRow>
                         <GridCol Span="3" Style="display: grid">
-                            <span><img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" /></span>
-                            <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            <span style="display: flex;justify-content: center;">
+                                <img style="height:22px; margin-bottom: 5px;" src="@GetImagePath(context.HomeTeam.LogoSrc)" />
+                            </span>
+                            <span style="display: flex;justify-content: center;">
+                                <img style="height:22px;" src="@GetImagePath(context.AwayTeam.LogoSrc)" />
+                            </span>
+
                         </GridCol>
                         <GridCol Span="19" Style="display: grid">
                             <span style="margin-bottom: 5px;">

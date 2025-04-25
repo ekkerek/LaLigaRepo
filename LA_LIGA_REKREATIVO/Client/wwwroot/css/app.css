@@ -1,7 +1,7 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', sans-serif !important;
 }
 
 h1:focus {
@@ -108,13 +108,13 @@ a, .btn-link {
     justify-content: flex-end;
 }
 
-.ant-list-split .ant-list-item {
+/*.ant-list-split .ant-list-item {
     border-bottom: 1px solid lightgray !important;
 }
 
     .ant-list-split .ant-list-item:last-child {
         border-bottom: 0px solid lightgray !important;
-    }
+    }*/
 
 .rz-calendar .rz-inputtext {
     background-color: transparent !important;
@@ -199,4 +199,27 @@ a, .btn-link {
         position: relative;
         right: 15px;
     }
+
+:root {
+    --ant-font-family: 'Poppins', sans-serif !important;
+}
+
+.ant-statistic-title {
+    font-size: small !important;
+    text-align: center;
+}
+
+/*.ant-tabs-nav-wrap {
+    background-color: white;
+}*/
+
+/*.ant-card-small > .ant-card-head {
+    background: linear-gradient(to right, #66b3ff, #3380cc);
+    color: white;
+}
+
+.ant-table-thead > tr > th {
+    background: #66b3ff !important;
+    color: white !important;
+}*/
 /*Code I added - End*/

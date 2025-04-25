@@ -5,7 +5,12 @@
 @inject Server Server
 @inject NavigationManager Navigation
 
-<MatchesBase MatchByTeamDtos="@matches" IsTeamResult="true"></MatchesBase>
+<Card Size="small">
+    <Body>
+        <MatchesBase MatchByTeamDtos="@matches" IsTeamResult="true"></MatchesBase>
+    </Body>
+</Card>
+
 
 
 @code {
