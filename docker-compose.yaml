@@ -25,7 +25,7 @@ services:
       - "8080:8080"   
       
   db:
-    image: postgres
+    image: postgres:16
     container_name: local_pgdb
     restart: always
     ports:
