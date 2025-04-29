@@ -285,23 +285,3 @@ html, body {
     height: 0;
     border-top: 2px solid #fff;
 }
-
-.klasa {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .klasa::before {
-        content: "";
-        background-image: url("./358511247_150359871398221_6497914246200068198_n.jpg");
-        background-size: cover;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
-        opacity: 0.25;
-    }
