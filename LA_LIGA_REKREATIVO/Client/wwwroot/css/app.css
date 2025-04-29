@@ -214,10 +214,12 @@ a, .btn-link {
     position: relative;
     width: 100%;
     height: 500px;
-    background: #3C805F;
-    background-image: linear-gradient(90deg, #3C805F 50%, #2D6A4F 50%);
     border: 2px solid #fff; /* White border for pitch */
     border-radius: 10px;
+    background: #3C805F;
+    background-image: linear-gradient(90deg, #3C805F 50%, #2D6A4F 50%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 
 /* Defining pitch lines */
@@ -276,79 +278,3 @@ a, .btn-link {
     height: 0;
     border-top: 2px solid #fff;
 }
-
-.goals {
-    position: absolute;
-    top: 5%;
-    width: 20%;
-    height: 90%;
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.goal-left {
-    left: 0;
-}
-
-.goal-right {
-    right: 0;
-}
-
-.player {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000;
-    font-weight: bold;
-}
-
-    .player img {
-        width: 100%;
-        border-radius: 50%;
-    }
-
-/* Player positions */
-.player-1 {
-    top: 10%;
-    left: 30%;
-}
-
-.player-2 {
-    top: 15%;
-    left: 45%;
-}
-
-.player-3 {
-    top: 30%;
-    left: 25%;
-}
-
-.player-4 {
-    top: 30%;
-    left: 55%;
-}
-
-.player-5 {
-    top: 45%;
-    left: 45%;
-}
-
-
-/*.ant-tabs-nav-wrap {
-    background-color: white;
-}*/
-
-/*.ant-card-small > .ant-card-head {
-    background: linear-gradient(to right, #66b3ff, #3380cc);
-    color: white;
-}
-
-.ant-table-thead > tr > th {
-    background: #66b3ff !important;
-    color: white !important;
-}*/
-/*Code I added - End*/
