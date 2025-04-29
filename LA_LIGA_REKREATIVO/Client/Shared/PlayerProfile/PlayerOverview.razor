@@ -6,7 +6,7 @@
 
 @if (playerStats.Player is not null)
 {
-    <div class="klasa" style="display: flex; justify-content: center;">
+    <div style="display: flex; justify-content: center;">
         <img style="height: 35vh;margin-bottom: 20px; position: relative;" src="@_fileService.GetImagePath(player.Picture)" />
     </div>
     <Card>
@@ -159,28 +159,6 @@
         </div>
     }
 }
-
-<style>
-    .klasa {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .klasa::before {
-            content: "";
-            background-image: url("./358511247_150359871398221_6497914246200068198_n.jpg");
-            background-size: cover;
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            left: 0px;
-            opacity: 0.25;
-        }
-</style>
 
 @code {
     [Parameter] public int Id { get; set; }
