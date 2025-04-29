@@ -222,8 +222,7 @@ html, body {
     width: 100%;
     height: 500px;
     background: #3C805F;
-    background-image: linear-gradient(90deg, #4F8F6D 50%, #3C805F 50%); /* Lighter version of #2D6A4F on the right side */
-    border: 2px solid #fff; /* White border for pitch */
+    background-image: linear-gradient(90deg, #3C805F 50%, #3F7359 50%);
     border-radius: 10px;
 }
 
