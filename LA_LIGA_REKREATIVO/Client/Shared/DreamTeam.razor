@@ -23,6 +23,7 @@
 
     @if (stats.Count() > 0)
     {
+
         <Card BodyStyle="padding: 0px;" Size="small">
             <TitleTemplate>
                 <span style="display: flex; justify-content: center; font-size: large;">
@@ -31,110 +32,118 @@
             </TitleTemplate>
 
             <Body>
-                <div style="height: 65dvh;" class="klasa">
-                    <GridRow Style="height: 33%;">
-                        <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
-                            <div>
-                                <div class="dream-team-containter">
-                                    <div class="dream-team-div">
-                                        <a @onclick="() => GoToProfilePage(stats.FirstOrDefault().Player.Id)">
-                                            <img class="dream-team-img" src="@_fileService.GetImagePath(stats.FirstOrDefault().Player.Picture)" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.FirstOrDefault().Player.FullName
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.FirstOrDefault().TotalPoints
-                                    <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
-                                </div>
-                            </div>
-                        </GridCol>
-                        <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
-                            <div>
-                                <div class="dream-team-containter">
-                                    <div class="dream-team-div">
-                                        <a @onclick="() => GoToProfilePage(stats.Skip(1).FirstOrDefault().Player.Id)">
-                                            <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(1).FirstOrDefault().Player.Picture)" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(1).FirstOrDefault().Player.FullName
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(1).FirstOrDefault().TotalPoints
-                                    <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
-                                </div>
-                            </div>
-                        </GridCol>
-                    </GridRow>
-
-                    <GridRow style="height: 33%;">
-                        <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
-                            <div>
-                                <div class="dream-team-containter">
-                                    <div class="dream-team-div">
-                                        <a @onclick="() => GoToProfilePage(stats.Skip(2).FirstOrDefault().Player.Id)">
-                                            <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(2).FirstOrDefault().Player.Picture)" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(2).FirstOrDefault().Player.FullName
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(2).FirstOrDefault().TotalPoints
-                                    <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
-                                </div>
-                            </div>
-                        </GridCol>
-                        <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
-                            <div>
-                                <div class="dream-team-containter">
-                                    <div class="dream-team-div">
-                                        <a @onclick="() => GoToProfilePage(stats.Skip(3).FirstOrDefault().Player.Id)">
-                                            <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(3).FirstOrDefault().Player.Picture)" />
-                                        </a>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(3).FirstOrDefault().Player.FullName
-                                </div>
-                                <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                    @stats.Skip(3).FirstOrDefault().TotalPoints
-                                    <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
-                                </div>
-                            </div>
-                        </GridCol>
-                    </GridRow>
-
-                    <GridRow style="height: 33%;">
-                        <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="24">
-                            @{
-                                var gk = stats.FirstOrDefault(x => x.Player.IsGk);
-                            }
-                            @if (gk != null)
-                            {
+                <div class="pitch">
+                    <!-- Center circle and center spot -->
+                    <div class="center-circle"></div>
+                    <div class="center-spot"></div>
+                    <div class="goal-bottom"></div>
+                    <div class="goal-top"></div>
+                    <div class="center-line"></div>
+                    <div style="height: 100%;">
+                        <GridRow Style="height: 33%;">
+                            <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
                                 <div>
                                     <div class="dream-team-containter">
                                         <div class="dream-team-div">
-                                            <a @onclick="() => GoToProfilePage(gk.Player.Id)">
-                                                <img class="dream-team-img" src="@_fileService.GetImagePath(gk.Player.Picture)" />
+                                            <a @onclick="() => GoToProfilePage(stats.FirstOrDefault().Player.Id)">
+                                                <img class="dream-team-img" src="@_fileService.GetImagePath(stats.FirstOrDefault().Player.Picture)" />
                                             </a>
                                         </div>
                                     </div>
-                                    <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                        @gk.Player.FullName (GK)
+                                    <div style="display: flex; justify-content: center; color: white;">
+                                        @stats.FirstOrDefault().Player.FullName
                                     </div>
-                                    <div style="display: flex; justify-content: center; color: white; font-weight: 600;">
-                                        @gk.TotalPoints <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
+                                    <div style="display: flex; justify-content: center; color: white;">
+                                        @stats.FirstOrDefault().TotalPoints
+                                        <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
                                     </div>
                                 </div>
-                            }
-                        </GridCol>
-                    </GridRow>
+                            </GridCol>
+                            <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
+                                <div>
+                                    <div class="dream-team-containter">
+                                        <div class="dream-team-div">
+                                            <a @onclick="() => GoToProfilePage(stats.Skip(1).FirstOrDefault().Player.Id)">
+                                                <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(1).FirstOrDefault().Player.Picture)" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white;">
+                                        @stats.Skip(1).FirstOrDefault().Player.FullName
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white; ">
+                                        @stats.Skip(1).FirstOrDefault().TotalPoints
+                                        <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
+                                    </div>
+                                </div>
+                            </GridCol>
+                        </GridRow>
+
+                        <GridRow style="height: 33%;">
+                            <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
+                                <div>
+                                    <div class="dream-team-containter">
+                                        <div class="dream-team-div">
+                                            <a @onclick="() => GoToProfilePage(stats.Skip(2).FirstOrDefault().Player.Id)">
+                                                <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(2).FirstOrDefault().Player.Picture)" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white;">
+                                        @stats.Skip(2).FirstOrDefault().Player.FullName
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white; ">
+                                        @stats.Skip(2).FirstOrDefault().TotalPoints
+                                        <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
+                                    </div>
+                                </div>
+                            </GridCol>
+                            <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="12">
+                                <div>
+                                    <div class="dream-team-containter">
+                                        <div class="dream-team-div">
+                                            <a @onclick="() => GoToProfilePage(stats.Skip(3).FirstOrDefault().Player.Id)">
+                                                <img class="dream-team-img" src="@_fileService.GetImagePath(stats.Skip(3).FirstOrDefault().Player.Picture)" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white; ">
+                                        @stats.Skip(3).FirstOrDefault().Player.FullName
+                                    </div>
+                                    <div style="display: flex; justify-content: center; color: white;">
+                                        @stats.Skip(3).FirstOrDefault().TotalPoints
+                                        <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
+                                    </div>
+                                </div>
+                            </GridCol>
+                        </GridRow>
+
+                        <GridRow style="height: 33%;">
+                            <GridCol Style="display: flex; justify-content: center; align-items: center;" Span="24">
+                                @{
+                                    var gk = stats.FirstOrDefault(x => x.Player.IsGk);
+                                }
+                                @if (gk != null)
+                                {
+                                    <div>
+                                        <div class="dream-team-containter">
+                                            <div class="dream-team-div">
+                                                <a @onclick="() => GoToProfilePage(gk.Player.Id)">
+                                                    <img class="dream-team-img" src="@_fileService.GetImagePath(gk.Player.Picture)" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; justify-content: center; color: white;">
+                                            @gk.Player.FullName (GK)
+                                        </div>
+                                        <div style="display: flex; justify-content: center; color: white; ">
+                                            @gk.TotalPoints <Icon Style="position: relative; top: 4px;" Type="star" Theme="fill" />
+                                        </div>
+                                    </div>
+                                }
+                            </GridCol>
+                        </GridRow>
+                    </div>
                 </div>
             </Body>
         </Card>
@@ -199,7 +208,7 @@
     public bool Loading { get; set; } = false;
     public int count = 6;
     public int multiple = 1;
-    int defaultLeagueId;
+    private int defaultLeagueId;
     private bool loading;
     private bool isOverallLeague = true;
 
@@ -211,24 +220,12 @@
         leagues = result.ToList();
         if (leagues.Any())
         {
-            if (leagues.FirstOrDefault(x => x.IsOverallLeague) is not null)
-            {
-                defaultLeagueId = leagues.FirstOrDefault(x => x.IsOverallLeague).Id;
-                isOverallLeague = true;
-                var resStats = await Server.Players.GetDreamTeamOverall();
-                stats = resStats.ToList();
-                var resStatsSub = await Server.Players.Get2ndDreamTeamOverall();
-                statsSub = resStatsSub.ToList();
-            }
-            else
-            {
-                defaultLeagueId = leagues.FirstOrDefault().Id;
-                isOverallLeague = false;
-                var resStats = await Server.Players.GetDreamTeamByLeague(defaultLeagueId);
-                stats = resStats.ToList();
-                var resStatsSub = await Server.Players.Get2ndDreamTeamByLeague(defaultLeagueId);
-                statsSub = resStatsSub.ToList();
-            }
+            defaultLeagueId = leagues.FirstOrDefault().Id;
+            isOverallLeague = false;
+            var resStats = await Server.Players.GetDreamTeamByLeague(defaultLeagueId);
+            stats = resStats.ToList();
+            var resStatsSub = await Server.Players.Get2ndDreamTeamByLeague(defaultLeagueId);
+            statsSub = resStatsSub.ToList();
         }
         InitLoading = false;
         loading = false;

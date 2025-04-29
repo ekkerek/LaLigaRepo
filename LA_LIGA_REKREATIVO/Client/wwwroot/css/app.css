@@ -133,9 +133,9 @@ a, .btn-link {
 }
 
 .dream-team-img {
-    height: 65px;
+    height: 73px;
     position: relative;
-    bottom: 2px;
+    bottom: 8px;
     border-radius: 50%;
 }
 
@@ -153,9 +153,9 @@ a, .btn-link {
     border: solid;
     border-color: white;
     border-width: 1px;
-    background-color: darkgreen;
     display: flex;
     justify-content: center;
+    background: linear-gradient(to bottom right, #8B0000, ghostwhite);
 }
 
 .dream-team-containter {
@@ -208,6 +208,135 @@ a, .btn-link {
     font-size: small !important;
     text-align: center;
 }
+
+/* Football pitch container */
+.pitch {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: #3C805F;
+    background-image: linear-gradient(90deg, #3C805F 50%, #2D6A4F 50%);
+    border: 2px solid #fff; /* White border for pitch */
+    border-radius: 10px;
+}
+
+/* Defining pitch lines */
+.line {
+    position: absolute;
+    border: 1px solid #fff;
+    z-index: 1;
+}
+
+.center-circle {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.center-spot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.goal-top,
+.goal-bottom {
+    position: absolute;
+    width: 130px; /* width of the goal */
+    height: 30px; /* depth of the goal */
+    border: 2px solid #fff;
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.goal-top {
+    top: -2px; /* place it above the pitch */
+}
+
+.goal-bottom {
+    bottom: -2px; /* place it below the pitch */
+}
+
+.center-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    border-top: 2px solid #fff;
+}
+
+.goals {
+    position: absolute;
+    top: 5%;
+    width: 20%;
+    height: 90%;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.goal-left {
+    left: 0;
+}
+
+.goal-right {
+    right: 0;
+}
+
+.player {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-weight: bold;
+}
+
+    .player img {
+        width: 100%;
+        border-radius: 50%;
+    }
+
+/* Player positions */
+.player-1 {
+    top: 10%;
+    left: 30%;
+}
+
+.player-2 {
+    top: 15%;
+    left: 45%;
+}
+
+.player-3 {
+    top: 30%;
+    left: 25%;
+}
+
+.player-4 {
+    top: 30%;
+    left: 55%;
+}
+
+.player-5 {
+    top: 45%;
+    left: 45%;
+}
+
 
 /*.ant-tabs-nav-wrap {
     background-color: white;
