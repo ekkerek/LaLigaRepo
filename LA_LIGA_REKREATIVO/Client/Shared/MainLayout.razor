@@ -1,6 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.Extensions.Localization
+
+@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject IStringLocalizer<Shared.NavMenu> Localizer
 
 <div class="page" style="height: 100dvh; min-height: -webkit-fill-available;">
     <div class="sidebar">
@@ -22,7 +25,7 @@
                         <img style="max-height: 24px;max-width: 24px" src="./home.png" />
                     </span>
 
-                    <span>Home</span>
+                    <span>@Localizer["Home"]</span>
                 </div>
             </Button>
             <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToMatches">
@@ -30,7 +33,7 @@
                     <span style="display:flex; justify-content: center">
                         <img style="max-height: 24px;max-width: 24px" src="./football-field.png" />
                     </span>
-                    <span>Matches</span>
+                    <span>@Localizer["Matches"]</span>
                 </div>
             </Button>
             <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToStandings">
@@ -38,7 +41,7 @@
                     <span style="display:flex; justify-content: center">
                         <img style="max-height: 24px; max-width: 24px" src="./trophy.png" />
                     </span>
-                    <span>Standings</span>
+                    <span>@Localizer["Standings"]</span>
                 </div>
             </Button>
             <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateTodreamTeam">
@@ -47,7 +50,7 @@
                         <img style="max-height: 24px;max-width: 24px" src="./star.png" />
                     </span>
 
-                    <span>Dream team</span>
+                    <span>@Localizer["DreamTeam"]</span>
                 </div>
             </Button>
             <Button Style="background-color: transparent; height: 48px; border: 0px; padding: 4px; font-size: 12px; " OnClick="NavigateToStats">
@@ -55,7 +58,7 @@
                     <span style="display:flex; justify-content: center">
                         <img style="max-height: 24px;max-width: 24px" src="./stats.png" />
                     </span>
-                    <span>Stats</span>
+                    <span>@Localizer["Stats"]</span>
                 </div>
             </Button>
         </Footer>

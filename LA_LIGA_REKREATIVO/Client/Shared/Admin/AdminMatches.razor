@@ -28,7 +28,7 @@
     <PropertyColumn Sortable Filterable Title="League" Property="c=>c.League.Name"></PropertyColumn>
     <ActionColumn Title="Edit">
         <Space>
-            <SpaceItem><Button Danger OnClick="()=>Edit(context)">Edit</Button></SpaceItem>
+            <SpaceItem><Button Disabled="!context.League.IsActive" Danger OnClick="()=>Edit(context)">Edit</Button></SpaceItem>
         </Space>
     </ActionColumn>
     <ActionColumn Title="Delete">

@@ -2,10 +2,12 @@
 @using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject NavigationManager Navigation
-@inject FileService _fileService;
+@inject FileService _fileService
+@inject IStringLocalizer<Pages.Stats> Localizer
 
 <Spin Spinning=loading>
     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
@@ -37,7 +39,7 @@
            Size="TableSize.Small"
            HidePagination>
         <PropertyColumn Title="#" Property="c=> c.OrderId"></PropertyColumn>
-        <PropertyColumn Title="Name" Property="c=>c.Player.Picture">
+        <PropertyColumn Title=@Localizer["Name"] Property="c=>c.Player.Picture">
             <span>
                 <img class="player-img" src="@_fileService.GetImagePath(context.Player.Picture)" />
             </span>
@@ -51,49 +53,49 @@
 
         @if (stattt == "FantasyPoints")
         {
-            <PropertyColumn Title="Points" Property="c=>c.TotalPoints" />
+            <PropertyColumn Title=@Localizer["FantasyPoints"] Property="c=>c.TotalPoints" />
         }
         else if (stattt == "Total Goals")
         {
-            <PropertyColumn Title="Goals" Property="c=>c.Goals" />
+            <PropertyColumn Title=@Localizer["Goals"] Property="c=>c.Goals" />
         }
         else if (stattt == "TotalAssists")
         {
-            <PropertyColumn Title="Assists" Property="c=>c.Assists" />
+            <PropertyColumn Title=@Localizer["Assists"] Property="c=>c.Assists" />
         }
         else if (stattt == "OwnGoals")
         {
-            <PropertyColumn Title="Own Goals" Property="c=>c.OwnGoals" />
+            <PropertyColumn Title=@Localizer["OwnGoals"] Property="c=>c.OwnGoals" />
         }
         else if (stattt == "GoalsPerMatch")
         {
-            <PropertyColumn Title="Goals Per Match" Property="c=>c.GoalsPerMatch">
+            <PropertyColumn Title=@Localizer["GoalsPerMatch"] Property="c=>c.GoalsPerMatch">
                 @context.GoalsPerMatch.ToString("F1")
             </PropertyColumn>
         }
         else if (stattt == "YellowCards")
         {
-            <PropertyColumn Title="Yellow Cards" Property="c=>c.YellowCards" />
+            <PropertyColumn Title=@Localizer["YellowCards"] Property="c=>c.YellowCards" />
         }
         else if (stattt == "RedCards")
         {
-            <PropertyColumn Title="Red Cards" Property="c=>c.RedCards" />
+            <PropertyColumn Title=@Localizer["RedCards"] Property="c=>c.RedCards" />
         }
         else if (stattt == "CleanSheetGK")
         {
-            <PropertyColumn Title="Clean Sheet GK" Property="c=>c.CleanSheetGK" />
+            <PropertyColumn Title=@Localizer["CleanSheetGK"] Property="c=>c.CleanSheetGK" />
         }
         else if (stattt == "FourSavesGK")
         {
-            <PropertyColumn Title="Four Saves GK" Property="c=>c.FourSavesGK" />
+            <PropertyColumn Title=@Localizer["FourSavesGK"] Property="c=>c.FourSavesGK" />
         }
         else if (stattt == "SavedFromPenaltyGK")
         {
-            <PropertyColumn Title="Saved From Penalty GK" Property="c=>c.SavedFromPenaltyGK" />
+            <PropertyColumn Title=@Localizer["SavedFromPenaltyGK"] Property="c=>c.SavedFromPenaltyGK" />
         }
         else if (stattt == "SavedFrom10meterGK")
         {
-            <PropertyColumn Title="Saves From 10 meter GK" Property="c=>c.SavedFrom10meterGK" />
+            <PropertyColumn Title=@Localizer["SavesFrom10meterGK"] Property="c=>c.SavedFrom10meterGK" />
         }
     </Table>
 </Spin>

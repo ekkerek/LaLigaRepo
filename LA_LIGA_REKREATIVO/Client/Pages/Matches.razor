@@ -4,15 +4,17 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @using System.Net.Http.Headers;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject NavigationManager Navigation
 @inject HttpClient Http
+@inject IStringLocalizer<Pages.Matches> Localizer
 
 
 <div style="display:flex; margin-bottom:12px;">
-    <Button Style="width: 50%;" OnClick="handleIsydate">Results</Button>
-    <Button Style="width: 50%;" OnClick="handleIsByRound">Fixtures</Button>
+    <Button Style="width: 50%;" OnClick="handleIsydate">@Localizer["Results"]</Button>
+    <Button Style="width: 50%;" OnClick="handleIsByRound">@Localizer["Fixtures"]</Button>
 </div>
 
 @if (isByDate)

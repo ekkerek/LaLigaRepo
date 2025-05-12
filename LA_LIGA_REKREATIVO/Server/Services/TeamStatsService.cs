@@ -200,7 +200,7 @@ public class TeamStatsService : ITeamStatsService
 
             if (!playoffMatches.Any())
             {
-                playoffRoundFinished = "Finished in group phase";
+                playoffRoundFinished = "Ispali u grupnoj fazi";
             }
             else
             {
@@ -213,7 +213,7 @@ public class TeamStatsService : ITeamStatsService
                     var teamWon = (finalMatch.HomeTeamId == teamId && finalMatch.HomeTeamGoals > finalMatch.AwayTeamGoals) ||
                                   (finalMatch.AwayTeamId == teamId && finalMatch.AwayTeamGoals > finalMatch.HomeTeamGoals);
 
-                    playoffRoundFinished = teamWon ? "1st place" : "2nd place";
+                    playoffRoundFinished = teamWon ? "1. mjesto" : "2. mjesto";
                 }
                 else
                 {
@@ -223,8 +223,8 @@ public class TeamStatsService : ITeamStatsService
                         .FirstOrDefault();
 
                     playoffRoundFinished = lastMatch != null
-                        ? $"Eliminated in {lastMatch.PlayOffRound}"
-                        : "Eliminated in early playoff round";
+                        ? $"{lastMatch.PlayOffRound.GetDisplayName()}"
+                        : "Ispali u ranijoj eliminacionoj fazi";
                 }
             }
 

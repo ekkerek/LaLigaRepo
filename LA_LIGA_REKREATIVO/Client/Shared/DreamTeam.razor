@@ -1,10 +1,12 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject NavigationManager Navigation
 @inject FileService _fileService;
+@inject IStringLocalizer<Shared.DreamTeam> Localizer
 
 <Spin Spinning=loading>
 
@@ -27,7 +29,7 @@
         <Card BodyStyle="padding: 0px;" Size="small">
             <TitleTemplate>
                 <span style="display: flex; justify-content: center; font-size: large;">
-                    Dream team
+                    @Localizer["DreamTeam1"]
                 </span>
             </TitleTemplate>
 
@@ -152,7 +154,7 @@
         <Card Style="width: 100%; margin-top: 1rem;" Size="small">
             <TitleTemplate>
                 <span style="display: flex; justify-content: center; font-size: large;">
-                    Subs
+                    @Localizer["Subs"]
                 </span>
             </TitleTemplate>
             <Body>

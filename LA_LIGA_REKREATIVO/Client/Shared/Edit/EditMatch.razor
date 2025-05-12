@@ -194,24 +194,58 @@
     private SummaryDto summary;
     private MatchDto Match = new();
 
+    // protected async override Task OnParametersSetAsync()
+    // {
+    //     var resultTeams = await Server.Teams.Get();
+    //     teams = resultTeams.ToList();
+    //     var resultPlayers = await Server.Players.Get();
+    //     allPlayers = resultPlayers.ToList();
+    //     var resultLeague = await Server.Leagues.Get();
+    //     leagues = resultLeague.ToList();
+    //     Match = await Server.Matches.Get(MatchId);
+    //     // _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
+    //     // _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
+    //     _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x?.Id).ToList();
+    //     _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x?.Id).ToList();
+    //     homeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
+    //     awayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
+    //     // selectedHomeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
+    //     // selectedAwayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
+    // }
+
     protected async override Task OnParametersSetAsync()
     {
-        var resultTeams = await Server.Teams.Get();
-        teams = resultTeams.ToList();
-        var resultPlayers = await Server.Players.Get();
-        allPlayers = resultPlayers.ToList();
-        var resultLeague = await Server.Leagues.Get();
-        leagues = resultLeague.ToList();
-        Match = await Server.Matches.Get(MatchId);
-        // _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
-        // _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
-        _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x?.Id).ToList();
-        _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x?.Id).ToList();
-        homeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
-        awayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
-        // selectedHomeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
-        // selectedAwayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
+        var teamsTask = Server.Teams.Get();
+        var playersTask = Server.Players.Get();
+        var leaguesTask = Server.Leagues.Get();
+        var matchTask = Server.Matches.Get(MatchId);
+
+        await Task.WhenAll(teamsTask, playersTask, leaguesTask, matchTask);
+
+        teams = teamsTask.Result.ToList();
+        allPlayers = playersTask.Result.ToList();
+        leagues = leaguesTask.Result.ToList();
+        Match = matchTask.Result;
+
+        _selectedValues1 = Match.Players
+            .Where(x => x.TeamId == Match.HomeTeam.Id)
+            .Select(x => x?.Id)
+            .ToList();
+
+        _selectedValues2 = Match.Players
+            .Where(x => x.TeamId == Match.AwayTeam.Id)
+            .Select(x => x?.Id)
+            .ToList();
+
+        homeTeamPlayers = allPlayers
+            .Where(x => x.TeamId == Match.HomeTeam.Id)
+            .ToHashSet();
+
+        awayTeamPlayers = allPlayers
+            .Where(x => x.TeamId == Match.AwayTeam.Id)
+            .ToHashSet();
     }
+
 
     public async Task HandleOk(MouseEventArgs e)
     {

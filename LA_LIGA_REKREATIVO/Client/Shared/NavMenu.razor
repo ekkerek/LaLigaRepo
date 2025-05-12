@@ -1,4 +1,7 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Shared.NavMenu> Localizer
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <img style="height: 42px; border-radius: 50%;" src="./channels4_profile-removebg-preview.png" />
         <a style="font-size: 1rem;" class="navbar-brand" href="">
@@ -14,12 +17,12 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span> @Localizer["Home"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="matches">
-                <span class="oi oi-calendar" aria-hidden="true"></span> Matches
+                <span class="oi oi-calendar" aria-hidden="true"></span> @Localizer["Matches"]
             </NavLink>
         </div>
         @*         <div class="nav-item px-3">
@@ -29,22 +32,22 @@
         </div> *@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="standings">
-                <span class="oi oi-graph" aria-hidden="true"></span> Standings
+                <span class="oi oi-graph" aria-hidden="true"></span> @Localizer["Standings"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="dreamTeam">
-                <span class="oi oi-star" aria-hidden="true"></span> Dream Team
+                <span class="oi oi-star" aria-hidden="true"></span> @Localizer["DreamTeam"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="stats">
-                <span class="oi oi-bar-chart" aria-hidden="true"></span> Stats
+                <span class="oi oi-bar-chart" aria-hidden="true"></span> @Localizer["Stats"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fantasy-rules">
-                <span class="oi oi-info" aria-hidden="true"></span> Fantasy rules
+                <span class="oi oi-info" aria-hidden="true"></span> @Localizer["FantasyRules"]
             </NavLink>
         </div>
     </nav>

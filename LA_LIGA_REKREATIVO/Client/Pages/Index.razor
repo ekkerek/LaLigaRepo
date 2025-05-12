@@ -3,11 +3,14 @@
 @using LA_LIGA_REKREATIVO.Client.Shared.Matches
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Services;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject FileService _fileService
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Pages.Index> Localizer
 
+@* <h3>@Localizer["Welcome"]</h3> *@
 
 <Spin Spinning=loading>
     <PageHeader Class="site-page-header" Title="La liga rekreativo" Subtitle="Sezona 5" Style="margin-bottom: 12px;" />
@@ -15,14 +18,14 @@
     <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
         <Row Gutter="12">
             <Col Span="12">
-            <Card>
-                <Statistic Title="Total matches" Value="@leagueStatistic.TotalMatches" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
+            <Card Size="small">
+                <Statistic Title=@Localizer["TotalMatches"] Value="@leagueStatistic.TotalMatches" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
                 </Statistic>
             </Card>
             </Col>
             <Col Span="12">
-            <Card>
-                <Statistic Title="Players number" Value="@leagueStatistic.NumberOfPlayers" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
+            <Card Size="small">
+                <Statistic Title=@Localizer["NumberOfPlayers"] Value="@leagueStatistic.NumberOfPlayers" ValueStyle="color: #cf1322; display: flex; justify-content: center;">
                 </Statistic>
             </Card>
             </Col>
@@ -32,14 +35,14 @@
     <div class="site-statistic-demo-card" style="margin-bottom: 12px;">
         <Row Gutter="12">
             <Col Span="12">
-            <Card>
-                <Statistic Title="Goals per match" Value="@leagueStatistic.GoalsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
+            <Card Size="small">
+                <Statistic Title=@Localizer["GoalsPerMatch"] Value="@leagueStatistic.GoalsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
                 </Statistic>
             </Card>
             </Col>
             <Col Span="12">
-            <Card>
-                <Statistic Title="Assists per match" Value="@leagueStatistic.AssistsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
+            <Card Size="small">
+                <Statistic Title=@Localizer["AssistsPerMatch"] Value="@leagueStatistic.AssistsPerMatch" Precision="2" ValueStyle="color: #3f8600; display: flex; justify-content: center;" Suffix="%">
                 </Statistic>
             </Card>
             </Col>
@@ -55,7 +58,7 @@
     </div>
 
 
-    <Card Size="small" Title="Top Goalscorer" Style="margin-bottom: 16px;">
+    <Card Size="small" Title=@Localizer["TopGoalscorers"] Style="margin-bottom: 16px;">
         <Body>
             <Table TItem="PlayerStatsDto"
                    DataSource="@stats"
@@ -77,7 +80,7 @@
         </Body>
     </Card>
 
-    <Card Size="small" Title="Top Assistents">
+    <Card Size="small" Title=@Localizer["TopAssistents"]>
         <Body>
             <Table TItem="PlayerStatsDto"
                    DataSource="@topAssistents"

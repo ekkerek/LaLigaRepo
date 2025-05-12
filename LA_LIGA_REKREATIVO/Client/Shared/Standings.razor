@@ -1,6 +1,9 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Server;
 @using LA_LIGA_REKREATIVO.Shared.Dto;
+@using Microsoft.Extensions.Localization
+
 @inject Server Server;
+@inject IStringLocalizer<Shared.Standings> Localizer
 
 <Table @ref="standingsTable"
        TItem="TeamStatsDto"
@@ -8,9 +11,9 @@
        Size="TableSize.Small"
        HidePagination>
     <PropertyColumn Title="#" Property="c=>c.OrderId"></PropertyColumn>
-    <PropertyColumn Title="Name" Property="c=>c.Team.Name" />
-    <PropertyColumn Align="ColumnAlign.Center" Title="MP" Property="c=>c.GamePlayed" />
-    <PropertyColumn Align="ColumnAlign.Center" Title="G" Property="c=>c.Goals">
+    <PropertyColumn Title=@Localizer["Name"] Property="c=>c.Team.Name" />
+    <PropertyColumn Align="ColumnAlign.Center" Title=@Localizer["MP"] Property="c=>c.GamePlayed" />
+    <PropertyColumn Align="ColumnAlign.Center" Title=@Localizer["G"] Property="c=>c.Goals">
         @context.Goals:@context.GoalsConceded
     </PropertyColumn>
     @if (League.IsOverallLeague)
@@ -19,7 +22,7 @@
     }
     else
     {
-        <PropertyColumn Align="ColumnAlign.Center" Title="PTS" Property="c=>c.TotalPoints" />
+        <PropertyColumn Align="ColumnAlign.Center" Title=@Localizer["PTS"] Property="c=>c.TotalPoints" />
     }
 
 </Table>

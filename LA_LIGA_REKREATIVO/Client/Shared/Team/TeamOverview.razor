@@ -1,9 +1,11 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Services;
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject FileService _fileService;
+@inject IStringLocalizer<Shared.Team.TeamOverview> Localizer
 
 
 <div>
@@ -18,30 +20,30 @@
             </TitleTemplate>
             <Body>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Total Matches:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["TotalMatches"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.GamePlayed</GridCol>
                 </GridRow>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Wins:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["Wins"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.Wins</GridCol>
                 </GridRow>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Draws:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["Draws"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.Draws</GridCol>
                 </GridRow>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Losts:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["Losts"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.Losts</GridCol>
                 </GridRow>
 
                 <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Goals:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["Goals"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.Goals</GridCol>
                 </GridRow>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Goals Conceded:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["GoalsConceded"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@teamStats.GoalsConceded</GridCol>
                 </GridRow>
             </Body>
@@ -53,26 +55,24 @@
                 <Table Responsive TItem="TeamStatsHistoryDto" DataSource="@teamStatsHistories" Size=@TableSize.Small HidePagination>
                     <TitleTemplate>
                         <span style="font-size: large;">
-                            History
+                            @Localizer["History"]
                         </span>
                     </TitleTemplate>
                     <ColumnDefinitions>
-                        <PropertyColumn Title="Year" Property="x=> x.Year" />
-                        <PropertyColumn Title="Total matches" Property="x=> x.GamePlayed" />
-                        <PropertyColumn Title="Wins" Property="x=> x.Wins" />
-                        <PropertyColumn Title="Draws" Property="x=> x.Draws" />
-                        <PropertyColumn Title="Losts" Property="x=> x.Losts" />
-                        <PropertyColumn Title="Goals" Property="x=> x.Goals" />
-                        <PropertyColumn Title="Goals Conceded" Property="x=> x.GoalsConceded" />
-                        <PropertyColumn Title="Final Standing" Property="x=> x.PlayoffRoundFinished" />
-
+                        <PropertyColumn Title=@Localizer["Year"] Property="x=> x.Year" />
+                        <PropertyColumn Title=@Localizer["TotalMatches"] Property="x=> x.GamePlayed" />
+                        <PropertyColumn Title=@Localizer["Wins"] Property="x=> x.Wins" />
+                        <PropertyColumn Title=@Localizer["Draws"] Property="x=> x.Draws" />
+                        <PropertyColumn Title=@Localizer["Losts"] Property="x=> x.Losts" />
+                        <PropertyColumn Title=@Localizer["Goals"] Property="x=> x.Goals" />
+                        <PropertyColumn Title=@Localizer["GoalsConceded"] Property="x=> x.GoalsConceded" />
+                        <PropertyColumn Title=@Localizer["FinalStanding"] Property="x=> x.PlayoffRoundFinished" />
                     </ColumnDefinitions>
                 </Table>
             </div>
         }
     }
 </div>
-
 
 @code {
     [Parameter] public int TeamId { get; set; }

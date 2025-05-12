@@ -4,9 +4,12 @@
 @using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Server;
 @using LA_LIGA_REKREATIVO.Client.Shared;
+@using Microsoft.Extensions.Localization
+
 @inject Server Server;
 @inject NavigationManager Navigation
 @inject FileService _fileService;
+@inject IStringLocalizer<Pages.MatchDetails> Localizer
 
 <div>
     <GridRow>
@@ -20,8 +23,8 @@
             </div>
         </GridCol>
         <GridCol Style="font-weight:500; display: grid; justify-content: center" Span="8">
-            <div style="display:flex; justify-content: center;align-items: flex-start; font-size: x-small;position: relative; bottom: 5px;">
-                @Match.GameTime.ToShortDateString() @Match.GameTime.ToShortTimeString()
+            <div style="display:flex; justify-content: center;align-items: flex-start; font-size: small;position: relative; bottom: 5px;">
+                @Match.GameTime.ToString("dd. MMMM yyyy") @Match.GameTime.ToShortTimeString()
             </div>
             <div style="display:flex; justify-content: center; font-size:xx-large; position: relative; bottom: 10px;">
                 @Match.HomeTeamGoals - @Match.AwayTeamGoals
@@ -40,13 +43,13 @@
     <GridRow>
         <Tabs Style="width: 100%" DefaultActiveKey="1">
             <TabPane Key="1">
-                <TabTemplate>Summary</TabTemplate>
+                <TabTemplate> @Localizer["Summary"]</TabTemplate>
                 <ChildContent>
                     <Summaries Match="@Match"></Summaries>
                 </ChildContent>
             </TabPane>
             <TabPane Key="2">
-                <TabTemplate>Players</TabTemplate>
+                <TabTemplate>@Localizer["Players"]</TabTemplate>
                 <ChildContent>
                     <Lineups Match="@Match"></Lineups>
                 </ChildContent>
@@ -79,7 +82,7 @@
     protected async override Task OnParametersSetAsync()
     {
         Match = await Server.Matches.Get(Id);
-        title = Match.League.Name.ToString() + " - " + (Match.IsPlayOff ? Match.PlayOffRound.ToString() : " round " + Match.GameRound.ToString());
+        title = Match.League.Name.ToString() + " - " + (Match.IsPlayOff ? Match.PlayOffRound.ToString() : Match.GameRound.ToString() + ". " + Localizer["Round"]);
     }
 
     private void GoToTeamDetails(int teamId)
@@ -89,6 +92,6 @@
 
     private string GetTabName()
     {
-        return Match.IsPlayOff ? "Draw" : "Standings";
+        return Match.IsPlayOff ? Localizer["Draw"] : Localizer["Standings"];
     }
 }

@@ -1,9 +1,11 @@
 ﻿@using LA_LIGA_REKREATIVO.Shared.Dto;
 @using LA_LIGA_REKREATIVO.Client.Services;
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using Microsoft.Extensions.Localization
 
 @inject Server Server
 @inject NavigationManager Navigation
+@inject IStringLocalizer<Shared.Matches.MatchesByGameTime> Localizer
 
 <Spin Spinning=loading>
     <Select TItem="LeagueDto"
@@ -13,7 +15,7 @@
             LabelName="@nameof(LeagueDto.Name)"
             ValueName="@nameof(LeagueDto.Id)"
             Style="width: 100%; margin-bottom: 12px;"
-            Placeholder="Select a league"
+            Placeholder=@Localizer["SelectLeague"]
             IgnoreItemChanges="false"
             OnSelectedItemChanged="OnSelectedLeague"
             AllowClear>

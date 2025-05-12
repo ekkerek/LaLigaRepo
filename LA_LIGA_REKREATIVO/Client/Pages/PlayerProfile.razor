@@ -1,11 +1,13 @@
 ﻿@page "/playerProfile/{Id:int}"
 @using LA_LIGA_REKREATIVO.Client.Shared.PlayerProfile
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Pages.PlayerProfile> Localizer
 
 <Tabs TabBarStyle="background-color: white;" Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated Centered>
-    <TabPane Tab="Overview" Key="1">
+    <TabPane Tab=@Localizer["Overview"] Key="1">
         <PlayerOverview Id="Id"></PlayerOverview>
     </TabPane>
-    <TabPane Tab="Matches" Key="2">
+    <TabPane Tab=@Localizer["Matches"] Key="2">
         <PlayerMatches Id="Id"></PlayerMatches>
     </TabPane>
 </Tabs>

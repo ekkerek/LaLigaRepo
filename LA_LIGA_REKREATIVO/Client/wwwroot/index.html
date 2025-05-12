@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sr-Latn">
 
 <head>
     <meta charset="utf-8" />
@@ -32,6 +32,13 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/AntDesign/js/ant-design-blazor.js"></script>
     <script src="js/cookieHelper.js"></script>
+
+    <script>
+        window.blazorCulture = {
+            get: () => window.localStorage.getItem('blazorCulture'),
+            set: (value) => window.localStorage.setItem('blazorCulture', 'sr-Latn')
+        };
+    </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KLB6LSEJFJ"></script>

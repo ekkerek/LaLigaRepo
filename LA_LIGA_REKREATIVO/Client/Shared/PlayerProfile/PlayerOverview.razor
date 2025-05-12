@@ -1,8 +1,11 @@
 ﻿@using LA_LIGA_REKREATIVO.Client.Services
 @using LA_LIGA_REKREATIVO.Shared.Dto
 @using LA_LIGA_REKREATIVO.Client.Server;
+@using Microsoft.Extensions.Localization
+
 @inject Server Server
 @inject FileService _fileService;
+@inject IStringLocalizer<Shared.PlayerProfile.PlayerOverview> Localizer
 
 @if (playerStats.Player is not null)
 {
@@ -25,7 +28,7 @@
                 <GridCol Span="8">
                     <GridRow Style="display: flex; justify-content: center;">
                         <span style="font-size: smaller">
-                            Fantasy points
+                            @Localizer["FantasyPoints"]
                         </span>
                     </GridRow>
                     <GridRow Style="display: flex; justify-content: center;">
@@ -37,7 +40,7 @@
                 <GridCol Span="8">
                     <GridRow Style="display: flex; justify-content: center;">
                         <span style="font-size: smaller">
-                            Goals
+                            @Localizer["Goals"]
                         </span>
                     </GridRow>
                     <GridRow Style="display: flex; justify-content: center;">
@@ -49,7 +52,7 @@
                 <GridCol Span="8">
                     <GridRow Style="display: flex; justify-content: center;">
                         <span style="font-size: smaller">
-                            Assists
+                            @Localizer["Assists"]
                         </span>
                     </GridRow>
                     <GridRow Style="display: flex; justify-content: center;">
@@ -63,56 +66,56 @@
             <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Total Matches:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["TotalMatches"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.TotalMatches</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Wins:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["Wins"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.Wins</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Draws:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["Draws"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.Draws</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Losts:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["Losts"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.Losts</GridCol>
             </GridRow>
 
             <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Goals Per Match:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["GoalsPerMatch"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.GoalsPerMatch.ToString("F1")</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">WinPerMatch:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["WinPerMatch"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.WinPerMatch.ToString("F1") %</GridCol>
             </GridRow>
 
             <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Yellow Cards:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["YellowCards"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.YellowCards</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Red Cards:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["RedCards"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.RedCards</GridCol>
             </GridRow>
 
             <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Own goals:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["OwnGoals"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.OwnGoals</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Missed Penalty:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["MissedPenalty"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.MissedPenalty</GridCol>
             </GridRow>
             <GridRow>
-                <GridCol Span="16" Class="content-centar">Missed From 10m:</GridCol>
+                <GridCol Span="16" Class="content-centar">@Localizer["MissedFrom10m"]:</GridCol>
                 <GridCol Span="8" Style="font-size: medium">@playerStats.Missed10meter</GridCol>
             </GridRow>
 
@@ -121,16 +124,16 @@
                 <Divider Style="margin-top: 12px;margin-bottom: 12px;" />
 
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Clean Sheets:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["CleanSheets"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@playerStats.CleanSheetGK</GridCol>
                 </GridRow>
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Saved Penalties:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["SavedPenalties"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@playerStats.SavedFromPenaltyGK</GridCol>
                 </GridRow>
 
                 <GridRow>
-                    <GridCol Span="16" Class="content-centar">Saved From 10 meter:</GridCol>
+                    <GridCol Span="16" Class="content-centar">@Localizer["SavedFrom10meter"]:</GridCol>
                     <GridCol Span="8" Style="font-size: medium">@playerStats.SavedFrom10meterGK</GridCol>
                 </GridRow>
             }
@@ -143,17 +146,19 @@
             <Table Responsive TItem="PlayerStatsHistoryDto" DataSource="@playerhistory" Size=@TableSize.Small HidePagination>
                 <TitleTemplate>
                     <span style="font-size: large;">
-                        History
+                        @Localizer["History"]
                     </span>
                 </TitleTemplate>
                 <ColumnDefinitions>
-                    <PropertyColumn Title="Year" Property="x=> x.Year" />
-                    <PropertyColumn Title="Team" Property="x=> x.Team.Name" />
-                    <PropertyColumn Title="Fantasy Points" Property="x=> x.TotalPoints" />
-                    <PropertyColumn Title="Golas" Property="x=> x.Goals" />
-                    <PropertyColumn Title="Assists" Property="x=> x.Assists" />
-                    <PropertyColumn Title="Total Matches" Property="x=> x.TotalMatches" />
-                    <PropertyColumn Title="Goals Per Match" Property="x=> x.GoalsPerMatch" />
+                    <PropertyColumn Title=@Localizer["Year"] Property="x=> x.Year" />
+                    <PropertyColumn Title=@Localizer["Team"] Property="x=> x.Team.Name" />
+                    <PropertyColumn Title=@Localizer["FantasyPoints"] Property="x=> x.TotalPoints" />
+                    <PropertyColumn Title=@Localizer["Goals"] Property="x=> x.Goals" />
+                    <PropertyColumn Title=@Localizer["Assists"] Property="x=> x.Assists" />
+                    <PropertyColumn Title=@Localizer["TotalMatches"] Property="x=> x.TotalMatches" />
+                    <PropertyColumn Title=@Localizer["GoalsPerMatch"] Property="c=>c.GoalsPerMatch">
+                        @context.GoalsPerMatch.ToString("F1")
+                    </PropertyColumn>
                 </ColumnDefinitions>
             </Table>
         </div>

@@ -1,16 +1,18 @@
 ﻿@page "/team/{TeamId:int}"
 @using LA_LIGA_REKREATIVO.Client.Shared.Team
+@using Microsoft.Extensions.Localization
 
+@inject IStringLocalizer<Pages.Team> Localizer
 
 
 <Tabs TabBarStyle="background-color: white;" Size="TabSize.Large" @bind-ActiveKey="@activeKey" Animated Centered>
-    <TabPane Tab="Overview" Key="1">
+    <TabPane Tab=@Localizer["Overview"] Key="1">
         <TeamOverview TeamId="TeamId"></TeamOverview>
     </TabPane>
-    <TabPane Tab="Players" Key="2">
+    <TabPane Tab=@Localizer["Players"] Key="2">
         <TeamPlayers TeamId="TeamId"></TeamPlayers>
     </TabPane>
-    <TabPane Tab="Results" Key="3">
+    <TabPane Tab=@Localizer["Results"] Key="3">
         <TeamMatcheass TeamId="TeamId"></TeamMatcheass>
     </TabPane>
 </Tabs>
