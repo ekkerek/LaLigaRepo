@@ -89,7 +89,7 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                         LastName = player.LastName,
                         Picture = player.Picture
                     },
-                    TotalPoints = CalculateTotalPoints(player.Id, matches),
+                    TotalPoints = CalculateTotalPoints(player.Id, matches) + 2,
                     Team = _mapper.Map<TeamDto>(teams.FirstOrDefault(x => x.Id == player.Team.Id))
                 })
                 .OrderByDescending(p => p.TotalPoints)
