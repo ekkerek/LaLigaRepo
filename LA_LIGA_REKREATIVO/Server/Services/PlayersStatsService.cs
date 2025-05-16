@@ -38,6 +38,103 @@ namespace LA_LIGA_REKREATIVO.Server.Services
             return playersStats;
         }
 
+        public List<PlayerStatsDto> GetDreamTeamByLeagueRound(int leagueId, int round, PlayOffRound? playOffRound = null)
+        {
+            List<Match>? matches = null;
+            // Get all matches for the specified league and round
+            if (playOffRound is null)
+            {
+                matches = _context.Matches.Include(x => x.League)
+                                          .Include(x => x.Summaries)
+                                              .ThenInclude(s => s.Player)
+                                                .ThenInclude(x => x.Team)
+                                          .Where(x => x.League.Id == leagueId && x.GameRound == round)
+                                          .ToList();
+            }
+            else
+            {
+                matches = _context.Matches.Include(x => x.League)
+                                          .Include(x => x.Summaries)
+                                              .ThenInclude(s => s.Player)
+                                                .ThenInclude(x => x.Team)
+                                          .Where(x => x.League.Id == leagueId && x.PlayOffRound == playOffRound)
+                                          .ToList();
+            }
+
+            var teams = _context.Teams;
+
+            // Get all field players and GKs
+            var summaries = matches.SelectMany(m => m.Summaries);
+
+            var players = summaries
+                .Select(s => s.Player)
+                .Where(x => !x.IsGk)
+                .Distinct()
+                .ToList();
+
+            var goalkeepers = summaries
+                .Select(s => s.Player)
+                .Where(x => x.IsGk)
+                .Distinct()
+                .ToList();
+
+            // Calculate total points for field players
+            var allFieldStats = players
+                .Select(player => new PlayerStatsDto
+                {
+                    Player = new PlayerDto
+                    {
+                        Id = player.Id,
+                        FirstName = player.FirstName,
+                        LastName = player.LastName,
+                        Picture = player.Picture
+                    },
+                    TotalPoints = CalculateTotalPoints(player.Id, matches),
+                    Team = _mapper.Map<TeamDto>(teams.FirstOrDefault(x => x.Id == player.Team.Id))
+                })
+                .OrderByDescending(p => p.TotalPoints)
+                .Take(8)
+                .ToList();
+
+            // Calculate total points for GKs
+            var allGkStats = goalkeepers
+                .Select(gk => new PlayerStatsDto
+                {
+                    Player = new PlayerDto
+                    {
+                        Id = gk.Id,
+                        FirstName = gk.FirstName,
+                        LastName = gk.LastName,
+                        IsGk = true,
+                        Picture = gk.Picture
+                    },
+                    TotalPoints = CalculateTotalPoints(gk.Id, matches),
+                    Team = _mapper.Map<TeamDto>(teams.FirstOrDefault(x => x.Id == gk.Team.Id))
+                })
+                .OrderByDescending(p => p.TotalPoints)
+                .Take(2)
+                .ToList();
+
+            // Split into groups
+            var first4Players = allFieldStats.Take(4);
+            var next4Players = allFieldStats.Skip(4).Take(4);
+            var firstGk = allGkStats.Take(1);
+            var secondGk = allGkStats.Skip(1).Take(1);
+
+            // Final order: 4 players + best GK + 4 players + second-best GK
+            var dreamTeam = new List<PlayerStatsDto>();
+            dreamTeam.AddRange(first4Players);
+            dreamTeam.AddRange(firstGk);
+            dreamTeam.AddRange(next4Players);
+            dreamTeam.AddRange(secondGk);
+
+            return dreamTeam;
+        }
+
+
+
+
+
         public List<PlayerStatsDto> GetDreamTeamOverall()
         {
             var playersStats = GetPlayersStatsOverall().Where(x => !x.Player.IsGk).OrderByDescending(x => x.TotalPoints).Take(4).ToList();

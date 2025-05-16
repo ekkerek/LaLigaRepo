@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ByRound" xml:space="preserve">
+    <value>By round</value>
+  </data>
+  <data name="BySeasson" xml:space="preserve">
+    <value>By seasson</value>
+  </data>
   <data name="DreamTeam" xml:space="preserve">
     <value>Dream Team</value>
+  </data>
+  <data name="SelectLeague" xml:space="preserve">
+    <value>Select league</value>
+  </data>
+  <data name="SelectRound" xml:space="preserve">
+    <value>Select round</value>
   </data>
 </root>

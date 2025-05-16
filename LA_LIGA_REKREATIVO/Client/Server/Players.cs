@@ -129,6 +129,17 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             return Enumerable.Empty<PlayerStatsDto>();
         }
 
+        public async Task<IEnumerable<PlayerStatsDto>> GetDreamTeamByLeagueRound(int leagueId, int round)
+        {
+            var result = await _httpClient.GetAsync($"api/player/getDreamTeamByLeagueRound/{leagueId}/{round}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<PlayerStatsDto>>(json);
+            }
+            return Enumerable.Empty<PlayerStatsDto>();
+        }
+
         public async Task<IEnumerable<PlayerStatsDto>> GetDreamTeamOverall()
         {
             var result = await _httpClient.GetAsync($"api/player/getDreamTeamOverall");

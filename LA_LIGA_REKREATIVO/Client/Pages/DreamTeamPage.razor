@@ -1,8 +1,121 @@
 ﻿@page "/dreamTeam"
+@using LA_LIGA_REKREATIVO.Shared.Dto
 @using Microsoft.Extensions.Localization
+@using LA_LIGA_REKREATIVO.Client.Server;
+
+@inject Server Server
 @inject IStringLocalizer<Pages.DreamTeamPage> Localizer
 
-<DreamTeam></DreamTeam>
-@code {
+<Spin Spinning=loading>
+    <div style="display: flex;border: 1px solid lightgray;padding: 3px;margin-bottom: 6px;border-radius: 5px;">
+        <span style="width: 40%;display: flex; align-items: center;">@Localizer["SelectLeague"]</span>
+        <Select TItem="LeagueDto"
+                TItemValue="int?"
+                DataSource="@leagues"
+                DefaultValue="@defaultLeagueId"
+                LabelName="@nameof(LeagueDto.Name)"
+                ValueName="@nameof(PlayerDto.Id)"
+                Style="width: 60%;align-items: center;"
+                Placeholder="Select a league"
+                IgnoreItemChanges="false"
+                OnSelectedItemChanged="OnSelectedLeague"
+                AllowClear>
+        </Select>
+    </div>
 
+    @if (activeKey != "1")
+    {
+        <div style="display: flex;border: 1px solid lightgray;padding: 3px;margin-bottom: 6px;border-radius: 5px;">
+            <span style="width: 40%;display: flex; align-items: center;">@Localizer["SelectRound"]</span>
+            <SimpleSelect Style="width: 60%;align-items: center;" Value="@selectedRoundStr" DefaultValue="Select Round" OnSelectedItemChanged="OnRoundSelected">
+                <SelectOptions>
+                    @foreach (var round in leagueRounds)
+                    {
+                        <SimpleSelectOption Value="@round.ToString()" Label="@round.ToString()" />
+                    }
+                </SelectOptions>
+            </SimpleSelect>
+        </div>
+    }
+
+    <Tabs TabBarStyle="background-color: white;" Size="TabSize.Small" @bind-ActiveKey="@activeKey" Animated Centered>
+        <TabPane Tab=@Localizer["BySeasson"] Key="1">
+            <DreamTeam Stats="stats" StatsSub="statsSub" defaultLeagueId="defaultLeagueId" Leagues="leagues"></DreamTeam>
+        </TabPane>
+        <TabPane Tab=@Localizer["ByRound"] Key="2">
+            <DreamTeam Stats="statsByRound" StatsSub="statsSubByRound" defaultLeagueId="defaultLeagueId" Leagues="leagues" />
+        </TabPane>
+    </Tabs>
+</Spin>
+@code {
+    private List<PlayerStatsDto> stats = new();
+    private List<PlayerStatsDto> statsSub = new();
+    private List<LeagueDto> leagues = new();
+    private bool loading;
+    private int defaultLeagueId;
+    string activeKey { get; set; } = "1";
+
+
+
+    private List<PlayerStatsDto> statsByRound = new();
+    private List<PlayerStatsDto> statsSubByRound = new();
+
+    private int selectedRound = 1;
+    private string selectedRoundStr = "1";
+    private IEnumerable<int> leagueRounds = Enumerable.Empty<int>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        loading = true;
+        var result = await Server.Leagues.Get();
+        leagues = result.ToList();
+        if (leagues.Any())
+        {
+            defaultLeagueId = leagues.FirstOrDefault().Id;
+            leagueRounds = await Server.Leagues.GetLeagueRounds(defaultLeagueId);
+            var resStats = await Server.Players.GetDreamTeamByLeague(defaultLeagueId);
+            stats = resStats.ToList();
+            var resStatsSub = await Server.Players.Get2ndDreamTeamByLeague(defaultLeagueId);
+            statsSub = resStatsSub.ToList();
+            var resStatsRound = await Server.Players.GetDreamTeamByLeagueRound(defaultLeagueId, selectedRound);
+            statsByRound = resStatsRound.Skip(0).Take(5).ToList();
+            statsSubByRound = resStatsRound.Skip(5).Take(5).ToList();
+        }
+        loading = false;
+    }
+
+    private async Task OnSelectedLeague(LeagueDto league)
+    {
+        if (league is null) return;
+
+        loading = true;
+        defaultLeagueId = league.Id;
+        leagueRounds = await Server.Leagues.GetLeagueRounds(defaultLeagueId);
+        var res = await Server.Players.GetDreamTeamByLeague(league.Id);
+        stats = res.ToList();
+        var resSub = await Server.Players.Get2ndDreamTeamByLeague(league.Id);
+        statsSub = resSub.ToList();
+        var resStats = await Server.Players.GetDreamTeamByLeagueRound(league.Id, selectedRound);
+        statsByRound = resStats.Skip(0).Take(5).ToList();
+        statsSubByRound = resStats.Skip(5).Take(5).ToList();
+
+        StateHasChanged();
+        loading = false;
+    }
+
+    private async Task OnRoundSelected(string roundStr)
+    {
+        if (int.TryParse(roundStr, out var round))
+        {
+            selectedRound = round;
+            selectedRoundStr = roundStr;
+            loading = true;
+
+            var resStats = await Server.Players.GetDreamTeamByLeagueRound(defaultLeagueId, selectedRound);
+            statsByRound = resStats.Skip(0).Take(5).ToList();
+            statsSubByRound = resStats.Skip(5).Take(5).ToList();
+
+            loading = false;
+        }
+    }
 }

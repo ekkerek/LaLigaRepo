@@ -20,5 +20,6 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         IEnumerable<PlayerStatsDto> GetTopGoalscorer();
         IEnumerable<PlayerStatsDto> GetTopAssitent();
         List<PlayerStatsHistoryDto> GetPlayerStatsForNonActiveLeagues(int playerId);
+        List<PlayerStatsDto> GetDreamTeamByLeagueRound(int leagueId, int round, PlayOffRound? playOffRound = null);
     }
 }

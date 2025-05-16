@@ -61,11 +61,47 @@ namespace LA_LIGA_REKREATIVO.Client.Resources.Pages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to By round.
+        /// </summary>
+        public static string ByRound {
+            get {
+                return ResourceManager.GetString("ByRound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By seasson.
+        /// </summary>
+        public static string BySeasson {
+            get {
+                return ResourceManager.GetString("BySeasson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dream Team.
         /// </summary>
         public static string DreamTeam {
             get {
                 return ResourceManager.GetString("DreamTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select league.
+        /// </summary>
+        public static string SelectLeague {
+            get {
+                return ResourceManager.GetString("SelectLeague", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select round.
+        /// </summary>
+        public static string SelectRound {
+            get {
+                return ResourceManager.GetString("SelectRound", resourceCulture);
             }
         }
     }

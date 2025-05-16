@@ -143,6 +143,21 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return cacheData;
         }
 
+        [HttpGet("getDreamTeamByLeagueRound/{leagueId}/{round}")]
+        public IEnumerable<PlayerStatsDto> GetDreamTeamByLeagueRound(int leagueId, int round)
+        {
+            var cacheData = _memoryCache.Get<IEnumerable<PlayerStatsDto>>($"getDreamTeamRound-{leagueId}-{round}");
+            if (cacheData != null)
+            {
+                return cacheData;
+            }
+
+            var expirationTime = DateTimeOffset.Now.AddDays(7);
+            cacheData = _playerStatsService.GetDreamTeamByLeagueRound(leagueId, round); //await _dbContext.Products.ToListAsync();
+            _memoryCache.Set($"getDreamTeamRound-{leagueId}-{round}", cacheData, expirationTime);
+            return cacheData;
+        }
+
         [HttpGet("get2ndDreamTeam/{leagueId}")]
         public IEnumerable<PlayerStatsDto> Get2ndDreamTeam(int leagueId)
         {

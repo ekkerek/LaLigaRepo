@@ -95,5 +95,16 @@ namespace LA_LIGA_REKREATIVO.Client.Server
             }
             return Enumerable.Empty<LeagueDto>();
         }
+
+        public async Task<IEnumerable<int>> GetLeagueRounds(int leagueId)
+        {
+            var result = await _httpClient.GetAsync($"api/league/getLeagueRounds/{leagueId}");
+            if (result.IsSuccessStatusCode)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<int>>(json);
+            }
+            return Enumerable.Empty<int>();
+        }
     }
 }

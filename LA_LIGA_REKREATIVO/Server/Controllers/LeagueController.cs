@@ -53,6 +53,17 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
             return _mapper.Map<List<LeagueDto>>(leagues).Where(x => x.IsActive && !x.IsPlayOff).OrderByDescending(x => x?.IsOverallLeague).ThenByDescending(x => x.Id);
         }
 
+        [HttpGet("getLeagueRounds/{leagueId}")]
+        public IEnumerable<int> GetLeagueRounds(int leagueId)
+        {
+            return _context.Matches.Include(x => x.League)
+                                                .Where(x => x.League.Id == leagueId)
+                                                .Select(m => m.GameRound)
+                                                .Distinct()
+                                                .OrderBy(r => r)
+                                                .ToList();
+        }
+
         // POST api/<LeagueController>
         [HttpPost]
         [Authorize]
