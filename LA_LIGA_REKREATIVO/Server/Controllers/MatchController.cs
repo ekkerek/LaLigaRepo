@@ -533,7 +533,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                                                       x.IsOfficialResult))
                                           .ToList();
 
-            leagueStatisticDto.NumberOfPlayers = _context.Players.Count();
+            leagueStatisticDto.NumberOfPlayers = _context.Players.Include(x=> x.Team).ThenInclude(x=> x.Leagues).Where(x=> x.Team.Leagues.FirstOrDefault().IsActive).Count();
 
             leagueStatisticDto.TotalGoals = matches.Sum(x => x.Summaries.Count(x => x.Type == SummaryType.Goal));
             leagueStatisticDto.TotalAssists = matches.Sum(x => x.Summaries.Count(x => x.Type == SummaryType.Assist));
