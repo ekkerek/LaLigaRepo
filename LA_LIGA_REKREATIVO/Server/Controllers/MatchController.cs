@@ -587,15 +587,6 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 .Select(x => x.Id)
                 .ToList();
 
-            var leagueRounds = _context.Matches
-                .Where(x => x.League.IsActive)
-                .GroupBy(x => x.Id)
-                .Select(g => new
-                {
-                    LeagueId = g.Key,
-                    Rounds = g.Select(x => x.GameRound).Distinct().ToList()
-                })
-                .ToList();
 
             foreach (var leagueId in leagueIds)
             {
@@ -603,17 +594,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                 _memoryCache.Remove($"getDreamTeam-{leagueId}");
                 _memoryCache.Remove($"get2ndDreamTeam-{leagueId}");
                 _memoryCache.Remove($"getByGameTime-{leagueId}");
-
-                var rounds = leagueRounds
-                    .FirstOrDefault(x => x.LeagueId == leagueId)?
-                    .Rounds ?? new List<int>();
-
-                foreach (var round in rounds)
-                {
-                    _memoryCache.Remove($"getDreamTeamRound-{leagueId}-{round}");
-                }
             }
         }
-
     }
 }
