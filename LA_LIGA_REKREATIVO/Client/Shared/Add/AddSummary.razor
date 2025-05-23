@@ -10,15 +10,15 @@
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="@addSummaryForm">
+          @ref="@addSummaryForm">
         <GridRow>
             <GridCol Span="12">Player name:</GridCol>
             <GridCol Span="12">
-                <SimpleSelect DefaultValue="@Players.FirstOrDefault().Id.ToString()" Style="width:100%;" OnSelectedItemChanged="setSummaryPlayer">
+                <SimpleSelect EnableSearch DefaultValue="@Players.FirstOrDefault().Id.ToString()" Style="width:100%;" OnSelectedItemChanged="setSummaryPlayer">
                     <SelectOptions>
                         @foreach (var player in Players)
                         {
-                                <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.GetFullName().ToString()"></SimpleSelectOption>
+                            <SimpleSelectOption Value="@player.Id.ToString()" Label="@player.GetFullName().ToString()"></SimpleSelectOption>
                         }
                     </SelectOptions>
                 </SimpleSelect>

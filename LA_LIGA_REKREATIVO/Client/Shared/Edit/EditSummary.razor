@@ -12,11 +12,11 @@
           OnFinishFailed="OnFinishFailed"
           LabelColSpan="8"
           WrapperColSpan="16"
-    @ref="@editSummaryForm">
+          @ref="@editSummaryForm">
         <GridRow>
-            <GridCol Span="12">Config name</GridCol>
+            <GridCol Span="12">Player name:</GridCol>
             <GridCol Span="12">
-                <SimpleSelect DefaultValue="@Summary.Player.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="setSummaryPlayer">
+                <SimpleSelect EnableSearch DefaultValue="@Summary.Player.Id.ToString()" Style="width:120px;" OnSelectedItemChanged="setSummaryPlayer">
                     <SelectOptions>
                         @foreach (var player in Players)
                         {
@@ -27,11 +27,11 @@
             </GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12">Time:</GridCol>
             <GridCol Span="12"><Input Type="number" @bind-Value="@summary.Time" /></GridCol>
         </GridRow>
         <GridRow>
-            <GridCol Span="12">Overwrite selected config:</GridCol>
+            <GridCol Span="12">Action:</GridCol>
             <GridCol Span="12">
                 <EnumSelect TEnum="SummaryType" @bind-Value="@summary.Type" OnSelectedItemChanged="setSummaryType"></EnumSelect>
             </GridCol>
@@ -40,7 +40,7 @@
 </Modal>
 
 @code {
-    [Parameter] public List<PlayerDto> Players { get; set; }
+    [Parameter] public HashSet<PlayerDto> Players { get; set; }
     [Parameter] public EventCallback<SummaryDto> OnChange { get; set; }
     [Parameter] public EventCallback CloseModal { get; set; }
     [Parameter] public SummaryDto Summary { get; set; }
@@ -53,7 +53,7 @@
     {
         summary = Summary;
         base.OnInitialized();
-     }
+    }
 
     public async Task HandleOk(MouseEventArgs e)
     {

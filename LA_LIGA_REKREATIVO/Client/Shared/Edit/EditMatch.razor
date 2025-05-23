@@ -10,7 +10,7 @@
 
 @if (showEditSummaryModal)
 {
-    <EditSummary Summary="@summary" OnChange="EditExistingSummary" CloseModal="CloseEditSummaryModal" Players="@allPlayers"></EditSummary>
+    <EditSummary Summary="@summary" OnChange="EditExistingSummary" CloseModal="CloseEditSummaryModal" Players="@matchPlayers"></EditSummary>
 }
 
 <Modal Title="Edit match"
@@ -194,25 +194,6 @@
     private SummaryDto summary;
     private MatchDto Match = new();
 
-    // protected async override Task OnParametersSetAsync()
-    // {
-    //     var resultTeams = await Server.Teams.Get();
-    //     teams = resultTeams.ToList();
-    //     var resultPlayers = await Server.Players.Get();
-    //     allPlayers = resultPlayers.ToList();
-    //     var resultLeague = await Server.Leagues.Get();
-    //     leagues = resultLeague.ToList();
-    //     Match = await Server.Matches.Get(MatchId);
-    //     // _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x.Id.ToString()).ToList();
-    //     // _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x.Id.ToString()).ToList();
-    //     _selectedValues1 = Match.Players.Where(x => x.TeamId == Match.HomeTeam.Id).Select(x => x?.Id).ToList();
-    //     _selectedValues2 = Match.Players.Where(x => x.TeamId == Match.AwayTeam.Id).Select(x => x?.Id).ToList();
-    //     homeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
-    //     awayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
-    //     // selectedHomeTeamPlayers = allPlayers.Where(x => x.TeamId == Match.HomeTeam.Id).ToHashSet();
-    //     // selectedAwayTeamPlayers = allPlayers.Where(x => x.TeamId == Match.AwayTeam.Id).ToHashSet();
-    // }
-
     protected async override Task OnParametersSetAsync()
     {
         var teamsTask = Server.Teams.Get();
@@ -316,6 +297,8 @@
 
     public void OpenEditSummaryModal(SummaryDto value)
     {
+        matchPlayers = new HashSet<PlayerDto>(selectedHomeTeamPlayers);
+        matchPlayers.UnionWith(selectedAwayTeamPlayers);
         summary = value;
         showEditSummaryModal = true;
     }

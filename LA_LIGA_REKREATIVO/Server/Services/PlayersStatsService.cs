@@ -360,17 +360,14 @@ namespace LA_LIGA_REKREATIVO.Server.Services
         private TeamDto GetMostFrequentTeamId(Player player, int year)
         {
             if (player.Matches.Count < 2)
-            {
                 return null;
-            }
+
             var teamId = player.Matches.Where(x => x.League.Year == year)
-                .Select(m => m.HomeTeamId == player.Team.Id || m.AwayTeamId == player.Team.Id
-                             ? player.Team.Id
-                             : m.HomeTeamId == player.Id ? m.HomeTeamId : m.AwayTeamId)
-                .GroupBy(id => id)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .FirstOrDefault();
+                                       .SelectMany(m => new[] { m.HomeTeamId, m.AwayTeamId })
+                                       .GroupBy(id => id)
+                                       .OrderByDescending(g => g.Count())
+                                       .Select(g => g.Key)
+                                       .FirstOrDefault();
 
             return _mapper.Map<TeamDto>(_context.Teams.FirstOrDefault(x => x.Id == teamId));
         }

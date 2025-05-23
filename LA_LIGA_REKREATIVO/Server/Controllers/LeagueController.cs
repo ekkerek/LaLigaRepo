@@ -60,7 +60,7 @@ namespace LA_LIGA_REKREATIVO.Server.Controllers
                                                 .Where(x => x.League.Id == leagueId)
                                                 .Select(m => m.GameRound)
                                                 .Distinct()
-                                                .OrderBy(r => r)
+                                                .OrderByDescending(r => r)
                                                 .ToList();
         }
 
