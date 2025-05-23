@@ -317,10 +317,20 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                 .Include(x => x.Matches.Where(m => !m.League.IsActive))
                     .ThenInclude(m => m.Summaries)
                         .ThenInclude(s => s.Player)
+                            .ThenInclude(t => t.Team)
                 .FirstOrDefault(x => x.Id == playerId);
 
             if (player == null || !player.Matches.Any())
                 return new List<PlayerStatsHistoryDto>();
+
+            var teamId = player.Matches
+                .Select(m => m.HomeTeamId == player.Team.Id || m.AwayTeamId == player.Team.Id
+                             ? player.Team.Id
+                             : m.HomeTeamId == player.Id ? m.HomeTeamId : m.AwayTeamId)
+                .GroupBy(id => id)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
 
             return player.Matches
                 .GroupBy(m => m.League.Year)
@@ -339,12 +349,30 @@ namespace LA_LIGA_REKREATIVO.Server.Services
                         GoalsPerMatch = g.Any() ? (double)CalculatePlayerGoals(player) / g.Count() : 0,
                         WinPerMatch = g.Any() ? ((double)CalculatePlayerWins(player) / g.Count()) * 100.0 : 0,
                         Player = _mapper.Map<PlayerDto>(player),
-                        Team = _mapper.Map<TeamDto>(player.Team),
+                        Team = GetMostFrequentTeamId(player, g.Key),
                     };
 
                     return stats;
                 })
                 .ToList();
+        }
+
+        private TeamDto GetMostFrequentTeamId(Player player, int year)
+        {
+            if (player.Matches.Count < 2)
+            {
+                return null;
+            }
+            var teamId = player.Matches.Where(x => x.League.Year == year)
+                .Select(m => m.HomeTeamId == player.Team.Id || m.AwayTeamId == player.Team.Id
+                             ? player.Team.Id
+                             : m.HomeTeamId == player.Id ? m.HomeTeamId : m.AwayTeamId)
+                .GroupBy(id => id)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.Key)
+                .FirstOrDefault();
+
+            return _mapper.Map<TeamDto>(_context.Teams.FirstOrDefault(x => x.Id == teamId));
         }
 
         public IEnumerable<PlayerStatsDto> GetTopGoalscorer()

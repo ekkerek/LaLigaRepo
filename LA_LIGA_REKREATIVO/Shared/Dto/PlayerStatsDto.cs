@@ -31,7 +31,7 @@
         public int SavedFrom10meterGK { get; set; }
 
         public PlayerDto Player { get; set; }
-        public TeamDto Team { get; set; }
+        public TeamDto? Team { get; set; }
 
         public int OrderId { get; set; }
     }

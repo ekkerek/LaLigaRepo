@@ -151,7 +151,11 @@
                 </TitleTemplate>
                 <ColumnDefinitions>
                     <PropertyColumn Title=@Localizer["Year"] Property="x=> x.Year" />
-                    <PropertyColumn Title=@Localizer["Team"] Property="x=> x.Team.Name" />
+
+                    @if (playerhistory.Any(x => x.Team is not null))
+                    {
+                        <PropertyColumn Title=@Localizer["Team"] Property="x=> x.Team.Name" />
+                    }
                     <PropertyColumn Title=@Localizer["FantasyPoints"] Property="x=> x.TotalPoints" />
                     <PropertyColumn Title=@Localizer["Goals"] Property="x=> x.Goals" />
                     <PropertyColumn Title=@Localizer["Assists"] Property="x=> x.Assists" />
